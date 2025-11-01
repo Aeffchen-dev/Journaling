@@ -192,7 +192,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-geist;
     overflow: hidden;
     height: 100vh;
     height: 100svh;

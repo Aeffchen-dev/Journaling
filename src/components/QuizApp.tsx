@@ -584,11 +584,10 @@ export function QuizApp() {
       {/* App Header with controls - Always visible */}
       <div className="mt-4 flex items-baseline justify-between w-full px-4" style={{ paddingTop: 'env(safe-area-inset-top, 0)' }}>
         <div 
-          className="cursor-pointer" 
+          className="cursor-pointer font-geist" 
           style={{ 
-            fontFamily: 'Arial Heavy, Arial, sans-serif', 
             fontSize: '20px', 
-            fontWeight: '950',
+            fontWeight: '700',
             color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff'
           }}
           onClick={handleLogoClick}
@@ -634,14 +633,15 @@ export function QuizApp() {
                       display: 'inline-block',
                       width: '15px',
                       height: '15px',
-                      backgroundColor: '#fbbf24',
+                      backgroundColor: '#dfff00',
                       borderRadius: '50%',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
                       transform: `translateY(2px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '-2deg') : (logoSmileyRotating ? '360deg' : '-2deg')})`,
-                      transition: 'transform 0.8s ease-in-out'
+                      transition: 'transform 0.8s ease-in-out',
+                      filter: 'brightness(1.2)'
                     }}
                   >
                     <div style={{ display: 'flex', gap: '2px', position: 'absolute', top: '4.5px', left: '50%', transform: 'translateX(-50%)' }}>

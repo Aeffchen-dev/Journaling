@@ -289,7 +289,7 @@ export function QuizCard({
         {question.category.toLowerCase() !== 'intro' && (
           <div className="mb-4">
             <div 
-              className="px-4 py-2 rounded-full font-medium inline-block border-2"
+              className="px-2 py-1 rounded-full font-medium inline-block border"
               style={{
                 backgroundColor: 'transparent',
                 borderColor: categoryColors.pageBg,
