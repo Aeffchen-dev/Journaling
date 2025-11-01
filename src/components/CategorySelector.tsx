@@ -212,9 +212,9 @@ export function CategorySelector({
             
             <button
               onClick={handleClose}
-              className="text-white bg-white/10 hover:bg-white/15 p-2 rounded-full transition-colors"
+              className="text-white transition-colors"
             >
-              <X className="h-6 w-6" strokeWidth={1} />
+              <X className="h-6 w-6" strokeWidth={2} />
             </button>
           </div>
 
