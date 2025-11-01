@@ -608,7 +608,7 @@ export function QuizCard({
             width: '48px',
             height: '48px',
             borderRadius: '50%',
-            backgroundColor: `color-mix(in hsl, ${categoryColors.cardColor} 16%, ${categoryColors.pageBg} 84%)`,
+            backgroundColor: `color-mix(in hsl, ${categoryColors.cardColor} 45%, ${categoryColors.pageBg} 55%)`,
             backdropFilter: 'blur(4px)',
             opacity: 1,
             display: 'flex',
