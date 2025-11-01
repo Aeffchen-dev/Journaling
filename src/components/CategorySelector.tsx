@@ -246,7 +246,7 @@ export function CategorySelector({
                   <div 
                     className="absolute inset-0 rounded-full"
                     style={{ 
-                      backgroundColor: '#333333',
+                      backgroundColor: '#1a1a1a',
                       zIndex: 0
                     }}
                   />
