@@ -225,6 +225,8 @@ export function CategorySelector({
                     className="absolute inset-0 rounded-full"
                     style={{ 
                       backgroundColor: '#333333',
+                      opacity: 0.8,
+                      backdropFilter: 'blur(8px)',
                       zIndex: 0
                     }}
                   />
@@ -236,6 +238,8 @@ export function CategorySelector({
                        background: isSelected 
                          ? `linear-gradient(to right, ${darkenColor(colors.cardColor, 0.9)}, ${colors.cardColor})`
                          : colors.cardColor,
+                       opacity: 0.8,
+                       backdropFilter: 'blur(8px)',
                        width: isSelected ? '100%' : '48px',
                        transition: shouldAnimate 
                          ? 'background 0.2s ease-in-out'
