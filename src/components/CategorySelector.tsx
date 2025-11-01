@@ -126,7 +126,7 @@ export function CategorySelector({
               transform: scale(1);
             }
             50% {
-              transform: scale(1.2);
+              transform: scale(1.4);
             }
             100% {
               transform: scale(1);
@@ -185,7 +185,7 @@ export function CategorySelector({
 
           {/* Categories List */}
           <ScrollArea className="flex-1 min-h-0">
-            <div className="px-4 pt-2 pb-4 space-y-2">
+            <div className="px-4 pt-2 pb-4 space-y-2" style={{ marginTop: '8px' }}>
               {categories.map((category, index) => {
               const isSelected = tempSelection.includes(category);
               const colors = getCategoryColors(category, index);
