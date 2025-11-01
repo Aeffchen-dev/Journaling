@@ -147,23 +147,13 @@ export function CategorySelector({
         {`
           @keyframes widthBounceRight {
             0% {
-              transform: translateX(0);
+              width: calc(100% - 8px);
             }
             50% {
-              transform: translateX(8px);
+              width: calc(100% + 8px);
             }
             100% {
-              transform: translateX(0);
-            }
-          }
-          @keyframes ripple {
-            0% {
-              transform: scale(1);
-              opacity: 1;
-            }
-            100% {
-              transform: scale(1.5);
-              opacity: 0;
+              width: 100%;
             }
           }
           @keyframes checkmarkAppear {
@@ -286,27 +276,16 @@ export function CategorySelector({
                    }}>
                      {category}
                    </span>
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <div
-                      className="relative cursor-pointer opacity-100 z-10"
-                      onClick={() => {
-                        const newCategories = isSelected 
-                          ? tempSelection.filter(c => c !== category)
-                          : [...tempSelection, category];
-                        setTempSelection(newCategories);
-                      }}
-                    >
-                      {/* Ripple effect */}
-                      {isSelected && (
-                        <div
-                          className="absolute inset-0 rounded-full"
-                          style={{
-                            border: '2px solid black',
-                            animation: 'ripple 0.6s ease-out'
-                          }}
-                        />
-                      )}
-                      
+                   <div onClick={(e) => e.stopPropagation()}>
+                     <div
+                       className="relative cursor-pointer opacity-100 z-10"
+                       onClick={() => {
+                         const newCategories = isSelected 
+                           ? tempSelection.filter(c => c !== category)
+                           : [...tempSelection, category];
+                         setTempSelection(newCategories);
+                       }}
+                     >
                        <div
                          className={`w-8 h-8 flex items-center justify-center rounded-full`}
                          style={{ 
