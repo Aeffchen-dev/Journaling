@@ -530,10 +530,10 @@ export function QuizCard({
           <div 
             style={{
               position: 'absolute',
-              bottom: '2rem',
+              bottom: monsterVariation.pillSide === 'right' ? `calc(2rem + 100px)` : '2rem',
               left: monsterVariation.pillSide === 'left' ? 'calc(2rem + 20px)' : 'auto',
-              right: monsterVariation.pillSide === 'right' ? 'calc(2rem + 20px)' : 'auto',
-              transformOrigin: 'bottom left',
+              right: monsterVariation.pillSide === 'right' ? 'calc(2rem + 40px)' : 'auto',
+              transformOrigin: monsterVariation.pillSide === 'left' ? 'bottom left' : 'bottom right',
               transform: 'rotate(-90deg)',
               zIndex: 30
             }}
