@@ -586,7 +586,7 @@ export function QuizApp() {
         <div 
           className="cursor-pointer font-factora" 
           style={{ 
-            fontSize: '20px', 
+            fontSize: '22px', 
             fontWeight: '700',
             color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
             letterSpacing: '0.03em'
@@ -613,8 +613,8 @@ export function QuizApp() {
                   <div 
                     style={{
                       display: 'inline-block',
-                      width: '15px',
-                      height: '15px',
+                      width: '16.5px',
+                      height: '16.5px',
                       backgroundColor: '#FFFF00',
                       borderRadius: '50%',
                       alignItems: 'center',
@@ -622,21 +622,23 @@ export function QuizApp() {
                       flexDirection: 'column',
                       position: 'relative',
                       transform: `translateY(2px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (logoSmileyRotating ? '360deg' : '0deg')})`,
-                      transition: 'transform 0.8s ease-in-out'
+                      transition: 'transform 0.8s ease-in-out',
+                      paddingLeft: '2px',
+                      paddingRight: '2px'
                     }}
                   >
-                    <div style={{ display: 'flex', gap: '2px', position: 'absolute', top: '4.5px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <div style={{ width: '2px', height: '2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
-                      <div style={{ width: '2px', height: '2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
+                    <div style={{ display: 'flex', gap: '2.2px', position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)' }}>
+                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
+                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
                     </div>
                     <div style={{ 
-                      width: '6px', 
-                      height: '2.5px', 
+                      width: '6.6px', 
+                      height: '2.75px', 
                       border: '1px solid black', 
                       borderTop: 'none',
-                      borderRadius: '0 0 6px 6px',
+                      borderRadius: '0 0 6.6px 6.6px',
                       position: 'absolute',
-                      top: '8.5px',
+                      top: '9.35px',
                       left: '50%',
                       transform: 'translateX(-50%)'
                     }}></div>
