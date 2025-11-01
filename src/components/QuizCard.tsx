@@ -545,7 +545,7 @@ export function QuizCard({
               ref={pillInnerRef}
               className="px-2 py-0.5 rounded-full font-medium border font-factora"
               style={{
-                backgroundColor: 'transparent',
+                backgroundColor: categoryColors.cardColor,
                 borderColor: categoryColors.pageBg,
                 borderWidth: '1px',
                 color: categoryColors.pageBg,
