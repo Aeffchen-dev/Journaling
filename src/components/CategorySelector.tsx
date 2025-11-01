@@ -203,7 +203,7 @@ export function CategorySelector({
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
                     transition: isSelected 
-                      ? 'width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                      ? 'width 0.5s cubic-bezier(0.34, 1.8, 0.64, 1)'
                       : 'width 0.3s ease-out'
                   }}
                   onClick={() => handleCategoryToggle(category)}
@@ -224,7 +224,7 @@ export function CategorySelector({
                       backgroundColor: colors.cardColor,
                       width: isSelected ? '100%' : '48px',
                       transition: isSelected 
-                        ? 'width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                        ? 'width 0.5s cubic-bezier(0.34, 1.8, 0.64, 1)'
                         : 'width 0.3s ease-out',
                       zIndex: 1
                     }}
