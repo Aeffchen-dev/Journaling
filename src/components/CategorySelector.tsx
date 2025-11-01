@@ -233,6 +233,9 @@ export function CategorySelector({
                   className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
                   style={{ 
                     paddingLeft: isSelected ? '32px' : '64px',
+                    paddingRight: '2px',
+                    paddingTop: '2px',
+                    paddingBottom: '2px',
                     width: isSelected ? '100%' : '90%',
                     animation: shouldAnimate ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
                     transition: isSelected ? 'padding-left 0.2s ease-in-out' : 'width 0.2s ease-in-out, padding-left 0.2s ease-in-out'
@@ -285,8 +288,8 @@ export function CategorySelector({
                         <div
                           className={`flex items-center justify-center rounded-full`}
                           style={{ 
-                            width: '48px', 
-                            height: '48px',
+                            width: '44px', 
+                            height: '44px',
                             border: isSelected ? 'none' : `2px solid ${colors.cardColor}`,
                             backgroundColor: isSelected ? colors.pageBg : 'transparent',
                             transition: shouldAnimate && isSelected
@@ -298,8 +301,8 @@ export function CategorySelector({
                         >
                           {isSelected && (
                             <svg 
-                              width="28" 
-                              height="28" 
+                              width="26" 
+                              height="26" 
                               viewBox="0 0 24 24" 
                               fill="none"
                               style={{ 
