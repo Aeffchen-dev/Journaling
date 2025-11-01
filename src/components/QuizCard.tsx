@@ -562,14 +562,16 @@ export function QuizCard({
         onClick={onSwipeLeft}
       />
 
-      {/* Category Pill - Centered at bottom, moved up for button */}
+      {/* Category Pill - Positioned at bottom corner opposite to monster, moved up for button, rotated -90deg */}
       {question.category.toLowerCase() !== 'intro' && (
         <div 
           style={{
             position: 'absolute',
-            left: '50%',
-            bottom: 'calc(2rem + 56px)',
-            transform: 'translateX(-50%)',
+            ...(monsterVariation.pillSide === 'right' 
+              ? { right: `calc(2rem + ${pillWidth}px)`, bottom: 'calc(2rem + 56px)', transformOrigin: 'bottom right' } 
+              : { left: `calc(2rem + ${pillWidth}px)`, bottom: 'calc(2rem + 56px)', transformOrigin: 'bottom left' }
+            ),
+            transform: monsterVariation.pillSide === 'right' ? 'rotate(90deg)' : 'rotate(-90deg)',
             zIndex: 20
           }}
         >
@@ -593,13 +595,15 @@ export function QuizCard({
         </div>
       )}
 
-      {/* Edit Button - Centered at bottom */}
+      {/* Edit Button - Positioned at bottom corner on same side as pill */}
       {question.category.toLowerCase() !== 'intro' && (
         <button
           style={{
             position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
+            ...(monsterVariation.pillSide === 'right' 
+              ? { right: 'calc(2rem - 12px)' } 
+              : { left: 'calc(2rem - 16px)' }
+            ),
             bottom: 'calc(2rem - 8px)',
             width: '48px',
             height: '48px',
