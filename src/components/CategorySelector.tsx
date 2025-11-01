@@ -169,13 +169,14 @@ export function CategorySelector({
               return (
                 <div 
                   key={category}
-                  className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden transition-all duration-300"
+                  className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
                   style={{ 
                     paddingLeft: '32px',
                     paddingRight: '8px',
                     paddingTop: '8px',
                     paddingBottom: '8px',
-                    width: isSelected ? '100%' : '90%'
+                    width: isSelected ? '100%' : '90%',
+                    transition: 'width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
