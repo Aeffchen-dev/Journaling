@@ -610,7 +610,7 @@ export function QuizCard({
             borderRadius: '50%',
             backgroundColor: categoryColors.cardColor,
             backdropFilter: 'blur(4px)',
-            filter: 'saturate(1.3) brightness(1.1)',
+            filter: 'saturate(1.4) brightness(1.3) contrast(1.1)',
             opacity: 1,
             display: 'flex',
             alignItems: 'center',
