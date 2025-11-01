@@ -80,7 +80,7 @@ export function QuizApp() {
   const [toggleAnimating, setToggleAnimating] = useState(false);
   const [loadingSmileyRotating, setLoadingSmileyRotating] = useState(false);
   const [logoSmileyRotating, setLogoSmileyRotating] = useState(false);
-  const [smileyRotation, setSmileyRotation] = useState(0);
+  const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
 
   useEffect(() => {
     fetchQuestions();
@@ -337,7 +337,7 @@ export function QuizApp() {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
       setIsTransitioning(true);
       setTransitionDirection('left');
-      setSmileyRotation(prev => prev + 360);
+      setBaseSmileyRotation(prev => prev + 360);
       
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
@@ -351,7 +351,7 @@ export function QuizApp() {
     if (currentIndex > 0 && !isTransitioning) {
       setIsTransitioning(true);
       setTransitionDirection('right');
-      setSmileyRotation(prev => prev - 360);
+      setBaseSmileyRotation(prev => prev - 360);
       
       setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
@@ -624,8 +624,8 @@ export function QuizApp() {
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
-                      transform: `translateY(2px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : smileyRotation}deg)`,
-                      transition: loading ? 'transform 0.8s ease-in-out' : 'transform 0.3s ease-in-out',
+                      transform: `translateY(2px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + (isDragging ? -(dragOffset / window.innerWidth) * 360 : 0))}deg)`,
+                      transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : 'transform 0.3s ease-in-out'),
                       paddingLeft: '2px',
                       paddingRight: '2px'
                     }}
