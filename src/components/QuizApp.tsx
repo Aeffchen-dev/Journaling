@@ -554,17 +554,17 @@ export function QuizApp() {
     }
     
     const colorMap = {
-      1: { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 16%)' },
-      2: { cardColor: 'hsl(182, 87%, 68%)', pageBg: 'hsl(250, 95%, 17%)' },
-      3: { cardColor: 'hsl(259, 45%, 72%)', pageBg: 'hsl(0, 65%, 13%)' },
-      4: { cardColor: 'hsl(335, 100%, 90%)', pageBg: 'hsl(14, 100%, 43%)' },
-      5: { cardColor: 'hsl(289, 100%, 79%)', pageBg: 'hsl(281, 100%, 13%)' },
-      6: { cardColor: 'hsl(76, 100%, 75%)', pageBg: 'hsl(159, 100%, 13%)' },
-      7: { cardColor: 'hsl(307, 100%, 80%)', pageBg: 'hsl(23, 98%, 24%)' },
-      8: { cardColor: 'hsl(157, 100%, 87%)', pageBg: 'hsl(178, 93%, 17%)' },
-      9: { cardColor: 'hsl(157, 100%, 50%)', pageBg: 'hsl(170, 100%, 14%)' },
-      10: { cardColor: 'hsl(200, 100%, 77%)', pageBg: 'hsl(205, 100%, 19%)' },
-      11: { cardColor: 'hsl(70, 100%, 49%)', pageBg: 'hsl(187, 94%, 13%)' },
+      1: { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 12%)' },
+      2: { cardColor: 'hsl(182, 87%, 68%)', pageBg: 'hsl(250, 95%, 12%)' },
+      3: { cardColor: 'hsl(259, 45%, 72%)', pageBg: 'hsl(0, 65%, 10%)' },
+      4: { cardColor: 'hsl(335, 100%, 90%)', pageBg: 'hsl(14, 100%, 25%)' },
+      5: { cardColor: 'hsl(289, 100%, 79%)', pageBg: 'hsl(281, 100%, 10%)' },
+      6: { cardColor: 'hsl(76, 100%, 75%)', pageBg: 'hsl(159, 100%, 10%)' },
+      7: { cardColor: 'hsl(307, 100%, 80%)', pageBg: 'hsl(23, 98%, 18%)' },
+      8: { cardColor: 'hsl(157, 100%, 87%)', pageBg: 'hsl(178, 93%, 12%)' },
+      9: { cardColor: 'hsl(157, 100%, 50%)', pageBg: 'hsl(170, 100%, 10%)' },
+      10: { cardColor: 'hsl(200, 100%, 77%)', pageBg: 'hsl(205, 100%, 14%)' },
+      11: { cardColor: 'hsl(70, 100%, 49%)', pageBg: 'hsl(187, 94%, 10%)' },
     };
     
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
