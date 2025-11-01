@@ -610,13 +610,14 @@ export function QuizCard({
             borderRadius: '50%',
             backgroundColor: `color-mix(in hsl, ${categoryColors.cardColor} 35%, ${categoryColors.pageBg} 65%)`,
             backdropFilter: 'blur(4px)',
-            opacity: 0.7,
+            opacity: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             border: 'none',
             cursor: 'pointer',
-            zIndex: 30
+            zIndex: 30,
+            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.24)'
           }}
           onClick={(e) => {
             e.stopPropagation();
@@ -624,9 +625,9 @@ export function QuizCard({
           }}
         >
           {isEditing ? (
-            <X size={20} color={categoryColors.pageBg} />
+            <X size={20} color={`color-mix(in hsl, ${categoryColors.pageBg} 60%, black 40%)`} />
           ) : (
-            <Pencil size={20} color={categoryColors.pageBg} />
+            <Pencil size={20} color={`color-mix(in hsl, ${categoryColors.pageBg} 60%, black 40%)`} />
           )}
         </button>
       )}
