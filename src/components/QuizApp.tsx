@@ -163,7 +163,7 @@ export function QuizApp() {
       
       try {
         // Use the new Google Sheets URL with cache busting
-        const spreadsheetId = '1-BHUX8Zm4C2tACRJugpF_fj8TzBXnGGGUYQV3ggfKYM';
+        const spreadsheetId = '11gB8BwBxKTO92k4kAQxdkhk56zkXSzyTTKG-9mKqDPc';
         const timestamp = new Date().getTime();
         const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=0&cachebust=${timestamp}`;
         
