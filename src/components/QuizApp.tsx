@@ -598,7 +598,20 @@ export function QuizApp() {
 
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
-    if (!isDragging || !hasSlides) {
+    if (!isDragging && !isTransitioning) {
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+    }
+
+    // During transition, show target color immediately
+    if (isTransitioning && !isDragging) {
+      const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
+      const targetColors = getColorsForSlide(targetIndex);
+      return targetColors.pageBg;
+    }
+
+    // During dragging, interpolate based on progress
+    if (!hasSlides) {
       const colors = getCurrentColors();
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     }
@@ -628,7 +641,20 @@ export function QuizApp() {
 
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
-    if (!isDragging || !hasSlides) {
+    if (!isDragging && !isTransitioning) {
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
+    }
+
+    // During transition, show target color immediately
+    if (isTransitioning && !isDragging) {
+      const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
+      const targetColors = getColorsForSlide(targetIndex);
+      return targetColors.cardColor;
+    }
+
+    // During dragging, interpolate based on progress
+    if (!hasSlides) {
       const colors = getCurrentColors();
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
     }
