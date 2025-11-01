@@ -306,7 +306,7 @@ export function CategorySelector({
                               viewBox="0 0 24 24" 
                               fill="none"
                               style={{ 
-                                color: 'white',
+                                color: colors.cardColor,
                                 animation: shouldAnimate ? 'checkmarkAppear 0.1s ease-out 0.1s both' : 'none'
                               }}
                             >
