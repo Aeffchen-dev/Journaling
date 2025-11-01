@@ -650,11 +650,10 @@ export function QuizApp() {
         </div>
         <button 
           onClick={() => setCategorySelectorOpen(true)}
-          className="font-normal flex items-center"
+          className="font-factora font-medium flex items-center"
           style={{ 
-            fontSize: '14px',
-            color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
-            letterSpacing: '0.05em'
+            fontSize: '12px',
+            color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff'
           }}
         >
           Kategorien
