@@ -119,6 +119,21 @@ export function CategorySelector({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <style>
+        {`
+          @keyframes checkboxPop {
+            0% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.2);
+            }
+            100% {
+              transform: scale(1);
+            }
+          }
+        `}
+      </style>
       <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col" style={{ height: '100svh', width: '100vw' }}>
         <DialogDescription className="sr-only">
           Wählen Sie die Kategorien aus, die Sie sehen möchten
@@ -159,7 +174,7 @@ export function CategorySelector({
                     paddingTop: '8px',
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
-                    transition: 'width 0.5s cubic-bezier(0.68, -0.8, 0.265, 1.8)'
+                    transition: 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
@@ -174,15 +189,16 @@ export function CategorySelector({
                   
                   {/* Colored background that slides in/out */}
                   <div 
-                    className="absolute inset-0 rounded-full transition-transform duration-300"
+                    className="absolute inset-0 rounded-full"
                     style={{ 
                       backgroundColor: colors.cardColor,
                       transform: isSelected ? 'translateX(0%)' : 'translateX(-100%)',
+                      transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
                       zIndex: 1
                     }}
                   />
                   
-                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10 transition-colors duration-300" style={{ color: isSelected ? textColor : 'white', fontSize: '14px' }}>
+                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ color: isSelected ? textColor : 'white', fontSize: '14px', transition: 'color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
                     {category}
                   </span>
                   <div onClick={(e) => e.stopPropagation()}>
@@ -202,8 +218,8 @@ export function CategorySelector({
                           height: '32px',
                           border: isSelected ? `1px solid black` : `2px solid black`,
                           backgroundColor: isSelected ? 'black' : 'transparent',
-                          transform: isSelected ? 'scale(1.15)' : 'scale(1)',
-                          transition: 'all 0.5s cubic-bezier(0.68, -0.8, 0.265, 1.8)'
+                          animation: isSelected ? 'checkboxPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+                          transition: 'background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
                         }}
                       >
                         {isSelected && (
