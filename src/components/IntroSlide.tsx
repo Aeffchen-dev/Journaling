@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface IntroSlideProps {
   type: 'welcome' | 'description';
@@ -32,8 +32,19 @@ export function IntroSlide({
   const [mouseEndX, setMouseEndX] = useState<number | null>(null);
   const [mouseEndY, setMouseEndY] = useState<number | null>(null);
   const [isMousePressed, setIsMousePressed] = useState(false);
+  const [showIndicator, setShowIndicator] = useState(false);
 
   const minSwipeDistance = 50;
+
+  // Show animated indicator after 1 second on welcome slide
+  useEffect(() => {
+    if (type === 'welcome') {
+      const timer = setTimeout(() => {
+        setShowIndicator(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [type]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     if (onDragStart) {
@@ -182,13 +193,72 @@ export function IntroSlide({
             </div>
             
             {/* Bottom text */}
-            <div className="pb-8">
+            <div className="pb-8 flex flex-col items-center gap-2">
               <p 
                 className="text-xs text-foreground text-center"
                 style={{ fontFamily: 'Arial, sans-serif', fontSize: '12px' }}
               >
                 Swipe um weiter zu navigieren
               </p>
+              
+              {/* Animated indicator - appears after 1s */}
+              {showIndicator && (
+                <div 
+                  className="flex gap-1.5"
+                  style={{
+                    animation: 'fadeInUp 0.5s ease-out',
+                    opacity: 1
+                  }}
+                >
+                  <style>{`
+                    @keyframes fadeInUp {
+                      from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                      }
+                      to {
+                        opacity: 1;
+                        transform: translateY(0);
+                      }
+                    }
+                    @keyframes pulse {
+                      0%, 100% {
+                        opacity: 0.3;
+                      }
+                      50% {
+                        opacity: 1;
+                      }
+                    }
+                  `}</style>
+                  <div 
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: 'currentColor',
+                      animation: 'pulse 1.5s ease-in-out infinite'
+                    }}
+                  />
+                  <div 
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: 'currentColor',
+                      animation: 'pulse 1.5s ease-in-out infinite 0.2s'
+                    }}
+                  />
+                  <div 
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: 'currentColor',
+                      animation: 'pulse 1.5s ease-in-out infinite 0.4s'
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -204,7 +274,7 @@ export function IntroSlide({
             </div>
             
             {/* Bottom text */}
-            <div className="pb-8">
+            <div className="pb-8 flex flex-col items-center gap-2">
               <p 
                 className="text-xs text-foreground text-center"
                 style={{ fontFamily: 'Arial, sans-serif', fontSize: '12px' }}
