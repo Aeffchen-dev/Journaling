@@ -617,7 +617,7 @@ export function QuizCard({
             height: '48px',
             borderRadius: '50%',
             backgroundColor: question.category.toLowerCase() === 'balance'
-              ? `color-mix(in hsl, ${categoryColors.cardColor} 25%, ${categoryColors.pageBg} 75%)`
+              ? `color-mix(in hsl, ${categoryColors.cardColor} 35%, ${categoryColors.pageBg} 65%)`
               : `color-mix(in hsl, ${categoryColors.cardColor} 45%, ${categoryColors.pageBg} 55%)`,
             backdropFilter: 'blur(4px)',
             opacity: 1,
