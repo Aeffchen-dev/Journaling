@@ -589,7 +589,19 @@ export function QuizApp() {
     const c1 = parseHSL(color1);
     const c2 = parseHSL(color2);
     
-    const h = Math.round(c1.h + (c2.h - c1.h) * factor);
+    // Calculate shortest path for hue interpolation
+    let hueDiff = c2.h - c1.h;
+    if (hueDiff > 180) {
+      hueDiff -= 360;
+    } else if (hueDiff < -180) {
+      hueDiff += 360;
+    }
+    
+    let h = c1.h + hueDiff * factor;
+    if (h < 0) h += 360;
+    if (h >= 360) h -= 360;
+    h = Math.round(h);
+    
     const s = Math.round(c1.s + (c2.s - c1.s) * factor);
     const l = Math.round(c1.l + (c2.l - c1.l) * factor);
     
