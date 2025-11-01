@@ -20,11 +20,19 @@ export function CategorySelector({
   onCategoriesChange 
 }: CategorySelectorProps) {
   const [tempSelection, setTempSelection] = useState<string[]>(selectedCategories);
+  const [justToggled, setJustToggled] = useState<Set<string>>(new Set());
 
   // Update temp selection when selectedCategories prop changes
   useEffect(() => {
     setTempSelection(selectedCategories);
   }, [selectedCategories]);
+
+  // Clear justToggled when modal opens
+  useEffect(() => {
+    if (open) {
+      setJustToggled(new Set());
+    }
+  }, [open]);
 
   const getCategoryColors = (category: string, index: number) => {
     // Use specific color mapping for each category
@@ -105,6 +113,7 @@ export function CategorySelector({
         ? prev.filter(c => c !== category)
         : [...prev, category]
     );
+    setJustToggled(prev => new Set(prev).add(category));
   };
 
   const handleApply = () => {
@@ -195,25 +204,26 @@ export function CategorySelector({
             <div className="px-4 pt-2 pb-4 space-y-2" style={{ marginTop: '8px' }}>
               {categories.map((category, index) => {
               const isSelected = tempSelection.includes(category);
+              const shouldAnimate = justToggled.has(category) && isSelected;
               const colors = getCategoryColors(category, index);
               const textColor = darkenColor(colors.pageBg, 0.7); // 30% darker for text
               const checkboxColor = lightenColor(colors.pageBg, 1.1); // 10% lighter for checkbox
               
               return (
-                 <div 
-                   key={category}
-                   className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
-                   style={{ 
-                     paddingLeft: '64px',
-                     paddingRight: '8px',
-                     paddingTop: '8px',
-                     paddingBottom: '8px',
-                     width: isSelected ? '100%' : '90%',
-                     animation: isSelected ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
-                     transition: isSelected ? 'none' : 'width 0.2s ease-in-out'
-                   }}
-                   onClick={() => handleCategoryToggle(category)}
-                 >
+                <div 
+                  key={category}
+                  className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
+                  style={{ 
+                    paddingLeft: '64px',
+                    paddingRight: '8px',
+                    paddingTop: '8px',
+                    paddingBottom: '8px',
+                    width: isSelected ? '100%' : '90%',
+                    animation: shouldAnimate ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
+                    transition: isSelected ? 'none' : 'width 0.2s ease-in-out'
+                  }}
+                  onClick={() => handleCategoryToggle(category)}
+                >
                   {/* Dark grey background */}
                   <div 
                     className="absolute inset-0 rounded-full"
@@ -229,8 +239,10 @@ export function CategorySelector({
                      style={{ 
                        backgroundColor: colors.cardColor,
                        width: isSelected ? '100%' : '48px',
-                       transition: isSelected 
+                       transition: shouldAnimate 
                          ? 'width 0.2s ease-in-out'
+                         : isSelected 
+                         ? 'none'
                          : 'width 0.2s ease-in-out',
                        zIndex: 1
                      }}
@@ -273,8 +285,10 @@ export function CategorySelector({
                            height: '32px',
                            border: `2px solid white`,
                            backgroundColor: isSelected ? 'black' : 'transparent',
-                           transition: isSelected 
+                           transition: shouldAnimate && isSelected
                              ? 'background-color 0.1s ease-in-out 0.1s'
+                             : isSelected
+                             ? 'none'
                              : 'background-color 0.2s ease-in-out'
                          }}
                        >
@@ -286,7 +300,7 @@ export function CategorySelector({
                              fill="none"
                              style={{ 
                                color: 'white',
-                               animation: 'checkmarkAppear 0.1s ease-out 0.1s both'
+                               animation: shouldAnimate ? 'checkmarkAppear 0.1s ease-out 0.1s both' : 'none'
                              }}
                            >
                              <path
