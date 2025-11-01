@@ -655,9 +655,18 @@ export function QuizCard({
           
           {isEditing && (
             <style>{`
+              @keyframes blink {
+                0%, 49% { opacity: 1; }
+                50%, 100% { opacity: 0; }
+              }
               .edit-textarea::placeholder {
                 color: color-mix(in srgb, ${categoryColors.cardColor} 85%, black);
                 opacity: 0.3;
+              }
+              .edit-textarea::placeholder::before {
+                content: '|';
+                animation: blink 1s infinite;
+                margin-right: 4px;
               }
               .edit-textarea {
                 transition: all 250ms ease-in-out;
@@ -674,7 +683,7 @@ export function QuizCard({
             <Textarea
               value={editedText}
               onChange={(e) => setEditedText(e.target.value)}
-              placeholder="Your answer"
+              placeholder="| Your answer"
               className={`mt-4 font-factora w-full resize-none edit-textarea ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem]' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem]'}`}
               style={{
                 fontWeight: 'bold',
