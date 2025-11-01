@@ -213,8 +213,9 @@ export function CategorySelector({
             <button
               onClick={handleClose}
               className="text-white transition-colors"
+              style={{ marginRight: '8px' }}
             >
-              <X className="h-6 w-6" strokeWidth={2} />
+              <X className="h-7 w-7" strokeWidth={2} />
             </button>
           </div>
 
