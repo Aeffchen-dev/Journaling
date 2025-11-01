@@ -201,7 +201,7 @@ export function CategorySelector({
                     paddingTop: '8px',
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
-                    animation: isSelected ? 'widthBounceTwice 0.3s ease-in-out 0.4s forwards' : 'none',
+                    animation: isSelected ? 'widthBounceTwice 0.3s ease-in-out 0.3s forwards' : 'none',
                     transition: !isSelected ? 'width 0.2s ease-in-out' : 'none'
                   }}
                   onClick={() => handleCategoryToggle(category)}
@@ -223,7 +223,7 @@ export function CategorySelector({
                       width: isSelected ? '100%' : '48px',
                       animation: isSelected ? 'none' : 'none',
                       transition: isSelected 
-                        ? 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s'
+                        ? 'width 0.3s ease-in-out'
                         : 'width 0.2s ease-in-out',
                       zIndex: 1
                     }}
@@ -233,7 +233,7 @@ export function CategorySelector({
                     color: isSelected ? textColor : 'white', 
                     fontSize: '14px', 
                     transition: isSelected 
-                      ? 'color 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s'
+                      ? 'color 0.3s ease-in-out'
                       : 'color 0.2s ease-in-out'
                   }}>
                     {category}
@@ -266,9 +266,9 @@ export function CategorySelector({
                           height: '32px',
                           border: isSelected ? `1px solid black` : `2px solid white`,
                           backgroundColor: isSelected ? 'black' : 'transparent',
-                          animation: isSelected ? 'checkboxPopBounce 0.3s ease-in-out 0.4s' : 'none',
+                          animation: isSelected ? 'checkboxPopBounce 0.3s ease-in-out 0.3s' : 'none',
                           transition: isSelected 
-                            ? 'background-color 0.1s ease-in-out 0.4s'
+                            ? 'background-color 0.15s ease-in-out 0.3s'
                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
                         }}
                       >
@@ -280,7 +280,7 @@ export function CategorySelector({
                             fill="none"
                             style={{ 
                               color: 'white',
-                              animation: 'checkmarkAppear 0.15s ease-in-out 0.4s both'
+                              animation: 'checkmarkAppear 0.2s ease-in-out 0.3s both'
                             }}
                           >
                             <path
