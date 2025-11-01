@@ -613,7 +613,7 @@ export function QuizApp() {
                       display: 'inline-block',
                       width: '15px',
                       height: '15px',
-                      backgroundColor: '#dfff00',
+                      backgroundColor: '#dfff00 !important',
                       borderRadius: '50%',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -621,7 +621,7 @@ export function QuizApp() {
                       position: 'relative',
                       transform: `translateY(2px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '-2deg') : (logoSmileyRotating ? '360deg' : '-2deg')})`,
                       transition: 'transform 0.8s ease-in-out',
-                      filter: 'brightness(1.2)'
+                      filter: 'brightness(1.2) !important'
                     }}
                   >
                     <div style={{ display: 'flex', gap: '2px', position: 'absolute', top: '4.5px', left: '50%', transform: 'translateX(-50%)' }}>

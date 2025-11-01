@@ -75,13 +75,25 @@ export function CategorySelector({
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
-  const darkenColor = (hslColor: string) => {
-    // Parse HSL color and reduce lightness by 20%
+  const darkenColor = (hslColor: string, factor: number = 0.8) => {
+    // Parse HSL color and reduce lightness by the given factor
     const match = hslColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
     if (match) {
       const h = match[1];
       const s = match[2];
-      const l = Math.max(0, parseInt(match[3]) * 0.8); // Reduce lightness by 20%
+      const l = Math.max(0, parseInt(match[3]) * factor);
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+    return hslColor;
+  };
+
+  const lightenColor = (hslColor: string, factor: number = 1.1) => {
+    // Parse HSL color and increase lightness by the given factor
+    const match = hslColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (match) {
+      const h = match[1];
+      const s = match[2];
+      const l = Math.min(100, parseInt(match[3]) * factor);
       return `hsl(${h}, ${s}%, ${l}%)`;
     }
     return hslColor;
@@ -134,7 +146,8 @@ export function CategorySelector({
               {categories.map((category, index) => {
               const isSelected = tempSelection.includes(category);
               const colors = getCategoryColors(category, index);
-              const darkerColor = darkenColor(colors.pageBg);
+              const textColor = darkenColor(colors.pageBg, 0.7); // 30% darker for text
+              const checkboxColor = lightenColor(colors.pageBg, 1.1); // 10% lighter for checkbox
               
               return (
                 <div 
@@ -149,7 +162,7 @@ export function CategorySelector({
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
-                  <span className="font-geist font-normal tracking-wide opacity-100" style={{ color: darkerColor, fontSize: '14px' }}>
+                  <span className="font-geist font-normal tracking-wide opacity-100" style={{ color: textColor, fontSize: '14px' }}>
                     {category}
                   </span>
                   <div onClick={(e) => e.stopPropagation()}>
@@ -167,8 +180,8 @@ export function CategorySelector({
                         style={{ 
                           width: '32px', 
                           height: '32px',
-                          border: `1px solid ${darkerColor}`,
-                          backgroundColor: isSelected ? darkerColor : 'transparent'
+                          border: `1px solid ${checkboxColor}`,
+                          backgroundColor: isSelected ? checkboxColor : 'transparent'
                         }}
                       >
                         {isSelected && (

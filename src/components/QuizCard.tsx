@@ -255,12 +255,13 @@ export function QuizCard({
 
   return (
     <div 
-      className={`relative w-full max-w-[500px] mx-auto rounded-[2rem] shadow-card overflow-hidden select-none`}
+      className={`relative w-full max-w-[500px] mx-auto rounded-[2rem] shadow-card select-none`}
       style={{
         height: 'calc(100% - 16px)',
         maxHeight: 'calc(100% - 16px)',
         backgroundColor: question.category.toLowerCase() !== 'intro' ? categoryColors.cardColor : 'hsl(var(--card-background))',
-        color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))'
+        color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))',
+        overflow: 'visible'
       }}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -270,20 +271,37 @@ export function QuizCard({
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
     >
+      {/* Decorative circle at bottom */}
+      {question.category.toLowerCase() !== 'intro' && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-60%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '120%',
+            aspectRatio: '1',
+            borderRadius: '50%',
+            backgroundColor: categoryColors.pageBg,
+            pointerEvents: 'none',
+            zIndex: 0
+          }}
+        />
+      )}
       {/* Left Click Area - Previous */}
       <div 
-        className="absolute left-0 top-0 w-20 h-full z-10 cursor-pointer"
+        className="absolute left-0 top-0 w-20 h-full z-20 cursor-pointer"
         onClick={onSwipeRight}
       />
 
       {/* Right Click Area - Next */}
       <div 
-        className="absolute right-0 top-0 w-20 h-full z-10 cursor-pointer"
+        className="absolute right-0 top-0 w-20 h-full z-20 cursor-pointer"
         onClick={onSwipeLeft}
       />
 
       {/* Main Content */}
-      <div className={`h-full flex flex-col justify-start ${question.category.toLowerCase() === 'intro' ? 'p-8' : 'p-8 lg:p-10'}`}>
+      <div className={`h-full flex flex-col justify-start ${question.category.toLowerCase() === 'intro' ? 'p-8' : 'p-8 lg:p-10'} relative z-10`}>
         
         {/* Category Pill - Only for non-intro slides */}
         {question.category.toLowerCase() !== 'intro' && (
