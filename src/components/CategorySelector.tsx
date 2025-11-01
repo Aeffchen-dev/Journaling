@@ -132,6 +132,20 @@ export function CategorySelector({
               transform: scale(1);
             }
           }
+          @keyframes widthBounceTwice {
+            0% {
+              width: 90%;
+            }
+            40% {
+              width: 106%;
+            }
+            70% {
+              width: 98%;
+            }
+            100% {
+              width: 100%;
+            }
+          }
           @keyframes checkmarkAppear {
             0% {
               opacity: 0;
@@ -184,9 +198,8 @@ export function CategorySelector({
                     paddingTop: '8px',
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
-                    transition: isSelected 
-                      ? 'width 0.3s ease-in-out'
-                      : 'width 0.2s ease-in-out'
+                    animation: isSelected ? 'widthBounceTwice 0.3s ease-in-out 0.3s forwards' : 'none',
+                    transition: !isSelected ? 'width 0.2s ease-in-out' : 'none'
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
