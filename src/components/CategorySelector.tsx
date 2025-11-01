@@ -233,9 +233,6 @@ export function CategorySelector({
                   className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
                   style={{ 
                     paddingLeft: isSelected ? '32px' : '64px',
-                    paddingRight: '8px',
-                    paddingTop: '8px',
-                    paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
                     animation: shouldAnimate ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
                     transition: isSelected ? 'padding-left 0.2s ease-in-out' : 'width 0.2s ease-in-out, padding-left 0.2s ease-in-out'
@@ -285,31 +282,31 @@ export function CategorySelector({
                          setTempSelection(newCategories);
                        }}
                      >
-                       <div
-                         className={`w-8 h-8 flex items-center justify-center rounded-full`}
-                         style={{ 
-                           width: '32px', 
-                           height: '32px',
-                           border: isSelected ? 'none' : '2px solid white',
-                           backgroundColor: isSelected ? 'black' : 'transparent',
-                           transition: shouldAnimate && isSelected
-                             ? 'background-color 0.1s ease-in-out 0.1s, border 0.1s ease-in-out 0.1s'
-                             : isSelected
-                             ? 'none'
-                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
-                         }}
-                       >
-                         {isSelected && (
-                           <svg 
-                             width="20" 
-                             height="20" 
-                             viewBox="0 0 24 24" 
-                             fill="none"
-                             style={{ 
-                               color: 'white',
-                               animation: shouldAnimate ? 'checkmarkAppear 0.1s ease-out 0.1s both' : 'none'
-                             }}
-                           >
+                        <div
+                          className={`flex items-center justify-center rounded-full`}
+                          style={{ 
+                            width: '48px', 
+                            height: '48px',
+                            border: isSelected ? 'none' : '2px solid white',
+                            backgroundColor: isSelected ? colors.pageBg : 'transparent',
+                            transition: shouldAnimate && isSelected
+                              ? 'background-color 0.1s ease-in-out 0.1s, border 0.1s ease-in-out 0.1s'
+                              : isSelected
+                              ? 'none'
+                              : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
+                          }}
+                        >
+                          {isSelected && (
+                            <svg 
+                              width="28" 
+                              height="28" 
+                              viewBox="0 0 24 24" 
+                              fill="none"
+                              style={{ 
+                                color: 'white',
+                                animation: shouldAnimate ? 'checkmarkAppear 0.1s ease-out 0.1s both' : 'none'
+                              }}
+                            >
                              <path
                                d="M20 6 9 17l-5-5"
                                stroke="currentColor"
