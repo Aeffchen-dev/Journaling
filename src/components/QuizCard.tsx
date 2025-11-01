@@ -531,7 +531,7 @@ export function QuizCard({
           <div 
             style={{
               position: 'absolute',
-              bottom: '8rem',
+              bottom: '2rem',
               ...(monsterVariation.pillSide === 'right' 
                 ? { right: `calc(2rem - 20px - ${pillHeight}px)` }
                 : { left: 'calc(2rem + 20px)' }
