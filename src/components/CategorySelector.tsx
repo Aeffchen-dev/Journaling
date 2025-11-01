@@ -233,7 +233,7 @@ export function CategorySelector({
                    <div 
                      className="absolute inset-y-0 left-0 rounded-full"
                      style={{ 
-                       background: `linear-gradient(to right, ${darkenColor(colors.cardColor, 0.8)} 0%, ${colors.cardColor} 25%)`,
+                       background: `linear-gradient(to right, ${darkenColor(colors.cardColor, 0.8)} 0%, ${colors.cardColor} 20%)`,
                        width: isSelected ? '100%' : '48px',
                        transition: shouldAnimate 
                          ? 'width 0.2s ease-in-out'
