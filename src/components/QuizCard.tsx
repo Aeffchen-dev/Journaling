@@ -614,7 +614,7 @@ export function QuizCard({
             justifyContent: 'center',
             border: 'none',
             cursor: 'pointer',
-            zIndex: 10
+            zIndex: 30
           }}
           onClick={(e) => {
             e.stopPropagation();
