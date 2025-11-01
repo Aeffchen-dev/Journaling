@@ -180,8 +180,8 @@ export function CategorySelector({
                         style={{ 
                           width: '32px', 
                           height: '32px',
-                          border: `1px solid ${checkboxColor}`,
-                          backgroundColor: isSelected ? checkboxColor : 'transparent'
+                          border: `1px solid black`,
+                          backgroundColor: isSelected ? 'black' : 'transparent'
                         }}
                       >
                         {isSelected && (
