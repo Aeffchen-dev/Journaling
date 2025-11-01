@@ -46,7 +46,7 @@ const Switch = React.forwardRef<
         top: '1.5px',
         width: '18px',
         height: '18px',
-        backgroundColor: '#FFFF66',
+        backgroundColor: '#FFFF33',
         borderRadius: '50%',
         display: 'flex',
         alignItems: 'center',
