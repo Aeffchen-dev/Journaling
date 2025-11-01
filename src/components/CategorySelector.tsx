@@ -204,7 +204,7 @@ export function CategorySelector({
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
                     transition: isSelected 
-                      ? 'width 0.6s cubic-bezier(0.34, 1.8, 0.64, 1)'
+                      ? 'width 0.6s cubic-bezier(0.25, 2.5, 0.5, 1)'
                       : 'width 0.2s ease-in-out'
                   }}
                   onClick={() => handleCategoryToggle(category)}
@@ -225,7 +225,7 @@ export function CategorySelector({
                       backgroundColor: colors.cardColor,
                       width: isSelected ? '100%' : '48px',
                       transition: isSelected 
-                        ? 'width 0.6s cubic-bezier(0.34, 1.8, 0.64, 1)'
+                        ? 'width 0.6s cubic-bezier(0.25, 2.5, 0.5, 1)'
                         : 'width 0.2s ease-in-out',
                       zIndex: 1
                     }}
@@ -270,7 +270,7 @@ export function CategorySelector({
                           backgroundColor: isSelected ? 'black' : 'transparent',
                           animation: isSelected ? 'checkboxPopBounce 0.6s ease-in-out' : 'none',
                           transition: isSelected 
-                            ? 'background-color 0.15s ease-in-out 0.4s, border 0.6s ease-in-out'
+                            ? 'background-color 0.15s ease-in-out 0.4s'
                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
                         }}
                       >
