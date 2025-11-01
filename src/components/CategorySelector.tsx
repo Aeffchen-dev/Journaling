@@ -119,23 +119,6 @@ export function CategorySelector({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <style>
-        {`
-          @keyframes sparkle {
-            0% {
-              opacity: 0;
-              transform: translate(0, 0) scale(0);
-            }
-            50% {
-              opacity: 1;
-            }
-            100% {
-              opacity: 0;
-              transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
-            }
-          }
-        `}
-      </style>
       <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col" style={{ height: '100svh', width: '100vw' }}>
         <DialogDescription className="sr-only">
           Wählen Sie die Kategorien aus, die Sie sehen möchten
@@ -176,7 +159,7 @@ export function CategorySelector({
                     paddingTop: '8px',
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
-                    transition: 'width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+                    transition: 'width 0.5s cubic-bezier(0.68, -0.8, 0.265, 1.8)'
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
@@ -218,46 +201,27 @@ export function CategorySelector({
                           width: '32px', 
                           height: '32px',
                           border: isSelected ? `1px solid black` : `2px solid black`,
-                          backgroundColor: isSelected ? 'black' : 'transparent'
+                          backgroundColor: isSelected ? 'black' : 'transparent',
+                          transform: isSelected ? 'scale(1.15)' : 'scale(1)',
+                          transition: 'all 0.5s cubic-bezier(0.68, -0.8, 0.265, 1.8)'
                         }}
                       >
                         {isSelected && (
-                          <>
-                            <svg 
-                              width="20" 
-                              height="20" 
-                              viewBox="0 0 24 24" 
-                              fill="none"
-                              style={{ color: 'white' }}
-                            >
-                              <path
-                                d="M20 6 9 17l-5-5"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            
-                            {/* Sparkles */}
-                            {[...Array(4)].map((_, i) => (
-                              <div
-                                key={i}
-                                className="absolute"
-                                style={{
-                                  width: '8px',
-                                  height: '8px',
-                                  backgroundColor: 'white',
-                                  borderRadius: '50%',
-                                  top: i === 0 ? '-8px' : i === 1 ? '32px' : '50%',
-                                  left: i === 2 ? '-8px' : i === 3 ? '32px' : '50%',
-                                  animation: `sparkle 0.5s ease-out ${i * 0.05}s`,
-                                  opacity: 0,
-                                  boxShadow: '0 0 4px white'
-                                }}
-                              />
-                            ))}
-                          </>
+                          <svg 
+                            width="20" 
+                            height="20" 
+                            viewBox="0 0 24 24" 
+                            fill="none"
+                            style={{ color: 'white' }}
+                          >
+                            <path
+                              d="M20 6 9 17l-5-5"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
                         )}
                       </div>
                     </div>
