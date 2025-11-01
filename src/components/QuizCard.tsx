@@ -617,7 +617,7 @@ export function QuizCard({
             border: 'none',
             cursor: 'pointer',
             zIndex: 30,
-            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.24)'
+            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.12)'
           }}
           onClick={(e) => {
             e.stopPropagation();
