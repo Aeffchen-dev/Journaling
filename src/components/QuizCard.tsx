@@ -101,10 +101,12 @@ export function QuizCard({
   const [rightPillExtraBottom, setRightPillExtraBottom] = useState(0);
   const [pillHeight, setPillHeight] = useState(0);
   const [pillWidth, setPillWidth] = useState(0);
+  const [cardWidth, setCardWidth] = useState(0);
   const pillInnerRef = useRef<HTMLDivElement>(null);
   
   const textRef = useRef<HTMLHeadingElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const minSwipeDistance = 50;
 
@@ -301,6 +303,19 @@ export function QuizCard({
     return () => window.removeEventListener('resize', measure);
   }, [question.category, monsterVariation.pillSide]);
 
+  // Measure card width
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      setCardWidth(rect.width);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
   // Get category-specific colors using specific category mapping
   const getCategoryColors = (categoryIndex: number) => {
     // Use specific color mapping for each category based on the actual category name
@@ -443,6 +458,7 @@ export function QuizCard({
 
   return (
     <div 
+      ref={cardRef}
       className={`relative w-full max-w-[500px] mx-auto rounded-[2rem] select-none`}
       style={{
         height: 'calc(100% - 16px)',
@@ -531,7 +547,7 @@ export function QuizCard({
           style={{
             position: 'absolute',
             ...(monsterVariation.pillSide === 'right' 
-              ? { left: '2rem', bottom: '2rem' } 
+              ? { left: `calc(2rem + ${cardWidth}px)`, bottom: '2rem' } 
               : { left: `calc(2rem + ${pillWidth}px)`, bottom: '2rem' }
             ),
             transformOrigin: 'bottom left',
