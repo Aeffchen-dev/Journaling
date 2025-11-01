@@ -511,10 +511,10 @@ export function QuizCard({
           <div 
             style={{
               position: 'absolute',
-              bottom: '32px',
-              [monsterVariation.pillSide]: '8px',
+              bottom: '2rem',
+              [monsterVariation.pillSide]: '2rem',
               transformOrigin: 'center center',
-              transform: 'rotate(-90deg) translateX(-50%)',
+              transform: 'rotate(-90deg)',
               zIndex: 10
             }}
           >
