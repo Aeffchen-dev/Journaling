@@ -353,7 +353,7 @@ export function QuizCard({
         maxHeight: 'calc(100% - 16px)',
         backgroundColor: question.category.toLowerCase() !== 'intro' ? categoryColors.cardColor : 'hsl(var(--card-background))',
         color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))',
-        overflow: 'visible',
+        overflow: 'hidden',
         boxShadow: '0 0 0 16px rgba(0, 0, 0, 0.24)'
       }}
       onTouchStart={onTouchStart}
