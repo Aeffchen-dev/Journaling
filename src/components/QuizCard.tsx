@@ -702,7 +702,7 @@ export function QuizCard({
               }
               .edit-textarea::placeholder {
                 color: color-mix(in srgb, ${categoryColors.cardColor} 85%, black);
-                opacity: 0.55;
+                opacity: 0.7;
               }
             `}</style>
           )}
