@@ -501,7 +501,7 @@ export function QuizCard({
         <div
           style={{
             position: 'absolute',
-            top: isEditing ? '85%' : '55%',
+            top: isEditing ? '70%' : '55%',
             left: `calc(50% + ${monsterVariation.circleOffsetX}%)`,
             transform: `translateX(-50%) scale(${isEditing ? '0.5' : '1'})`,
             width: `${monsterVariation.circleWidth}%`,
@@ -603,7 +603,7 @@ export function QuizCard({
               ? { right: 'calc(2rem - 12px)' } 
               : { left: 'calc(2rem - 16px)' }
             ),
-            bottom: 'calc(2rem - 16px)',
+            bottom: 'calc(2rem - 8px)',
             width: '48px',
             height: '48px',
             borderRadius: '50%',
