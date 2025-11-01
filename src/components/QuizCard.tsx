@@ -533,7 +533,7 @@ export function QuizCard({
               position: 'absolute',
               bottom: '2rem',
               ...(monsterVariation.pillSide === 'right' 
-                ? { right: 'calc(2rem - 20px)' }
+                ? { right: `calc(2rem - 20px - ${pillHeight}px)` }
                 : { left: 'calc(2rem + 20px)' }
               ),
               transformOrigin: 'bottom left',
@@ -545,9 +545,9 @@ export function QuizCard({
               ref={pillInnerRef}
               className="px-2 py-0.5 rounded-full font-medium border font-factora"
               style={{
-                backgroundColor: categoryColors.cardColor,
-                borderColor: categoryColors.cardColor,
-                color: categoryColors.cardColor,
+                backgroundColor: 'transparent',
+                borderColor: categoryColors.pageBg,
+                color: categoryColors.pageBg,
                 fontSize: '12px',
                 mixBlendMode: 'difference',
                 whiteSpace: 'nowrap'
