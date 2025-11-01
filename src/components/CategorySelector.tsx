@@ -235,15 +235,17 @@ export function CategorySelector({
                    <div 
                      className="absolute inset-y-0 left-0 rounded-full"
                      style={{ 
-                       backgroundColor: colors.cardColor.replace(')', ' / 0.8)').replace('hsl(', 'hsla('),
+                       background: isSelected 
+                         ? `linear-gradient(to right, ${darkenColor(colors.cardColor, 0.9).replace(')', ' / 0.8)').replace('hsl(', 'hsla(')}, ${colors.cardColor.replace(')', ' / 0.8)').replace('hsl(', 'hsla(')})`
+                         : colors.cardColor.replace(')', ' / 0.8)').replace('hsl(', 'hsla('),
                        backdropFilter: 'blur(8px)',
                        WebkitBackdropFilter: 'blur(8px)',
                        width: isSelected ? '100%' : '48px',
                        transition: shouldAnimate 
-                         ? 'background-color 0.2s ease-in-out'
+                         ? 'background 0.2s ease-in-out'
                          : isSelected 
-                         ? 'background-color 0.2s ease-in-out'
-                         : 'width 0.2s ease-in-out, background-color 0.2s ease-in-out',
+                         ? 'background 0.2s ease-in-out'
+                         : 'width 0.2s ease-in-out, background 0.2s ease-in-out',
                        animation: shouldAnimate ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
                        zIndex: 1
                      }}
