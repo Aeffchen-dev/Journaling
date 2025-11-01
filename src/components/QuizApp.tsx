@@ -588,7 +588,8 @@ export function QuizApp() {
           style={{ 
             fontSize: '20px', 
             fontWeight: '700',
-            color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff'
+            color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
+            letterSpacing: '0.05em'
           }}
           onClick={handleLogoClick}
         >
@@ -652,10 +653,11 @@ export function QuizApp() {
           className="font-normal flex items-center"
           style={{ 
             fontSize: '14px',
-            color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff'
+            color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
+            letterSpacing: '0.05em'
           }}
         >
-          Kategorien wählen
+          Kategorien
         </button>
       </div>
 
