@@ -593,7 +593,7 @@ export function QuizApp() {
           }}
           onClick={handleLogoClick}
         >
-          {"JOURNALING".split('').map((char, index) => {
+          {"Journaling".split('').map((char, index) => {
             const rotations = [6, -4, 8, -6, 4, -8, 6, -2, 4, -6];
             const isAnimating = animatingLetterIndex === index;
             const isEven = index % 2 === 0;
@@ -609,14 +609,12 @@ export function QuizApp() {
                   fontFeatureSettings: index === 0 ? '"ss01" 1' : 'normal'
                 }}
               >
-                {char === 'O' && index === 1 ? (
+                {char === 'o' && index === 1 ? (
                   <div 
                     style={{
                       display: 'inline-block',
-                      width: '16.5px',
-                      height: '16.5px',
-                      paddingLeft: '2px',
-                      paddingRight: '2px',
+                      width: '15px',
+                      height: '15px',
                       backgroundColor: '#FFFF00',
                       borderRadius: '50%',
                       alignItems: 'center',
@@ -627,18 +625,18 @@ export function QuizApp() {
                       transition: 'transform 0.8s ease-in-out'
                     }}
                   >
-                    <div style={{ display: 'flex', gap: '2.2px', position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
-                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
+                    <div style={{ display: 'flex', gap: '2px', position: 'absolute', top: '4.5px', left: '50%', transform: 'translateX(-50%)' }}>
+                      <div style={{ width: '2px', height: '2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
+                      <div style={{ width: '2px', height: '2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
                     </div>
                     <div style={{ 
-                      width: '6.6px', 
-                      height: '2.75px', 
+                      width: '6px', 
+                      height: '2.5px', 
                       border: '1px solid black', 
                       borderTop: 'none',
-                      borderRadius: '0 0 6.6px 6.6px',
+                      borderRadius: '0 0 6px 6px',
                       position: 'absolute',
-                      top: '9.5px',
+                      top: '8.5px',
                       left: '50%',
                       transform: 'translateX(-50%)'
                     }}></div>
