@@ -413,7 +413,7 @@ export function QuizCard({
         {question.category.toLowerCase() !== 'intro' && (
           <div className="mb-4">
             <div 
-              className="px-2 py-0.5 rounded-full font-medium inline-block border font-geist"
+              className="px-2 py-0.5 rounded-full font-medium inline-block border font-factora"
               style={{
                 backgroundColor: 'transparent',
                 borderColor: categoryColors.pageBg,
@@ -429,7 +429,7 @@ export function QuizCard({
         <div ref={containerRef} className={`flex-1 flex w-full ${question.category.toLowerCase() === 'intro' ? 'items-center justify-start text-left' : 'items-start justify-start text-left'}`}>
           <h1 
             ref={textRef}
-            className={`${question.category.toLowerCase() === 'intro' ? 'font-geist' : 'font-factora'} leading-tight lg:leading-[1.09] w-full ${question.category.toLowerCase() === 'intro' ? 'text-base md:text-lg lg:text-xl max-w-md' : 'text-3xl md:text-4xl lg:text-5xl max-w-full'}`}
+            className={`font-factora leading-tight lg:leading-[1.09] w-full ${question.category.toLowerCase() === 'intro' ? 'text-base md:text-lg lg:text-xl max-w-md' : 'text-3xl md:text-4xl lg:text-5xl max-w-full'}`}
             style={{ 
               fontWeight: question.category.toLowerCase() === 'intro' ? '400' : '700',
               color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))'
