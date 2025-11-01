@@ -553,7 +553,7 @@ export function QuizCard({
                 whiteSpace: 'nowrap'
               }}
             >
-              <span style={{ mixBlendMode: 'exclusion' }}>
+              <span style={{ mixBlendMode: 'difference' }}>
                 {question.category}
               </span>
             </div>
