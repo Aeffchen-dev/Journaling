@@ -201,7 +201,7 @@ export function CategorySelector({
                     paddingTop: '8px',
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
-                    animation: isSelected ? 'widthBounceTwice 0.3s ease-in-out 0.15s forwards' : 'none',
+                    animation: isSelected ? 'widthBounceTwice 0.3s ease-in-out 0.25s forwards' : 'none',
                     transition: !isSelected ? 'width 0.2s ease-in-out' : 'none'
                   }}
                   onClick={() => handleCategoryToggle(category)}
@@ -223,7 +223,7 @@ export function CategorySelector({
                       width: isSelected ? '100%' : '48px',
                       animation: isSelected ? 'none' : 'none',
                       transition: isSelected 
-                        ? 'width 0.25s ease-in-out 0.15s'
+                        ? 'width 0.25s ease-in-out 0.25s'
                         : 'width 0.2s ease-in-out',
                       zIndex: 1
                     }}
@@ -266,7 +266,7 @@ export function CategorySelector({
                           height: '32px',
                           border: isSelected ? `1px solid black` : `2px solid white`,
                           backgroundColor: isSelected ? 'black' : 'transparent',
-                          animation: isSelected ? 'checkboxPopBounce 0.3s ease-in-out 0.15s' : 'none',
+                          animation: isSelected ? 'checkboxPopBounce 0.3s ease-in-out 0.25s' : 'none',
                           transition: isSelected 
                             ? 'background-color 0.1s ease-in-out'
                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
@@ -280,7 +280,7 @@ export function CategorySelector({
                             fill="none"
                             style={{ 
                               color: 'white',
-                              animation: 'checkmarkAppear 0.15s ease-in-out 0.18s both'
+                              animation: 'checkmarkAppear 0.15s ease-in-out 0.28s both'
                             }}
                           >
                             <path
