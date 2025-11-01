@@ -100,6 +100,7 @@ export function QuizCard({
   
   const [rightPillExtraBottom, setRightPillExtraBottom] = useState(0);
   const [pillHeight, setPillHeight] = useState(0);
+  const [pillWidth, setPillWidth] = useState(0);
   const pillInnerRef = useRef<HTMLDivElement>(null);
   
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -293,6 +294,7 @@ export function QuizCard({
       const extra = Math.max(0, rect.width - rect.height);
       setRightPillExtraBottom(extra);
       setPillHeight(rect.height);
+      setPillWidth(rect.width);
     };
     measure();
     window.addEventListener('resize', measure);
@@ -530,7 +532,7 @@ export function QuizCard({
             position: 'absolute',
             ...(monsterVariation.pillSide === 'right' 
               ? { right: 0, bottom: 0 } 
-              : { left: `calc(2rem + ${pillHeight}px)`, bottom: '2rem' }
+              : { left: `calc(2rem + ${pillWidth}px)`, bottom: '2rem' }
             ),
             transformOrigin: monsterVariation.pillSide === 'right' ? 'bottom right' : 'bottom left',
             transform: 'rotate(-90deg)',
