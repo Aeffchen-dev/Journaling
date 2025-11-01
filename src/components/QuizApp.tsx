@@ -589,7 +589,7 @@ export function QuizApp() {
             fontSize: '20px', 
             fontWeight: '700',
             color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
-            letterSpacing: '0.05em'
+            letterSpacing: '0.03em'
           }}
           onClick={handleLogoClick}
         >
