@@ -604,7 +604,8 @@ export function QuizApp() {
                   display: 'inline-block',
                   transform: `rotate(${rotations[index]}deg) translateY(${translateY})`,
                   position: 'relative',
-                  transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                  transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  fontFeatureSettings: index === 0 ? '"ss01"' : 'normal'
                 }}
               >
                 {char === 'o' && index === 1 ? (

@@ -147,7 +147,9 @@ export function QuizCard({
       const cleanedText = question.question.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
       console.log('Cleaned text:', JSON.stringify(cleanedText));
       
-      const words = cleanedText.split(' ');
+      // Remove first character since we render it separately with special styling
+      const textWithoutFirstChar = cleanedText.substring(1);
+      const words = textWithoutFirstChar.split(' ');
       console.log('Words:', words.length, words);
       const containerWidth = containerRef.current.getBoundingClientRect().width;
       
@@ -446,23 +448,7 @@ export function QuizCard({
               {question.question.charAt(0)}
             </span>
             <span>
-              {processedText.length > 0 ? (
-                processedText.map((element, index) => {
-                  if (index === 0 && React.isValidElement(element)) {
-                    const props = element.props as { children?: React.ReactNode };
-                    const children = props.children;
-                    if (Array.isArray(children)) {
-                      const firstChild = children[0];
-                      if (typeof firstChild === 'string') {
-                        return React.cloneElement(element, { key: index }, firstChild.substring(1), ...children.slice(1));
-                      }
-                    }
-                  }
-                  return element;
-                })
-              ) : (
-                question.question.substring(1)
-              )}
+              {processedText.length > 0 ? processedText : question.question.substring(1)}
             </span>
           </h1>
         </div>
