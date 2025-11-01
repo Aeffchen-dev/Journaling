@@ -538,7 +538,7 @@ export function QuizCard({
               ),
               transformOrigin: 'bottom left',
               transform: 'rotate(-90deg)',
-              zIndex: 30
+              zIndex: 1
             }}
           >
             <div 
