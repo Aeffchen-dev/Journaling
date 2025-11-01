@@ -1,6 +1,94 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Eye component with blinking and random pupil movement
+function Eye({ categoryColors, eyeId }: { categoryColors: { cardColor: string; pageBg: string }, eyeId: string }) {
+  const [pupilOffset, setPupilOffset] = useState({ x: 0, y: 0 });
+  const [isBlinking, setIsBlinking] = useState(false);
+
+  // Random pupil movement every 10-20s
+  useEffect(() => {
+    const movePupil = () => {
+      const maxOffset = 4; // Maximum pixels the pupil can move
+      const randomX = (Math.random() - 0.5) * 2 * maxOffset;
+      const randomY = (Math.random() - 0.5) * 2 * maxOffset;
+      setPupilOffset({ x: randomX, y: randomY });
+    };
+
+    // Initial movement
+    movePupil();
+
+    // Set random interval between 10-20s
+    const scheduleNextMove = () => {
+      const delay = 10000 + Math.random() * 10000; // 10-20 seconds
+      return setTimeout(() => {
+        movePupil();
+        scheduleNextMove();
+      }, delay);
+    };
+
+    const timeoutId = scheduleNextMove();
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Random blinking
+  useEffect(() => {
+    const blink = () => {
+      setIsBlinking(true);
+      setTimeout(() => setIsBlinking(false), 150); // Blink duration
+    };
+
+    // Initial blink after random delay
+    const initialDelay = 2000 + Math.random() * 3000;
+    const initialTimeout = setTimeout(blink, initialDelay);
+
+    // Set random interval for blinking (3-8s)
+    const scheduleNextBlink = () => {
+      const delay = 3000 + Math.random() * 5000;
+      return setTimeout(() => {
+        blink();
+        scheduleNextBlink();
+      }, delay);
+    };
+
+    const timeoutId = scheduleNextBlink();
+    return () => {
+      clearTimeout(initialTimeout);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '30px',
+        height: '30px',
+        backgroundColor: 'white',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        transform: isBlinking ? 'scaleY(0.1)' : 'scaleY(1)',
+        transition: 'transform 0.15s ease-out'
+      }}
+    >
+      {/* Pupil */}
+      <div
+        style={{
+          width: '12px',
+          height: '12px',
+          backgroundColor: 'black',
+          borderRadius: '50%',
+          transform: `translate(${pupilOffset.x}px, ${pupilOffset.y}px)`,
+          transition: 'transform 0.8s ease-in-out'
+        }}
+      />
+    </div>
+  );
+}
+
 interface Question {
   question: string;
   category: string;
@@ -276,7 +364,7 @@ export function QuizCard({
         <div
           style={{
             position: 'absolute',
-            bottom: '-60%',
+            bottom: '-40%',
             left: '50%',
             transform: 'translateX(-50%)',
             width: '120%',
@@ -286,7 +374,25 @@ export function QuizCard({
             pointerEvents: 'none',
             zIndex: 0
           }}
-        />
+        >
+          {/* Eyes container */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 'calc(33.33% - 15px)',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              gap: '20px',
+              pointerEvents: 'none'
+            }}
+          >
+            {/* Left Eye */}
+            <Eye categoryColors={categoryColors} eyeId="left" />
+            {/* Right Eye */}
+            <Eye categoryColors={categoryColors} eyeId="right" />
+          </div>
+        </div>
       )}
       {/* Left Click Area - Previous */}
       <div 
