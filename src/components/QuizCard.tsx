@@ -608,7 +608,7 @@ export function QuizCard({
             width: '48px',
             height: '48px',
             borderRadius: '50%',
-            backgroundColor: `rgba(255, 255, 255, 0.25)`,
+            backgroundColor: `color-mix(in hsl, ${categoryColors.cardColor} 45%, ${categoryColors.pageBg} 55%)`,
             backdropFilter: 'blur(4px)',
             opacity: 1,
             display: 'flex',
@@ -625,9 +625,9 @@ export function QuizCard({
           }}
         >
           {isEditing ? (
-            <X size={20} color="rgba(0, 0, 0, 0.7)" />
+            <X size={20} color={`color-mix(in hsl, ${categoryColors.pageBg} 60%, black 40%)`} />
           ) : (
-            <Pencil size={20} color="rgba(0, 0, 0, 0.7)" />
+            <Pencil size={20} color={`color-mix(in hsl, ${categoryColors.pageBg} 60%, black 40%)`} />
           )}
         </button>
       )}
