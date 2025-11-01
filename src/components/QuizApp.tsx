@@ -652,7 +652,7 @@ export function QuizApp() {
           onClick={() => setCategorySelectorOpen(true)}
           className="font-factora font-medium flex items-center"
           style={{ 
-            fontSize: '12px',
+            fontSize: '16px',
             color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff'
           }}
         >

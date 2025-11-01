@@ -166,9 +166,9 @@ export function CategorySelector({
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-0 shrink-0">
             <DialogHeader>
-              <DialogTitle className="text-white font-factora font-normal" style={{ fontSize: '20px' }}>
-                Kategorien wählen
-              </DialogTitle>
+               <DialogTitle className="text-white font-factora font-normal" style={{ fontSize: '20px' }}>
+                 <span style={{ fontFeatureSettings: '"salt" 1' }}>K</span>ategorien wählen
+               </DialogTitle>
             </DialogHeader>
             
             <button
@@ -224,15 +224,15 @@ export function CategorySelector({
                     }}
                   />
                   
-                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ 
-                    color: isSelected ? textColor : 'white', 
-                    fontSize: '14px', 
-                    transition: isSelected 
-                      ? 'color 0.3s ease-in-out'
-                      : 'color 0.2s ease-in-out'
-                  }}>
-                    {category}
-                  </span>
+                   <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ 
+                     color: isSelected ? textColor : 'white', 
+                     fontSize: '14px', 
+                     transition: isSelected 
+                       ? 'color 0.3s ease-in-out'
+                       : 'color 0.2s ease-in-out'
+                   }}>
+                     <span style={{ fontFeatureSettings: '"salt" 1' }}>{category.charAt(0)}</span>{category.slice(1)}
+                   </span>
                   <div onClick={(e) => e.stopPropagation()}>
                     <div
                       className="relative cursor-pointer opacity-100 z-10"
