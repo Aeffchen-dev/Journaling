@@ -238,10 +238,11 @@ export function CategorySelector({
                          : colors.cardColor,
                        width: isSelected ? '100%' : '48px',
                        transition: shouldAnimate 
-                         ? 'width 0.2s ease-in-out'
+                         ? 'background 0.2s ease-in-out'
                          : isSelected 
-                         ? 'none'
-                         : 'width 0.2s ease-in-out',
+                         ? 'background 0.2s ease-in-out'
+                         : 'width 0.2s ease-in-out, background 0.2s ease-in-out',
+                       animation: shouldAnimate ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
                        zIndex: 1
                      }}
                    />
