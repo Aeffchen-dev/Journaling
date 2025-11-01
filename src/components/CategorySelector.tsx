@@ -228,7 +228,8 @@ export function CategorySelector({
         )}
         
         <div className="flex flex-col w-full h-full bg-background overflow-hidden" style={{ 
-          opacity: showContent ? 1 : 0
+          opacity: showContent ? 1 : 0,
+          transition: 'opacity 300ms ease-out'
         }}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-0 shrink-0">
