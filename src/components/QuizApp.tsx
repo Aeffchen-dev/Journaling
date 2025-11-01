@@ -712,6 +712,9 @@ export function QuizApp() {
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', bgColor);
     }
+    // Also update document background to color the areas behind Safari's UI
+    document.body.style.backgroundColor = bgColor;
+    document.documentElement.style.backgroundColor = bgColor;
   }, [currentIndex, slides]);
 
   // Update theme-color during drag and transition for smooth status bar color changes
