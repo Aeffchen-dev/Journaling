@@ -471,8 +471,7 @@ export function QuizCard({
             borderRadius: '50%',
             backgroundColor: categoryColors.pageBg,
             pointerEvents: 'none',
-            zIndex: 150,
-            mixBlendMode: 'color-dodge'
+            zIndex: 0
           }}
         >
           {/* Eyes container - centered vertically in visible monster portion */}
@@ -548,16 +547,13 @@ export function QuizCard({
               style={{
                 backgroundColor: 'transparent',
                 borderColor: categoryColors.pageBg,
+                color: categoryColors.pageBg,
                 fontSize: '12px',
+                mixBlendMode: 'color-dodge',
                 whiteSpace: 'nowrap'
               }}
             >
-              <span style={{
-                color: categoryColors.pageBg,
-                mixBlendMode: 'difference'
-              }}>
-                {question.category}
-              </span>
+              {question.category}
             </div>
           </div>
         )}
