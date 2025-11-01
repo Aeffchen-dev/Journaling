@@ -35,7 +35,7 @@ export function CategorySelector({
       setJustToggled(new Set());
       setShowContent(false);
       setIsClosing(false);
-      // Show content after black fade completes
+      // Start content fade after black fade completes
       const timer = setTimeout(() => {
         setShowContent(true);
       }, 300);
@@ -215,17 +215,16 @@ export function CategorySelector({
         </DialogDescription>
         
         {/* Black fade overlay */}
-        {(!showContent || isClosing) && (
-          <div 
-            style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundColor: 'black',
-              zIndex: 50,
-              animation: isClosing ? 'blackFadeOut 300ms ease-in-out forwards' : 'blackFadeIn 300ms ease-in-out forwards'
-            }}
-          />
-        )}
+        <div 
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'black',
+            zIndex: 50,
+            opacity: (!showContent && !isClosing) ? 1 : 0,
+            transition: 'opacity 300ms ease-in-out'
+          }}
+        />
         
         <div className="flex flex-col w-full h-full bg-background overflow-hidden" style={{ 
           opacity: showContent ? 1 : 0,
