@@ -518,13 +518,18 @@ export function QuizApp() {
   const safeIndex = hasSlides ? Math.min(currentIndex, slides.length - 1) : 0;
   const safeSlide = hasSlides ? slides[safeIndex] : undefined;
 
-  // Get current slide's colors for page background and header
-  const getCurrentColors = () => {
-    if (!safeSlide || !safeSlide.question) {
-      return { cardColor: '#ffffff', pageBg: '#000000' }; // defaults
+  // Helper to get colors for any slide index
+  const getColorsForSlide = (index: number) => {
+    if (!hasSlides || index < 0 || index >= slides.length) {
+      return { cardColor: '#ffffff', pageBg: '#000000' };
+    }
+    
+    const slide = slides[index];
+    if (!slide || !slide.question) {
+      return { cardColor: '#ffffff', pageBg: '#000000' };
     }
 
-    const question = safeSlide.question;
+    const question = slide.question;
     let colorIndex;
     
     switch(question.category) {
@@ -573,6 +578,60 @@ export function QuizApp() {
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
+  // Interpolate between two HSL colors
+  const interpolateHSL = (color1: string, color2: string, factor: number) => {
+    const parseHSL = (hsl: string) => {
+      const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+      if (!match) return { h: 0, s: 0, l: 0 };
+      return { h: parseInt(match[1]), s: parseInt(match[2]), l: parseInt(match[3]) };
+    };
+
+    const c1 = parseHSL(color1);
+    const c2 = parseHSL(color2);
+    
+    const h = Math.round(c1.h + (c2.h - c1.h) * factor);
+    const s = Math.round(c1.s + (c2.s - c1.s) * factor);
+    const l = Math.round(c1.l + (c2.l - c1.l) * factor);
+    
+    return `hsl(${h}, ${s}%, ${l}%)`;
+  };
+
+  // Get current slide's colors for page background and header
+  const getCurrentColors = () => {
+    return getColorsForSlide(safeIndex);
+  };
+
+  // Calculate interpolated background color based on drag
+  const getInterpolatedBgColor = () => {
+    if (!isDragging || !hasSlides) {
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+    }
+
+    // Calculate drag progress (0 to 1)
+    const screenWidth = window.innerWidth;
+    const dragProgress = Math.min(Math.abs(dragOffset) / screenWidth, 1);
+
+    const currentColors = getColorsForSlide(currentIndex);
+    let targetColors;
+    
+    if (dragOffset < 0 && currentIndex < slides.length - 1) {
+      // Swiping left (next slide)
+      targetColors = getColorsForSlide(currentIndex + 1);
+    } else if (dragOffset > 0 && currentIndex > 0) {
+      // Swiping right (prev slide)
+      targetColors = getColorsForSlide(currentIndex - 1);
+    } else {
+      // No valid target, stay at current
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
+    }
+
+    const currentBg = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
+    const targetBg = targetColors.pageBg;
+
+    return interpolateHSL(currentBg, targetBg, dragProgress);
+  };
+
   const currentColors = getCurrentColors();
 
   return (
@@ -580,8 +639,8 @@ export function QuizApp() {
       className="min-h-[100svh] h-[100svh] overflow-hidden flex flex-col" 
       style={{ 
         height: '100svh',
-        backgroundColor: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000',
-        transition: 'background-color 0.3s ease-out'
+        backgroundColor: getInterpolatedBgColor(),
+        transition: isDragging ? 'none' : 'background-color 0.3s ease-out'
       }}
     >
       {/* App Header with controls - Always visible */}
