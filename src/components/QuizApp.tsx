@@ -578,7 +578,7 @@ export function QuizApp() {
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
-  // Interpolate between two HSL colors
+  // Cross-fade between two colors without hue interpolation
   const interpolateHSL = (color1: string, color2: string, factor: number) => {
     const parseHSL = (hsl: string) => {
       const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
@@ -589,18 +589,8 @@ export function QuizApp() {
     const c1 = parseHSL(color1);
     const c2 = parseHSL(color2);
     
-    // Calculate shortest path for hue interpolation
-    let hueDiff = c2.h - c1.h;
-    if (hueDiff > 180) {
-      hueDiff -= 360;
-    } else if (hueDiff < -180) {
-      hueDiff += 360;
-    }
-    
-    let h = c1.h + hueDiff * factor;
-    if (h < 0) h += 360;
-    if (h >= 360) h -= 360;
-    h = Math.round(h);
+    // Switch hue at 50% instead of interpolating
+    const h = factor < 0.5 ? c1.h : c2.h;
     
     const s = Math.round(c1.s + (c2.s - c1.s) * factor);
     const l = Math.round(c1.l + (c2.l - c1.l) * factor);
