@@ -547,9 +547,9 @@ export function QuizCard({
               style={{
                 backgroundColor: `color-mix(in srgb, ${categoryColors.cardColor} 80%, transparent)`,
                 backdropFilter: 'blur(4px)',
-                borderColor: categoryColors.pageBg,
+                borderColor: `color-mix(in srgb, ${categoryColors.cardColor} 80%, transparent)`,
                 borderWidth: '1px',
-                color: categoryColors.pageBg,
+                color: `color-mix(in srgb, ${categoryColors.cardColor} 80%, transparent)`,
                 fontSize: '12px',
                 whiteSpace: 'nowrap',
                 mixBlendMode: 'difference'
