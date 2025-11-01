@@ -98,8 +98,8 @@ export function QuizCard({
     pillSide: 'left' as 'left' | 'right'
   });
   
-  // Right pill dynamic positioning based on text length
   const [rightPillExtraBottom, setRightPillExtraBottom] = useState(0);
+  const [pillHeight, setPillHeight] = useState(0);
   const pillInnerRef = useRef<HTMLDivElement>(null);
   
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -283,7 +283,7 @@ export function QuizCard({
     };
   }, [question.question]);
 
-  // Adjust right pill vertical position dynamically based on its text length
+  // Adjust pill positioning based on its dimensions
   useEffect(() => {
     if (question.category.toLowerCase() === 'intro') return;
     const el = pillInnerRef.current;
@@ -292,6 +292,7 @@ export function QuizCard({
       const rect = el.getBoundingClientRect();
       const extra = Math.max(0, rect.width - rect.height);
       setRightPillExtraBottom(extra);
+      setPillHeight(rect.height);
     };
     measure();
     window.addEventListener('resize', measure);
@@ -531,8 +532,10 @@ export function QuizCard({
             style={{
               position: 'absolute',
               bottom: '2rem',
-              left: monsterVariation.circleOffsetX < 0 ? 'auto' : 'calc(2rem + 20px)',
-              right: monsterVariation.circleOffsetX < 0 ? 'calc(2rem + 20px)' : 'auto',
+              ...(monsterVariation.pillSide === 'right' 
+                ? { right: `calc(2rem - 20px - ${pillHeight}px)` }
+                : { left: 'calc(2rem + 20px)' }
+              ),
               transformOrigin: 'bottom left',
               transform: 'rotate(-90deg)',
               zIndex: 30
@@ -542,9 +545,9 @@ export function QuizCard({
               ref={pillInnerRef}
               className="px-2 py-0.5 rounded-full font-medium border font-factora"
               style={{
-                backgroundColor: 'transparent',
-                borderColor: categoryColors.pageBg,
-                color: categoryColors.pageBg,
+                backgroundColor: categoryColors.cardColor,
+                borderColor: categoryColors.cardColor,
+                color: categoryColors.cardColor,
                 fontSize: '12px',
                 mixBlendMode: 'difference',
                 whiteSpace: 'nowrap'
