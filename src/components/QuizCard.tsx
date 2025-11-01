@@ -529,10 +529,13 @@ export function QuizCard({
         {/* Category Pill - Positioned at bottom corner opposite to monster, rotated -90deg */}
         {question.category.toLowerCase() !== 'intro' && (
           <div 
-            className={monsterVariation.pillSide === 'right' ? 'right-8 lg:right-10' : 'left-8 lg:left-10'}
             style={{
               position: 'absolute',
               bottom: '2rem',
+              ...(monsterVariation.pillSide === 'right' 
+                ? { right: '2rem' } 
+                : { left: '2rem' }
+              ),
               transformOrigin: monsterVariation.pillSide === 'right' ? 'bottom right' : 'bottom left',
               transform: 'rotate(-90deg)',
               zIndex: 1
