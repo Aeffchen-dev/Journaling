@@ -586,6 +586,10 @@ export function QuizApp() {
       return { h: parseInt(match[1]), s: parseInt(match[2]), l: parseInt(match[3]) };
     };
 
+    // Apply ease-out cubic easing for smoother transitions
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const easedFactor = easeOutCubic(factor);
+
     const c1 = parseHSL(color1);
     const c2 = parseHSL(color2);
     
@@ -597,13 +601,13 @@ export function QuizApp() {
       hueDiff += 360;
     }
     
-    let h = c1.h + hueDiff * factor;
+    let h = c1.h + hueDiff * easedFactor;
     if (h < 0) h += 360;
     if (h >= 360) h -= 360;
     h = Math.round(h);
     
-    const s = Math.round(c1.s + (c2.s - c1.s) * factor);
-    const l = Math.round(c1.l + (c2.l - c1.l) * factor);
+    const s = Math.round(c1.s + (c2.s - c1.s) * easedFactor);
+    const l = Math.round(c1.l + (c2.l - c1.l) * easedFactor);
     
     return `hsl(${h}, ${s}%, ${l}%)`;
   };
