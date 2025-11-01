@@ -174,7 +174,9 @@ export function CategorySelector({
                     paddingTop: '8px',
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
-                    transition: 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                    transition: isSelected 
+                      ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                      : 'width 0.3s ease-out'
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
@@ -193,12 +195,20 @@ export function CategorySelector({
                     style={{ 
                       backgroundColor: colors.cardColor,
                       width: isSelected ? '100%' : '48px',
-                      transition: 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      transition: isSelected 
+                        ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                        : 'width 0.3s ease-out',
                       zIndex: 1
                     }}
                   />
                   
-                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ color: isSelected ? textColor : 'white', fontSize: '14px', transition: 'color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ 
+                    color: isSelected ? textColor : 'white', 
+                    fontSize: '14px', 
+                    transition: isSelected 
+                      ? 'color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                      : 'color 0.3s ease-out'
+                  }}>
                     {category}
                   </span>
                   <div onClick={(e) => e.stopPropagation()}>
@@ -219,7 +229,9 @@ export function CategorySelector({
                           border: isSelected ? `1px solid black` : `2px solid black`,
                           backgroundColor: isSelected ? 'black' : 'transparent',
                           animation: isSelected ? 'checkboxPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
-                          transition: 'background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                          transition: isSelected 
+                            ? 'background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                            : 'background-color 0.3s ease-out, border 0.3s ease-out'
                         }}
                       >
                         {isSelected && (
