@@ -526,15 +526,18 @@ export function QuizCard({
       {/* Main Content */}
       <div className={`h-full flex flex-col justify-start ${question.category.toLowerCase() === 'intro' ? 'p-8' : 'p-8 lg:p-10'} relative z-10`}>
         
-        {/* Category Pill - Positioned on right edge, vertically centered, rotated -90deg */}
+        {/* Category Pill - Positioned at bottom corner opposite to monster, rotated -90deg */}
         {question.category.toLowerCase() !== 'intro' && (
           <div 
             style={{
               position: 'absolute',
-              top: '50%',
-              right: '2rem',
-              transformOrigin: 'center',
-              transform: 'translateY(-50%) rotate(-90deg)',
+              bottom: '2rem',
+              ...(monsterVariation.pillSide === 'right' 
+                ? { right: `calc(2rem - 20px - ${pillHeight}px)` }
+                : { left: 'calc(2rem + 20px)' }
+              ),
+              transformOrigin: 'bottom left',
+              transform: 'rotate(-90deg)',
               zIndex: 30
             }}
           >
