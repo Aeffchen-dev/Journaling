@@ -752,7 +752,11 @@ export function QuizApp() {
         height: '100svh',
         backgroundColor: getInterpolatedBgColor(),
         transition: isDragging ? 'none' : 'background-color 0.3s ease-out',
-        overflowY: 'hidden'
+        overflowY: 'hidden',
+        position: 'fixed',
+        width: '100%',
+        top: 0,
+        left: 0
       }}
     >
       {/* App Header with controls - Always visible */}
