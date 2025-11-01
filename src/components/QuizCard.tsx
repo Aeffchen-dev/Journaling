@@ -102,7 +102,6 @@ export function QuizCard({
   const [pillHeight, setPillHeight] = useState(0);
   const [pillWidth, setPillWidth] = useState(0);
   const [cardWidth, setCardWidth] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const pillInnerRef = useRef<HTMLDivElement>(null);
   
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -466,7 +465,6 @@ export function QuizCard({
         maxHeight: 'calc(100% - 16px)',
         backgroundColor: question.category.toLowerCase() !== 'intro' ? categoryColors.cardColor : 'hsl(var(--card-background))',
         color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))',
-        overflow: 'hidden',
         boxShadow: '0 0 32px 32px rgba(0, 0, 0, 0.24)'
       }}
       onTouchStart={onTouchStart}
@@ -548,7 +546,7 @@ export function QuizCard({
           style={{
             position: 'absolute',
             ...(monsterVariation.pillSide === 'right' 
-              ? { right: isMobile ? '16px' : '32px', bottom: '2rem' } 
+              ? { right: '32px', bottom: '2rem' } 
               : { left: `calc(2rem + ${pillWidth}px)`, bottom: '2rem' }
             ),
             transformOrigin: 'bottom left',
