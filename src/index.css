@@ -47,23 +47,29 @@ All colors MUST be HSL.
     --quiz-background: 0 0% 7%;
     --quiz-surface: 0 0% 12%;
     
-    /* Category-specific colors adjusted for contrast with very dark text versions of background */
-    --quiz-category1-bg: 180 85% 70%;        /* Light cyan instead of orange */
-    --quiz-category1-text: 180 85% 8%;       /* Darker cyan text */
-    --quiz-category2-bg: 275 45% 80%;        /* Light lavender like uploaded image */
-    --quiz-category2-text: 275 45% 15%;      /* Darker lavender text */
-    --quiz-category3-bg: 320 60% 80%;        /* Light purple-pink */
-    --quiz-category3-text: 320 60% 8%;       /* Darker purple-pink text */
-    --quiz-category4-bg: 45 85% 75%;         /* Light golden orange */
-    --quiz-category4-text: 45 85% 8%;        /* Darker golden orange text */
-    --quiz-category5-bg: 270 65% 75%;        /* Light purple */
-    --quiz-category5-text: 270 65% 8%;       /* Darker purple text */
-    --quiz-category6-bg: 55 85% 80%;         /* Light yellow */
-    --quiz-category6-text: 55 85% 8%;        /* Darker yellow text */
-    --quiz-category7-bg: 160 55% 75%;        /* Light sage green */
-    --quiz-category7-text: 160 55% 8%;       /* Darker sage green text */
-    --quiz-category8-bg: 200 65% 70%;        /* Light ocean blue */
-    --quiz-category8-text: 200 65% 8%;       /* Darker ocean blue text */
+    /* Category color pairs: card bg + page bg/text */
+    --quiz-category1-bg: 335 100% 81%;       /* #FF9DC6 */
+    --quiz-category1-text: 347 95% 16%;      /* #4F0216 */
+    --quiz-category2-bg: 182 87% 68%;        /* #67EFF4 */
+    --quiz-category2-text: 250 95% 17%;      /* #2C0255 */
+    --quiz-category3-bg: 259 45% 72%;        /* #AD99D8 */
+    --quiz-category3-text: 0 65% 13%;        /* #380C0C */
+    --quiz-category4-bg: 335 100% 81%;       /* #FF9DC6 */
+    --quiz-category4-text: 14 100% 43%;      /* #D93300 */
+    --quiz-category5-bg: 289 100% 79%;       /* #EC94FF */
+    --quiz-category5-text: 281 100% 13%;     /* #2C0041 */
+    --quiz-category6-bg: 76 100% 75%;        /* #DCFF80 */
+    --quiz-category6-text: 159 100% 13%;     /* #00422B */
+    --quiz-category7-bg: 307 100% 80%;       /* #FF98F3 */
+    --quiz-category7-text: 23 98% 24%;       /* #7B2F01 */
+    --quiz-category8-bg: 157 100% 87%;       /* #BCFFE5 */
+    --quiz-category8-text: 178 93% 17%;      /* #035653 */
+    --quiz-category9-bg: 157 100% 50%;       /* #00FF9B */
+    --quiz-category9-text: 170 100% 14%;     /* #00463A */
+    --quiz-category10-bg: 200 100% 77%;      /* #89D8FF */
+    --quiz-category10-text: 205 100% 19%;    /* #003A63 */
+    --quiz-category11-bg: 70 100% 49%;       /* #D0FC00 */
+    --quiz-category11-text: 187 94% 13%;     /* #023B42 */
     
     /* Legacy category colors - keeping for backward compatibility */
     --quiz-werte-bg: 266 100% 51%;           /* #7004FF */
