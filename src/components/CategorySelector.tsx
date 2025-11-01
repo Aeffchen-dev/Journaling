@@ -287,7 +287,7 @@ export function CategorySelector({
                           style={{ 
                             width: '48px', 
                             height: '48px',
-                            border: isSelected ? 'none' : '2px solid white',
+                            border: isSelected ? 'none' : `2px solid ${colors.cardColor}`,
                             backgroundColor: isSelected ? colors.pageBg : 'transparent',
                             transition: shouldAnimate && isSelected
                               ? 'background-color 0.1s ease-in-out 0.1s, border 0.1s ease-in-out 0.1s'
