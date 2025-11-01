@@ -614,7 +614,7 @@ export function QuizApp() {
                       display: 'inline-block',
                       width: '15px',
                       height: '15px',
-                      backgroundColor: '#ffff00',
+                      backgroundColor: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
                       borderRadius: '50%',
                       alignItems: 'center',
                       justifyContent: 'center',

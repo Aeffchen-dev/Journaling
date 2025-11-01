@@ -98,6 +98,10 @@ export function QuizCard({
     pillSide: 'left' as 'left' | 'right'
   });
   
+  // Right pill dynamic positioning based on text length
+  const [rightPillExtraBottom, setRightPillExtraBottom] = useState(0);
+  const pillInnerRef = useRef<HTMLDivElement>(null);
+  
   const textRef = useRef<HTMLHeadingElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -278,6 +282,21 @@ export function QuizCard({
       window.removeEventListener('resize', processText);
     };
   }, [question.question]);
+
+  // Adjust right pill vertical position dynamically based on its text length
+  useEffect(() => {
+    if (question.category.toLowerCase() === 'intro') return;
+    const el = pillInnerRef.current;
+    if (!el) return;
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      const extra = Math.max(0, rect.width - rect.height);
+      setRightPillExtraBottom(extra);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [question.category, monsterVariation.pillSide]);
 
   // Get category-specific colors using specific category mapping
   const getCategoryColors = (categoryIndex: number) => {
@@ -511,7 +530,7 @@ export function QuizCard({
           <div 
             style={{
               position: 'absolute',
-              bottom: monsterVariation.pillSide === 'right' ? 'calc(2rem + 20px)' : '2rem',
+              bottom: monsterVariation.pillSide === 'right' ? `calc(2rem + ${rightPillExtraBottom}px)` : '2rem',
               left: monsterVariation.pillSide === 'left' ? 'calc(2rem + 20px)' : 'auto',
               right: monsterVariation.pillSide === 'right' ? 'calc(2rem + 20px)' : 'auto',
               transformOrigin: monsterVariation.pillSide === 'left' ? 'bottom left' : 'bottom right',
@@ -520,6 +539,7 @@ export function QuizCard({
             }}
           >
             <div 
+              ref={pillInnerRef}
               className="px-2 py-0.5 rounded-full font-medium border font-factora"
               style={{
                 backgroundColor: 'transparent',
