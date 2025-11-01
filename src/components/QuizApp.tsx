@@ -603,27 +603,25 @@ export function QuizApp() {
                 key={index} 
                 style={{ 
                   display: 'inline-block',
-                  transform: `rotate(${rotations[index]}deg) translateY(${index === 0 ? '4px' : translateY})`,
+                  transform: `rotate(${rotations[index]}deg) translateY(${translateY})`,
                   position: 'relative',
                   transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  fontFeatureSettings: index === 0 ? '"ss01" 1' : 'normal',
-                  fontSize: index === 0 ? '24px' : '16px',
-                  verticalAlign: 'baseline'
+                  fontFeatureSettings: index === 0 ? '"ss01" 1' : 'normal'
                 }}
               >
-                {char === 'O' && index === 1 ? (
+                {char === 'o' && index === 1 ? (
                   <div 
                     style={{
                       display: 'inline-block',
-                      width: '16px',
-                      height: '16px',
+                      width: '15px',
+                      height: '15px',
                       backgroundColor: '#FFFF00',
                       borderRadius: '50%',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
-                      transform: `translateY(1px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (logoSmileyRotating ? '360deg' : '0deg')})`,
+                      transform: `translateY(2px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (logoSmileyRotating ? '360deg' : '0deg')})`,
                       transition: 'transform 0.8s ease-in-out'
                     }}
                   >
@@ -638,7 +636,7 @@ export function QuizApp() {
                       borderTop: 'none',
                       borderRadius: '0 0 6px 6px',
                       position: 'absolute',
-                      top: '9px',
+                      top: '8.5px',
                       left: '50%',
                       transform: 'translateX(-50%)'
                     }}></div>
