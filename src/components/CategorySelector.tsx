@@ -182,7 +182,7 @@ export function CategorySelector({
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-0 shrink-0">
             <DialogHeader>
-               <DialogTitle className="text-white font-factora font-normal" style={{ fontSize: '20px' }}>
+               <DialogTitle className="text-white font-factora font-normal" style={{ fontSize: '18px' }}>
                  <span style={{ fontFeatureSettings: '"salt" 1, "ss01" 1, "ss02" 1' }}>K</span>ategorien wählen
                </DialogTitle>
             </DialogHeader>
@@ -279,13 +279,13 @@ export function CategorySelector({
                          style={{ 
                            width: '32px', 
                            height: '32px',
-                           border: `2px solid white`,
+                           border: isSelected ? 'none' : '2px solid white',
                            backgroundColor: isSelected ? 'black' : 'transparent',
                            transition: shouldAnimate && isSelected
-                             ? 'background-color 0.1s ease-in-out 0.1s'
+                             ? 'background-color 0.1s ease-in-out 0.1s, border 0.1s ease-in-out 0.1s'
                              : isSelected
                              ? 'none'
-                             : 'background-color 0.2s ease-in-out'
+                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
                          }}
                        >
                          {isSelected && (

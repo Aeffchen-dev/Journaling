@@ -589,7 +589,7 @@ export function QuizApp() {
             fontSize: '22px', 
             fontWeight: '700',
             color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff',
-            letterSpacing: '0.03em'
+            letterSpacing: '0.02em'
           }}
           onClick={handleLogoClick}
         >
@@ -603,7 +603,7 @@ export function QuizApp() {
                 key={index} 
                 style={{ 
                   display: 'inline-block',
-                  transform: `rotate(${rotations[index]}deg) translateY(${translateY})`,
+                  transform: `rotate(${rotations[index]}deg) translateY(${index === 0 ? 'calc(' + translateY + ' + 2px)' : translateY})`,
                   position: 'relative',
                   transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   fontFeatureSettings: index === 0 ? '"ss01" 1' : 'normal'
@@ -654,7 +654,7 @@ export function QuizApp() {
           onClick={() => setCategorySelectorOpen(true)}
           className="font-factora font-medium flex items-center"
           style={{ 
-            fontSize: '16px',
+            fontSize: '14px',
             color: safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff'
           }}
         >
