@@ -614,7 +614,7 @@ export function QuizApp() {
                       display: 'inline-block',
                       width: '15px',
                       height: '15px',
-                      backgroundColor: '#FFFF33',
+                      backgroundColor: '#FFFF00',
                       borderRadius: '50%',
                       alignItems: 'center',
                       justifyContent: 'center',
