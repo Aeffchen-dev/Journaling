@@ -696,40 +696,6 @@ export function QuizApp() {
             <div className="flex items-center justify-center h-full text-white text-xl">Keine Fragen verfügbar</div>
           )}
         </div>
-        
-        {/* Toggle centered below the card */}
-        <div className="flex items-center justify-center pb-3 w-full">
-          <div className="flex items-center">
-            <div 
-              className="flex items-center cursor-pointer py-2" 
-              onClick={() => handleToggleClick(false)}
-            >
-              <span 
-                className="text-white font-normal"
-                style={{ fontFamily: 'Arial, sans-serif', marginRight: '8px', fontSize: '14px' }}
-              >
-                question mode
-              </span>
-            </div>
-            <Switch 
-              checked={isMixedMode}
-              onCheckedChange={handleToggleChange}
-              isAnimating={toggleAnimating}
-              className="w-[46px] data-[state=checked]:bg-transparent data-[state=unchecked]:bg-transparent data-[state=checked]:border-white data-[state=unchecked]:border-white border-[1px]"
-            />
-            <div 
-              className="flex items-center cursor-pointer py-2" 
-              onClick={() => handleToggleClick(true)}
-            >
-              <span 
-                className="text-white font-normal"
-                style={{ fontFamily: 'Arial, sans-serif', marginLeft: '8px', fontSize: '14px' }}
-              >
-                action mode
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
       
       <CategorySelector
