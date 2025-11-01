@@ -662,7 +662,7 @@ export function QuizCard({
               fontStyle: 'normal',
               letterSpacing: '0px',
               color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))',
-              fontSize: isEditing ? '12px' : undefined,
+              fontSize: isEditing ? '14px' : undefined,
               transition: 'all 0.3s ease',
               ...(isEditing && { color: 'black' })
             }}
