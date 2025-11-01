@@ -222,7 +222,8 @@ export function CategorySelector({
             backgroundColor: 'black',
             zIndex: 50,
             opacity: (!showContent && !isClosing) ? 1 : 0,
-            transition: 'opacity 300ms ease-in-out'
+            transition: 'opacity 300ms ease-in-out',
+            pointerEvents: 'none'
           }}
         />
         
