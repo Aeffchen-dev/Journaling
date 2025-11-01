@@ -135,8 +135,8 @@ export function QuizCard({
     const eyeIsEllipse = random(hash + 5) > 0.6;
     const eyeStretch = eyeIsEllipse ? (random(hash + 7) > 0.5 ? 1.5 : 0.7) : 1;
     
-    // Pupil size variation (+-20%)
-    const pupilSizeVariation = (random(hash + 9) - 0.5) * 2 * 0.2;
+    // Pupil size variation (0 to +30% bigger)
+    const pupilSizeVariation = random(hash + 9) * 0.3; // 0 to 0.3
     const pupilSize = 12 * (1 + pupilSizeVariation);
     
     // Pupil movement factor (affects range of movement)
