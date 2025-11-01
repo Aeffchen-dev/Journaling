@@ -675,7 +675,7 @@ export function QuizCard({
               value={editedText}
               onChange={(e) => setEditedText(e.target.value)}
               placeholder="Your answer"
-              className={`mt-4 font-factora leading-[120%] w-full resize-none edit-textarea ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem]' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem]'}`}
+              className={`mt-4 font-factora w-full resize-none edit-textarea ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem]' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem]'}`}
               style={{
                 fontWeight: 'bold',
                 fontStyle: 'normal',
@@ -684,7 +684,8 @@ export function QuizCard({
                 color: categoryColors.pageBg,
                 padding: 0,
                 outline: 'none',
-                boxShadow: 'none'
+                boxShadow: 'none',
+                lineHeight: '120%'
               }}
               onClick={(e) => e.stopPropagation()}
             />
