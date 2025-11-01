@@ -437,12 +437,12 @@ export function QuizCard({
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
     >
-      {/* Decorative circle at bottom */}
+      {/* Decorative circle at bottom - Monster */}
       {question.category.toLowerCase() !== 'intro' && (
         <div
           style={{
             position: 'absolute',
-            bottom: '-40%',
+            bottom: '-75%',
             left: `calc(50% + ${monsterVariation.circleOffsetX}%)`,
             transform: 'translateX(-50%)',
             width: `${monsterVariation.circleWidth}%`,
@@ -453,11 +453,11 @@ export function QuizCard({
             zIndex: 0
           }}
         >
-          {/* Eyes container */}
+          {/* Eyes container - positioned in upper third of visible portion */}
           <div
             style={{
               position: 'absolute',
-              top: `calc(33.33% - 15px + ${monsterVariation.eyeShift.y}px)`,
+              top: `calc(8% + ${monsterVariation.eyeShift.y}px)`,
               left: `calc(50% + ${monsterVariation.eyeShift.x}px)`,
               transform: 'translateX(-50%)',
               display: 'flex',
