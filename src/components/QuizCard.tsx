@@ -657,10 +657,6 @@ export function QuizCard({
           
           {isEditing && (
             <style>{`
-              @keyframes blink {
-                0%, 49% { opacity: 1; }
-                50%, 100% { opacity: 0; }
-              }
               .edit-textarea {
                 transition: all 250ms ease-in-out;
               }
@@ -670,32 +666,14 @@ export function QuizCard({
                 ring: none !important;
                 box-shadow: none !important;
               }
-              .cursor-blink {
-                animation: blink 1s infinite;
-              }
               .edit-textarea::placeholder {
                 color: color-mix(in srgb, ${categoryColors.cardColor} 85%, black);
-                opacity: 0.3;
+                opacity: 0.5;
               }
             `}</style>
           )}
           {isEditing && (
             <div className="relative mt-4 w-full">
-              {!editedText && (
-                <span 
-                  className="cursor-blink absolute left-0 top-0 pointer-events-none"
-                  style={{
-                    color: `color-mix(in srgb, ${categoryColors.cardColor} 85%, black)`,
-                    fontSize: question.category.toLowerCase() === 'intro' ? '1.26rem' : '2.364rem',
-                    fontWeight: 'bold',
-                    lineHeight: '120%',
-                    fontFamily: 'FactorA, sans-serif',
-                    opacity: 0.3
-                  }}
-                >
-                  |
-                </span>
-              )}
               <Textarea
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
@@ -708,7 +686,6 @@ export function QuizCard({
                   border: 'none',
                   color: categoryColors.pageBg,
                   padding: 0,
-                  paddingLeft: !editedText ? '1rem' : '0',
                   outline: 'none',
                   boxShadow: 'none',
                   lineHeight: '120%'
