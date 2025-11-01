@@ -550,8 +550,7 @@ export function QuizCard({
                 borderWidth: '1px',
                 color: categoryColors.pageBg,
                 fontSize: '12px',
-                whiteSpace: 'nowrap',
-                mixBlendMode: 'difference'
+                whiteSpace: 'nowrap'
               }}
             >
               {question.category}
