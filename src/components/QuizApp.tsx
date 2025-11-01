@@ -947,6 +947,7 @@ export function QuizApp() {
                       onDragEnd={handleDragEnd}
                       dragOffset={isDragging ? dragOffset : 0}
                       isDragging={isDragging}
+                      isFirstCard={index === 0}
                     />
                   </div>
                 );

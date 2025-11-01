@@ -64,6 +64,7 @@ interface QuizCardProps {
   onDragEnd?: () => void;
   dragOffset?: number;
   isDragging?: boolean;
+  isFirstCard?: boolean;
 }
 
 export function QuizCard({ 
@@ -76,7 +77,8 @@ export function QuizCard({
   onDragMove,
   onDragEnd,
   dragOffset = 0,
-  isDragging = false
+  isDragging = false,
+  isFirstCard = false
 }: QuizCardProps) {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -88,6 +90,7 @@ export function QuizCard({
   const [isBlinking, setIsBlinking] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState('');
+  const [showIndicator, setShowIndicator] = useState(false);
   const [monsterVariation, setMonsterVariation] = useState({
     circleSize: 120,
     circleWidth: 120,
@@ -129,6 +132,18 @@ export function QuizCard({
       localStorage.setItem(storageKey, editedText);
     }
   }, [editedText, question.question]);
+
+  // Show animated indicator after 1 second on first card
+  useEffect(() => {
+    if (isFirstCard) {
+      const timer = setTimeout(() => {
+        setShowIndicator(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowIndicator(false);
+    }
+  }, [isFirstCard]);
 
   // Generate unique monster variation based on question text
   useEffect(() => {
@@ -732,10 +747,69 @@ export function QuizCard({
 
         {/* Navigation hint at bottom - only for intro slides */}
         {question.category.toLowerCase() === 'intro' && (
-          <div className="text-center">
+          <div className="text-center flex flex-col items-center gap-2">
             <p className="text-xs opacity-60">
               Swipe um weiter zu navigieren
             </p>
+            
+            {/* Animated indicator - appears after 1s on first card */}
+            {isFirstCard && showIndicator && (
+              <div 
+                className="flex gap-1.5"
+                style={{
+                  animation: 'fadeInUp 0.5s ease-out',
+                  opacity: 1
+                }}
+              >
+                <style>{`
+                  @keyframes fadeInUp {
+                    from {
+                      opacity: 0;
+                      transform: translateY(10px);
+                    }
+                    to {
+                      opacity: 1;
+                      transform: translateY(0);
+                    }
+                  }
+                  @keyframes pulse {
+                    0%, 100% {
+                      opacity: 0.3;
+                    }
+                    50% {
+                      opacity: 1;
+                    }
+                  }
+                `}</style>
+                <div 
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: 'currentColor',
+                    animation: 'pulse 1.5s ease-in-out infinite'
+                  }}
+                />
+                <div 
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: 'currentColor',
+                    animation: 'pulse 1.5s ease-in-out infinite 0.2s'
+                  }}
+                />
+                <div 
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: 'currentColor',
+                    animation: 'pulse 1.5s ease-in-out infinite 0.4s'
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
 
