@@ -98,8 +98,8 @@ export function QuizCard({
     pillSide: 'left' as 'left' | 'right'
   });
   
-  // Right pill dynamic positioning based on text length
   const [rightPillExtraBottom, setRightPillExtraBottom] = useState(0);
+  const [pillHeight, setPillHeight] = useState(0);
   const pillInnerRef = useRef<HTMLDivElement>(null);
   
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -283,7 +283,7 @@ export function QuizCard({
     };
   }, [question.question]);
 
-  // Adjust right pill vertical position dynamically based on its text length
+  // Adjust pill positioning based on its dimensions
   useEffect(() => {
     if (question.category.toLowerCase() === 'intro') return;
     const el = pillInnerRef.current;
@@ -292,6 +292,7 @@ export function QuizCard({
       const rect = el.getBoundingClientRect();
       const extra = Math.max(0, rect.width - rect.height);
       setRightPillExtraBottom(extra);
+      setPillHeight(rect.height);
     };
     measure();
     window.addEventListener('resize', measure);
@@ -532,7 +533,7 @@ export function QuizCard({
               position: 'absolute',
               bottom: '2rem',
               ...(monsterVariation.pillSide === 'right' 
-                ? { right: 'calc(2rem - 20px)' }
+                ? { right: `calc(2rem - 20px - ${pillHeight}px)` }
                 : { left: 'calc(2rem + 20px)' }
               ),
               transformOrigin: 'bottom left',
