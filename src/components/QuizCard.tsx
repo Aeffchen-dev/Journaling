@@ -607,7 +607,7 @@ export function QuizCard({
             width: '48px',
             height: '48px',
             borderRadius: '50%',
-            backgroundColor: `color-mix(in srgb, ${categoryColors.cardColor} 85%, black)`,
+            backgroundColor: `color-mix(in srgb, ${categoryColors.cardColor} 70%, white)`,
             backdropFilter: 'blur(4px)',
             opacity: 1,
             display: 'flex',
