@@ -663,6 +663,8 @@ export function QuizCard({
               letterSpacing: '0px',
               color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))',
               fontSize: isEditing ? '14px' : undefined,
+              opacity: isEditing ? 0 : 1,
+              transform: isEditing ? 'scale(0.95)' : 'scale(1)',
               transition: 'all 0.3s ease',
               ...(isEditing && { color: 'black' })
             }}
