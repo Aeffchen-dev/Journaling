@@ -132,6 +132,16 @@ export function CategorySelector({
               transform: scale(1);
             }
           }
+          @keyframes checkmarkAppear {
+            0% {
+              opacity: 0;
+              transform: scale(0.5);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
         `}
       </style>
       <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col" style={{ height: '100svh', width: '100vw' }}>
@@ -240,7 +250,10 @@ export function CategorySelector({
                             height="20" 
                             viewBox="0 0 24 24" 
                             fill="none"
-                            style={{ color: 'white' }}
+                            style={{ 
+                              color: 'white',
+                              animation: 'checkmarkAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both'
+                            }}
                           >
                             <path
                               d="M20 6 9 17l-5-5"
