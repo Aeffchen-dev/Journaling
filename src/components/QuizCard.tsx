@@ -501,7 +501,7 @@ export function QuizCard({
         <div
           style={{
             position: 'absolute',
-            top: '55%',
+            top: '85%',
             left: `calc(50% + ${monsterVariation.circleOffsetX}%)`,
             transform: 'translateX(-50%)',
             width: `${monsterVariation.circleWidth}%`,
@@ -509,7 +509,8 @@ export function QuizCard({
             borderRadius: '50%',
             backgroundColor: categoryColors.pageBg,
             pointerEvents: 'none',
-            zIndex: 0
+            zIndex: 0,
+            transition: 'all 250ms ease-in-out'
           }}
         >
           {/* Eyes container - centered vertically in visible monster portion */}
