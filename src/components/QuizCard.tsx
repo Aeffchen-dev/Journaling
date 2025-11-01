@@ -536,10 +536,8 @@ export function QuizCard({
                 ? { right: `calc(2rem - 20px - ${pillHeight}px)` }
                 : { left: 'calc(2rem + 20px)' }
               ),
-              transformOrigin: 'bottom left',
               transform: 'rotate(-90deg)',
-              zIndex: 100,
-              isolation: 'isolate'
+              zIndex: 100
             }}
           >
             <div 
@@ -553,7 +551,7 @@ export function QuizCard({
                 whiteSpace: 'nowrap'
               }}
             >
-              <span style={{ mixBlendMode: 'difference', color: 'hsl(var(--foreground))' }}>
+              <span style={{ color: categoryColors.pageBg, textShadow: `0 0 2px ${categoryColors.cardColor}, 0 0 6px ${categoryColors.cardColor}` }}>
                 {question.category}
               </span>
             </div>
