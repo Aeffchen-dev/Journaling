@@ -539,20 +539,7 @@ export function QuizCard({
             zIndex: 1
           }}
         >
-          {/* Anchor point indicator */}
           <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '8px',
-              height: '8px',
-              backgroundColor: 'red',
-              borderRadius: '50%',
-              zIndex: 1000
-            }}
-          />
-          <div 
             ref={pillInnerRef}
             className="px-2 py-0.5 rounded-full font-medium border font-factora"
             style={{
