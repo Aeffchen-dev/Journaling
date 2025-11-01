@@ -81,6 +81,7 @@ export function QuizApp() {
   const [loadingSmileyRotating, setLoadingSmileyRotating] = useState(false);
   const [logoSmileyRotating, setLogoSmileyRotating] = useState(false);
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
+  const [pupilOffset, setPupilOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetchQuestions();
@@ -405,6 +406,55 @@ export function QuizApp() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentIndex]);
 
+  // Pupil tracking with bigger and more frequent movement
+  useEffect(() => {
+    const handleMove = (clientX: number, clientY: number) => {
+      const logoElement = document.querySelector('[data-smiley-logo]');
+      if (!logoElement) return;
+
+      const rect = logoElement.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = clientX - centerX;
+      const deltaY = clientY - centerY;
+      
+      // Bigger movement range (3px radius instead of 1.5px)
+      const maxDistance = 3;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      const limitedDistance = Math.min(distance, rect.width * 2); // Track further distances
+      
+      const angle = Math.atan2(deltaY, deltaX);
+      const offsetX = Math.cos(angle) * Math.min(limitedDistance / (rect.width * 0.5), maxDistance);
+      const offsetY = Math.sin(angle) * Math.min(limitedDistance / (rect.width * 0.5), maxDistance);
+
+      setPupilOffset({ x: offsetX, y: offsetY });
+    };
+
+    const handleMouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    // Add random idle movement when no interaction
+    const idleInterval = setInterval(() => {
+      const randomX = (Math.random() - 0.5) * 2;
+      const randomY = (Math.random() - 0.5) * 2;
+      setPupilOffset({ x: randomX, y: randomY });
+    }, 2000); // Move every 2 seconds during idle
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchmove', handleTouchMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleTouchMove);
+      clearInterval(idleInterval);
+    };
+  }, []);
+
   // Filter and order slides based on categories and mode
   useEffect(() => {
     // Filter by categories
@@ -723,6 +773,7 @@ export function QuizApp() {
               >
                 {char === 'o' && index === 1 ? (
                   <div 
+                    data-smiley-logo
                     style={{
                       display: 'inline-block',
                       width: '16.5px',
@@ -740,8 +791,22 @@ export function QuizApp() {
                     }}
                   >
                     <div style={{ display: 'flex', gap: '2.2px', position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
-                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
+                      <div style={{ 
+                        width: '2.2px', 
+                        height: '2.2px', 
+                        backgroundColor: 'black', 
+                        borderRadius: '50%',
+                        transform: `translate(${pupilOffset.x}px, ${pupilOffset.y}px)`,
+                        transition: 'transform 0.15s ease-out'
+                      }}></div>
+                      <div style={{ 
+                        width: '2.2px', 
+                        height: '2.2px', 
+                        backgroundColor: 'black', 
+                        borderRadius: '50%',
+                        transform: `translate(${pupilOffset.x}px, ${pupilOffset.y}px)`,
+                        transition: 'transform 0.15s ease-out'
+                      }}></div>
                     </div>
                     <div style={{ 
                       width: '6.6px', 
