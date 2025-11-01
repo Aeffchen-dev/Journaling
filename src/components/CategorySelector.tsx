@@ -75,6 +75,18 @@ export function CategorySelector({
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
+  const darkenColor = (hslColor: string) => {
+    // Parse HSL color and reduce lightness by 20%
+    const match = hslColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (match) {
+      const h = match[1];
+      const s = match[2];
+      const l = Math.max(0, parseInt(match[3]) * 0.8); // Reduce lightness by 20%
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+    return hslColor;
+  };
+
   const handleCategoryToggle = (category: string) => {
     setTempSelection(prev => 
       prev.includes(category) 
@@ -122,6 +134,7 @@ export function CategorySelector({
               {categories.map((category, index) => {
               const isSelected = tempSelection.includes(category);
               const colors = getCategoryColors(category, index);
+              const darkerColor = darkenColor(colors.pageBg);
               
               return (
                 <div 
@@ -136,7 +149,7 @@ export function CategorySelector({
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
-                  <span className="font-geist font-normal tracking-wide opacity-100" style={{ color: colors.pageBg, fontSize: '14px' }}>
+                  <span className="font-geist font-normal tracking-wide opacity-100" style={{ color: darkerColor, fontSize: '14px' }}>
                     {category}
                   </span>
                   <div onClick={(e) => e.stopPropagation()}>
@@ -154,8 +167,8 @@ export function CategorySelector({
                         style={{ 
                           width: '32px', 
                           height: '32px',
-                          border: `1px solid ${colors.pageBg}`,
-                          backgroundColor: isSelected ? colors.pageBg : 'transparent'
+                          border: `1px solid ${darkerColor}`,
+                          backgroundColor: isSelected ? darkerColor : 'transparent'
                         }}
                       >
                         {isSelected && (

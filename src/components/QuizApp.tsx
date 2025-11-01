@@ -665,7 +665,7 @@ export function QuizApp() {
           {loading ? (
             <div className="flex items-center justify-center h-full text-white" style={{ fontSize: '14px' }}>Lade Fragen...</div>
           ) : hasSlides ? (
-            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-full flex items-center justify-center">
               {/* Render current slide and adjacent slides for transitions */}
               {slides.map((slide, index) => {
                 const isActive = index === safeIndex;
@@ -726,8 +726,7 @@ export function QuizApp() {
                     style={{
                       transform,
                       zIndex,
-                      transition: isDragging ? 'none' : 'transform 0.3s ease-in-out',
-                      pointerEvents: isActive ? 'auto' : 'none'
+                      transition: isDragging ? 'none' : 'transform 0.3s ease-in-out'
                     }}
                   >
                     <QuizCard
@@ -746,7 +745,7 @@ export function QuizApp() {
               })}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-white text-xl">Keine Fragen verfügbar</div>
+            <div className="flex items-center justify-center h-full text-white" style={{ fontSize: '14px' }}>Keine Fragen verfügbar</div>
           )}
         </div>
       </div>
