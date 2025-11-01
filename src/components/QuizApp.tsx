@@ -81,7 +81,6 @@ export function QuizApp() {
   const [loadingSmileyRotating, setLoadingSmileyRotating] = useState(false);
   const [logoSmileyRotating, setLogoSmileyRotating] = useState(false);
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
-  const [pupilOffset, setPupilOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetchQuestions();
@@ -405,55 +404,6 @@ export function QuizApp() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentIndex]);
-
-  // Track mouse/touch position for pupil movement
-  useEffect(() => {
-    const handleMove = (clientX: number, clientY: number) => {
-      // Get the smiley element position (it's the 2nd character in "Journaling")
-      const logoElement = document.querySelector('.cursor-pointer.font-factora');
-      if (!logoElement) return;
-      
-      const rect = logoElement.getBoundingClientRect();
-      // Approximate position of the "o" (2nd character) in the logo
-      const smileyX = rect.left + 30; // Adjust based on font size
-      const smileyY = rect.top + rect.height / 2;
-      
-      // Calculate angle and distance from smiley to cursor
-      const deltaX = clientX - smileyX;
-      const deltaY = clientY - smileyY;
-      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      
-      // Limit pupil movement to a small radius (max 1.5px in each direction)
-      const maxOffset = 1.5;
-      const normalizedDistance = Math.min(distance / 150, 1); // Normalize to 0-1
-      
-      const offsetX = (deltaX / distance) * maxOffset * normalizedDistance;
-      const offsetY = (deltaY / distance) * maxOffset * normalizedDistance;
-      
-      setPupilOffset({ 
-        x: isNaN(offsetX) ? 0 : offsetX, 
-        y: isNaN(offsetY) ? 0 : offsetY 
-      });
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      handleMove(e.clientX, e.clientY);
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        handleMove(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, []);
 
   // Filter and order slides based on categories and mode
   useEffect(() => {
@@ -790,22 +740,8 @@ export function QuizApp() {
                     }}
                   >
                     <div style={{ display: 'flex', gap: '2.2px', position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <div style={{ 
-                        width: '2.2px', 
-                        height: '2.2px', 
-                        backgroundColor: 'black', 
-                        borderRadius: '50%',
-                        transform: `translate(${pupilOffset.x}px, ${pupilOffset.y}px)`,
-                        transition: 'transform 0.1s ease-out'
-                      }}></div>
-                      <div style={{ 
-                        width: '2.2px', 
-                        height: '2.2px', 
-                        backgroundColor: 'black', 
-                        borderRadius: '50%',
-                        transform: `translate(${pupilOffset.x}px, ${pupilOffset.y}px)`,
-                        transition: 'transform 0.1s ease-out'
-                      }}></div>
+                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
+                      <div style={{ width: '2.2px', height: '2.2px', backgroundColor: 'black', borderRadius: '50%' }}></div>
                     </div>
                     <div style={{ 
                       width: '6.6px', 
