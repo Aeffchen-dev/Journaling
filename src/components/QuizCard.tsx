@@ -533,7 +533,7 @@ export function QuizCard({
               position: 'absolute',
               bottom: '2rem',
               right: '2rem',
-              transformOrigin: 'bottom right',
+              transformOrigin: 'bottom left',
               transform: 'rotate(-90deg)',
               zIndex: 30
             }}
