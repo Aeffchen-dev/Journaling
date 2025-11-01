@@ -702,6 +702,35 @@ export function QuizApp() {
     return interpolateColors(currentCard, targetCard, dragProgress);
   };
 
+  // Update theme-color meta tag for iOS Safari status bar
+  useEffect(() => {
+    const colors = getCurrentColors();
+    const bgColor = slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+    
+    // Update theme-color meta tag
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', bgColor);
+    }
+  }, [currentIndex, slides]);
+
+  // Update theme-color during drag and transition for smooth status bar color changes
+  useEffect(() => {
+    const updateThemeColor = () => {
+      const bgColor = getInterpolatedBgColor();
+      let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor && bgColor) {
+        metaThemeColor.setAttribute('content', bgColor);
+      }
+    };
+
+    if (isDragging || isTransitioning) {
+      updateThemeColor();
+      const interval = setInterval(updateThemeColor, 16); // 60fps updates
+      return () => clearInterval(interval);
+    }
+  }, [isDragging, isTransitioning, dragOffset, transitionDirection]);
+
   const currentColors = getCurrentColors();
 
   return (
