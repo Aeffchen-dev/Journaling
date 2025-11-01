@@ -676,11 +676,15 @@ export function QuizCard({
               .cursor-blink {
                 animation: blink 1s infinite;
               }
+              .edit-textarea::placeholder {
+                color: color-mix(in srgb, ${categoryColors.cardColor} 85%, black);
+                opacity: 0.3;
+              }
             `}</style>
           )}
           {isEditing && (
             <div className="relative mt-4 w-full">
-              {(!editedText || editedText === 'Your answer') && (
+              {!editedText && (
                 <span 
                   className="cursor-blink absolute left-0 top-0 pointer-events-none"
                   style={{
@@ -688,27 +692,17 @@ export function QuizCard({
                     fontSize: question.category.toLowerCase() === 'intro' ? '1.26rem' : '2.364rem',
                     fontWeight: 'bold',
                     lineHeight: '120%',
-                    fontFamily: 'FactorA, sans-serif'
+                    fontFamily: 'FactorA, sans-serif',
+                    opacity: 0.3
                   }}
                 >
                   |
                 </span>
               )}
               <Textarea
-                value={editedText || 'Your answer'}
-                onChange={(e) => {
-                  const newValue = e.target.value;
-                  if (editedText === 'Your answer' || !editedText) {
-                    setEditedText(newValue === 'Your answer' ? '' : newValue);
-                  } else {
-                    setEditedText(newValue);
-                  }
-                }}
-                onFocus={(e) => {
-                  if (editedText === 'Your answer' || !editedText) {
-                    setEditedText('');
-                  }
-                }}
+                value={editedText}
+                onChange={(e) => setEditedText(e.target.value)}
+                placeholder="Your answer"
                 className={`font-factora w-full resize-none edit-textarea ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem]' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem]'}`}
                 style={{
                   fontWeight: 'bold',
@@ -717,11 +711,10 @@ export function QuizCard({
                   border: 'none',
                   color: categoryColors.pageBg,
                   padding: 0,
-                  paddingLeft: (!editedText || editedText === 'Your answer') ? '1rem' : '0',
+                  paddingLeft: !editedText ? '1rem' : '0',
                   outline: 'none',
                   boxShadow: 'none',
-                  lineHeight: '120%',
-                  opacity: (!editedText || editedText === 'Your answer') ? 0.3 : 1
+                  lineHeight: '120%'
                 }}
                 onClick={(e) => e.stopPropagation()}
               />
