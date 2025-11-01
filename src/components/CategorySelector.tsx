@@ -223,7 +223,7 @@ export function CategorySelector({
                       width: isSelected ? '100%' : '48px',
                       animation: isSelected ? 'none' : 'none',
                       transition: isSelected 
-                        ? 'width 0.3s ease-in-out 0.1s'
+                        ? 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s'
                         : 'width 0.2s ease-in-out',
                       zIndex: 1
                     }}
@@ -233,7 +233,7 @@ export function CategorySelector({
                     color: isSelected ? textColor : 'white', 
                     fontSize: '14px', 
                     transition: isSelected 
-                      ? 'color 0.3s ease-in-out 0.1s'
+                      ? 'color 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.1s'
                       : 'color 0.2s ease-in-out'
                   }}>
                     {category}
@@ -268,7 +268,7 @@ export function CategorySelector({
                           backgroundColor: isSelected ? 'black' : 'transparent',
                           animation: isSelected ? 'checkboxPopBounce 0.3s ease-in-out 0.1s' : 'none',
                           transition: isSelected 
-                            ? 'background-color 0.1s ease-in-out'
+                            ? 'background-color 0.12s cubic-bezier(0.4, 0, 0.2, 1)'
                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
                         }}
                       >
