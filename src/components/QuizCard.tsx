@@ -347,13 +347,14 @@ export function QuizCard({
 
   return (
     <div 
-      className={`relative w-full max-w-[500px] mx-auto rounded-[2rem] shadow-card select-none`}
+      className={`relative w-full max-w-[500px] mx-auto rounded-[2rem] select-none`}
       style={{
         height: 'calc(100% - 16px)',
         maxHeight: 'calc(100% - 16px)',
         backgroundColor: question.category.toLowerCase() !== 'intro' ? categoryColors.cardColor : 'hsl(var(--card-background))',
         color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))',
-        overflow: 'visible'
+        overflow: 'visible',
+        boxShadow: '0 0 0 16px rgba(0, 0, 0, 0.24)'
       }}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -435,7 +436,7 @@ export function QuizCard({
             ref={textRef}
             className={`font-factora leading-tight lg:leading-[1.09] w-full ${question.category.toLowerCase() === 'intro' ? 'text-base md:text-lg lg:text-xl max-w-md' : 'text-3xl md:text-4xl lg:text-5xl max-w-full'}`}
             style={{ 
-              fontWeight: question.category.toLowerCase() === 'intro' ? '400' : '700',
+              fontWeight: 'bold',
               fontStyle: question.category.toLowerCase() === 'intro' ? 'normal' : 'italic',
               color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))'
             }}
