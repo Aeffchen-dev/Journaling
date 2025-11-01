@@ -795,7 +795,7 @@ export function QuizApp() {
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
-                      transform: `translateY(4.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + (isDragging ? -(dragOffset / window.innerWidth) * 360 : 0))}deg)`,
+                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + (isDragging ? -(dragOffset / window.innerWidth) * 360 : 0))}deg)`,
                       transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : 'transform 0.3s ease-in-out'),
                       paddingLeft: '2px',
                       paddingRight: '2px'
