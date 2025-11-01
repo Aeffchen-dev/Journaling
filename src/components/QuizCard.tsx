@@ -506,15 +506,15 @@ export function QuizCard({
       {/* Main Content */}
       <div className={`h-full flex flex-col justify-start ${question.category.toLowerCase() === 'intro' ? 'p-8' : 'p-8 lg:p-10'} relative z-10`}>
         
-        {/* Category Pill - Positioned at bottom corner opposite to monster, rotated 90deg */}
+        {/* Category Pill - Positioned at bottom corner opposite to monster, rotated -90deg */}
         {question.category.toLowerCase() !== 'intro' && (
           <div 
             style={{
               position: 'absolute',
-              bottom: '16px',
-              [monsterVariation.pillSide]: '16px',
-              transformOrigin: monsterVariation.pillSide === 'left' ? 'bottom left' : 'bottom right',
-              transform: monsterVariation.pillSide === 'left' ? 'rotate(-90deg)' : 'rotate(90deg)',
+              bottom: '32px',
+              [monsterVariation.pillSide]: '8px',
+              transformOrigin: 'center center',
+              transform: 'rotate(-90deg) translateX(-50%)',
               zIndex: 10
             }}
           >
