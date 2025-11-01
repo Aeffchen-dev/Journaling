@@ -181,7 +181,7 @@ export function CategorySelector({
                     }}
                   />
                   
-                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ color: textColor, fontSize: '14px' }}>
+                  <span className="font-factora font-normal tracking-wide opacity-100 relative z-10 transition-colors duration-300" style={{ color: isSelected ? textColor : 'white', fontSize: '14px' }}>
                     {category}
                   </span>
                   <div onClick={(e) => e.stopPropagation()}>
