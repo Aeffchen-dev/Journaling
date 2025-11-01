@@ -179,7 +179,7 @@ export function CategorySelector({
                   key={category}
                   className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
                   style={{ 
-                    paddingLeft: '32px',
+                    paddingLeft: '48px',
                     paddingRight: '8px',
                     paddingTop: '8px',
                     paddingBottom: '8px',
