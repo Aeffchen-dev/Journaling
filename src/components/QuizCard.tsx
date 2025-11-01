@@ -706,7 +706,7 @@ export function QuizCard({
             `}</style>
           )}
           {isEditing && (
-            <div className="flex-1 relative mt-4 w-full edit-textarea-container">
+            <div className="flex-1 relative mt-2 w-full edit-textarea-container">
               <Textarea
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
