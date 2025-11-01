@@ -22,6 +22,7 @@ export function CategorySelector({
   const [tempSelection, setTempSelection] = useState<string[]>(selectedCategories);
   const [justToggled, setJustToggled] = useState<Set<string>>(new Set());
   const [showContent, setShowContent] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   // Update temp selection when selectedCategories prop changes
   useEffect(() => {
@@ -33,10 +34,11 @@ export function CategorySelector({
     if (open) {
       setJustToggled(new Set());
       setShowContent(false);
-      // Show content after black fade completes + 200ms delay
+      setIsClosing(false);
+      // Show content after black fade completes
       const timer = setTimeout(() => {
         setShowContent(true);
-      }, 400);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -129,8 +131,14 @@ export function CategorySelector({
   };
 
   const handleClose = () => {
-    onCategoriesChange(tempSelection); // Apply changes when closing
-    onOpenChange(false);
+    setIsClosing(true);
+    setShowContent(false);
+    // Wait for black fade out to complete before actually closing
+    setTimeout(() => {
+      onCategoriesChange(tempSelection);
+      onOpenChange(false);
+      setIsClosing(false);
+    }, 300);
   };
 
   return (
@@ -191,6 +199,14 @@ export function CategorySelector({
               opacity: 1;
             }
           }
+          @keyframes blackFadeOut {
+            0% {
+              opacity: 1;
+            }
+            100% {
+              opacity: 0;
+            }
+          }
         `}
       </style>
       <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none" style={{ height: '100svh', width: '100vw' }}>
@@ -199,14 +215,14 @@ export function CategorySelector({
         </DialogDescription>
         
         {/* Black fade overlay */}
-        {!showContent && (
+        {(!showContent || isClosing) && (
           <div 
             style={{
               position: 'absolute',
               inset: 0,
               backgroundColor: 'black',
               zIndex: 50,
-              animation: 'blackFadeIn 200ms ease-out forwards'
+              animation: isClosing ? 'blackFadeOut 300ms ease-out forwards' : 'blackFadeIn 300ms ease-out forwards'
             }}
           />
         )}
