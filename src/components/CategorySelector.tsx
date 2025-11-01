@@ -254,40 +254,38 @@ export function CategorySelector({
                         />
                       )}
                       
-                      <div
-                        className={`w-8 h-8 flex items-center justify-center rounded-full`}
-                        style={{ 
-                          width: '32px', 
-                          height: '32px',
-                          border: isSelected ? `1px solid black` : `2px solid white`,
-                          backgroundColor: isSelected ? 'black' : 'transparent',
-                          animation: isSelected ? 'checkboxPopBounce 0.25s ease-in-out 0.3s' : 'none',
-                          transition: isSelected 
-                            ? 'background-color 0.2s ease-in-out 0.3s'
-                            : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
-                        }}
-                      >
-                        {isSelected && (
-                          <svg 
-                            width="20" 
-                            height="20" 
-                            viewBox="0 0 24 24" 
-                            fill="none"
-                            style={{ 
-                              color: 'white',
-                              animation: 'checkmarkAppear 0.25s ease-in-out 0.3s both'
-                            }}
-                          >
-                            <path
-                              d="M20 6 9 17l-5-5"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        )}
-                      </div>
+                       <div
+                         className={`w-8 h-8 flex items-center justify-center rounded-full`}
+                         style={{ 
+                           width: '32px', 
+                           height: '32px',
+                           border: isSelected ? `1px solid black` : `2px solid white`,
+                           backgroundColor: isSelected ? 'black' : 'transparent',
+                           transition: isSelected 
+                             ? 'background-color 0.2s ease-in-out'
+                             : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
+                         }}
+                       >
+                         {isSelected && (
+                           <svg 
+                             width="20" 
+                             height="20" 
+                             viewBox="0 0 24 24" 
+                             fill="none"
+                             style={{ 
+                               color: 'white'
+                             }}
+                           >
+                             <path
+                               d="M20 6 9 17l-5-5"
+                               stroke="currentColor"
+                               strokeWidth="2"
+                               strokeLinecap="round"
+                               strokeLinejoin="round"
+                             />
+                           </svg>
+                         )}
+                       </div>
                     </div>
                   </div>
                 </div>
