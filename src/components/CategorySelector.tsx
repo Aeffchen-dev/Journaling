@@ -222,14 +222,14 @@ export function CategorySelector({
               inset: 0,
               backgroundColor: 'black',
               zIndex: 50,
-              animation: isClosing ? 'blackFadeOut 300ms ease-out forwards' : 'blackFadeIn 300ms ease-out forwards'
+              animation: isClosing ? 'blackFadeOut 300ms ease-in-out forwards' : 'blackFadeIn 300ms ease-in-out forwards'
             }}
           />
         )}
         
         <div className="flex flex-col w-full h-full bg-background overflow-hidden" style={{ 
           opacity: showContent ? 1 : 0,
-          transition: 'opacity 300ms ease-out'
+          transition: 'opacity 300ms ease-in-out'
         }}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-0 shrink-0">
