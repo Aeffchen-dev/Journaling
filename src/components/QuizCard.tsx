@@ -600,10 +600,10 @@ export function QuizCard({
           style={{
             position: 'absolute',
             ...(monsterVariation.pillSide === 'right' 
-              ? { right: 'calc(2rem - 16px)' } 
+              ? { right: 'calc(2rem - 12px)' } 
               : { left: 'calc(2rem - 16px)' }
             ),
-            bottom: '2rem',
+            bottom: 'calc(2rem - 16px)',
             width: '48px',
             height: '48px',
             borderRadius: '50%',
