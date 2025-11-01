@@ -548,7 +548,7 @@ export function QuizCard({
             position: 'absolute',
             ...(monsterVariation.pillSide === 'right' 
               ? { right: `calc(2rem + ${pillWidth}px)`, bottom: '2rem', transformOrigin: 'bottom right' } 
-              : { left: `calc(2rem + ${pillWidth}px)`, bottom: '2rem', transformOrigin: 'bottom left' }
+              : { left: `calc(2rem + ${pillWidth}px)`, bottom: '2rem', transformOrigin: 'top left' }
             ),
             transform: 'rotate(-90deg)',
             zIndex: 1
