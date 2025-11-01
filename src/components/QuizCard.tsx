@@ -438,7 +438,7 @@ export function QuizCard({
         <div
           style={{
             position: 'absolute',
-            top: '65%',
+            top: '55%',
             left: `calc(50% + ${monsterVariation.circleOffsetX}%)`,
             transform: 'translateX(-50%)',
             width: `${monsterVariation.circleWidth}%`,
