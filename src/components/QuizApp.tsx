@@ -609,7 +609,7 @@ export function QuizApp() {
                   fontFeatureSettings: index === 0 ? '"ss01" 1' : 'normal'
                 }}
               >
-                {char === 'o' && index === 1 ? (
+                {char === 'O' && index === 1 ? (
                   <div 
                     style={{
                       display: 'inline-block',
