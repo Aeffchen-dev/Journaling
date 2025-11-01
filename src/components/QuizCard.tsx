@@ -538,7 +538,8 @@ export function QuizCard({
               ),
               transformOrigin: 'bottom left',
               transform: 'rotate(-90deg)',
-              zIndex: 100
+              zIndex: 100,
+              isolation: 'isolate'
             }}
           >
             <div 
@@ -549,11 +550,12 @@ export function QuizCard({
                 borderColor: categoryColors.pageBg,
                 color: categoryColors.pageBg,
                 fontSize: '12px',
-                mixBlendMode: 'color-dodge',
                 whiteSpace: 'nowrap'
               }}
             >
-              {question.category}
+              <span style={{ mixBlendMode: 'exclusion' }}>
+                {question.category}
+              </span>
             </div>
           </div>
         )}
