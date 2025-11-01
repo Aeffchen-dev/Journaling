@@ -529,11 +529,13 @@ export function QuizCard({
         {/* Category Pill - Positioned at bottom corner opposite to monster, rotated -90deg */}
         {question.category.toLowerCase() !== 'intro' && (
           <div 
-            className={monsterVariation.pillSide === 'right' ? 'right-8 lg:right-10 top-8 lg:top-10' : 'left-8 lg:left-10 top-8 lg:top-10'}
+            className={monsterVariation.pillSide === 'right' ? 'right-8 lg:right-10' : 'left-8 lg:left-10'}
             style={{
               position: 'absolute',
-              transformOrigin: monsterVariation.pillSide === 'right' ? 'top right' : 'top left',
-              transform: 'rotate(-90deg)',
+              top: '2rem',
+              bottom: '2rem',
+              display: 'flex',
+              alignItems: 'flex-end',
               zIndex: 1
             }}
           >
@@ -548,13 +550,18 @@ export function QuizCard({
                 color: categoryColors.pageBg,
                 fontSize: '12px',
                 whiteSpace: 'nowrap',
-                mixBlendMode: 'difference'
+                mixBlendMode: 'difference',
+                transformOrigin: 'bottom left',
+                transform: 'rotate(-90deg) translateX(-100%)',
+                position: 'absolute',
+                bottom: 0
               }}
             >
               {question.category}
             </div>
           </div>
         )}
+      
 
         <div ref={containerRef} className={`flex-1 flex w-full ${question.category.toLowerCase() === 'intro' ? 'items-center justify-start text-left' : 'items-start justify-start text-left'}`}>
           <h1 
