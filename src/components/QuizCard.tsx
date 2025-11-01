@@ -512,7 +512,8 @@ export function QuizCard({
             style={{
               position: 'absolute',
               bottom: '2rem',
-              left: 'calc(2rem + 20px)',
+              left: monsterVariation.pillSide === 'left' ? 'calc(2rem + 20px)' : 'auto',
+              right: monsterVariation.pillSide === 'right' ? 'calc(2rem + 20px)' : 'auto',
               transformOrigin: monsterVariation.pillSide === 'left' ? 'bottom left' : 'bottom right',
               transform: 'rotate(-90deg)',
               zIndex: 30
