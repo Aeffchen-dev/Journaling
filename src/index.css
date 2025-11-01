@@ -186,6 +186,16 @@ All colors MUST be HSL.
   font-display: swap;
 }
 
+/* Factor A Font Definition */
+@font-face {
+  font-family: 'FactorA';
+  src: url('/assets/FactorA-Bold.woff2') format('woff2'),
+       url('/assets/FactorA-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   * {
     @apply border-border;

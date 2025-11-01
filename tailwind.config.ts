@@ -18,11 +18,12 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				'kokoro': ['Kokoro', 'serif'],
-				'schoolbell': ['Schoolbell', 'cursive'],
-				'geist': ['Geist', 'sans-serif'],
-			},
+		fontFamily: {
+			'kokoro': ['Kokoro', 'serif'],
+			'schoolbell': ['Schoolbell', 'cursive'],
+			'geist': ['Geist', 'sans-serif'],
+			'factora': ['FactorA', 'sans-serif'],
+		},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

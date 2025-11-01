@@ -153,9 +153,9 @@ export function QuizCard({
         visibility: hidden;
         white-space: nowrap;
         font-size: 4rem;
-        font-family: Kokoro, serif;
+        font-family: FactorA, sans-serif;
         font-weight: bold;
-        font-style: italic;
+        font-style: normal;
         padding: 0;
         margin: 0;
         border: 0;
@@ -429,7 +429,7 @@ export function QuizCard({
         <div ref={containerRef} className={`flex-1 flex w-full ${question.category.toLowerCase() === 'intro' ? 'items-center justify-start text-left' : 'items-start justify-start text-left'}`}>
           <h1 
             ref={textRef}
-            className={`font-geist leading-tight lg:leading-[1.09] w-full ${question.category.toLowerCase() === 'intro' ? 'text-base md:text-lg lg:text-xl max-w-md' : 'text-3xl md:text-4xl lg:text-5xl max-w-full'}`}
+            className={`${question.category.toLowerCase() === 'intro' ? 'font-geist' : 'font-factora'} leading-tight lg:leading-[1.09] w-full ${question.category.toLowerCase() === 'intro' ? 'text-base md:text-lg lg:text-xl max-w-md' : 'text-3xl md:text-4xl lg:text-5xl max-w-full'}`}
             style={{ 
               fontWeight: question.category.toLowerCase() === 'intro' ? '400' : '700',
               color: question.category.toLowerCase() !== 'intro' ? categoryColors.pageBg : 'hsl(var(--foreground))'
