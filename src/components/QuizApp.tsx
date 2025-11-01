@@ -578,38 +578,17 @@ export function QuizApp() {
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
-  // Interpolate between two HSL colors
-  const interpolateHSL = (color1: string, color2: string, factor: number) => {
-    const parseHSL = (hsl: string) => {
-      const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-      if (!match) return { h: 0, s: 0, l: 0 };
-      return { h: parseInt(match[1]), s: parseInt(match[2]), l: parseInt(match[3]) };
-    };
-
+  // Interpolate between two colors using CSS color-mix
+  const interpolateColors = (color1: string, color2: string, factor: number) => {
     // Apply ease-out cubic easing for smoother transitions
     const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
     const easedFactor = easeOutCubic(factor);
-
-    const c1 = parseHSL(color1);
-    const c2 = parseHSL(color2);
     
-    // Calculate shortest path for hue interpolation
-    let hueDiff = c2.h - c1.h;
-    if (hueDiff > 180) {
-      hueDiff -= 360;
-    } else if (hueDiff < -180) {
-      hueDiff += 360;
-    }
+    // Convert factor to percentage (0-100)
+    const percentage = easedFactor * 100;
     
-    let h = c1.h + hueDiff * easedFactor;
-    if (h < 0) h += 360;
-    if (h >= 360) h -= 360;
-    h = Math.round(h);
-    
-    const s = Math.round(c1.s + (c2.s - c1.s) * easedFactor);
-    const l = Math.round(c1.l + (c2.l - c1.l) * easedFactor);
-    
-    return `hsl(${h}, ${s}%, ${l}%)`;
+    // Use CSS color-mix in srgb color space for smooth transitions
+    return `color-mix(in srgb, ${color2} ${percentage}%, ${color1})`;
   };
 
   // Get current slide's colors for page background and header
@@ -644,7 +623,7 @@ export function QuizApp() {
     const currentBg = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
     const targetBg = targetColors.pageBg;
 
-    return interpolateHSL(currentBg, targetBg, dragProgress);
+    return interpolateColors(currentBg, targetBg, dragProgress);
   };
 
   // Calculate interpolated card color for header based on drag
@@ -674,7 +653,7 @@ export function QuizApp() {
     const currentCard = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
     const targetCard = targetColors.cardColor;
 
-    return interpolateHSL(currentCard, targetCard, dragProgress);
+    return interpolateColors(currentCard, targetCard, dragProgress);
   };
 
   const currentColors = getCurrentColors();
