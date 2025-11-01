@@ -209,7 +209,7 @@ export function CategorySelector({
                      paddingTop: '8px',
                      paddingBottom: '8px',
                      width: isSelected ? '100%' : '90%',
-                     animation: isSelected ? 'widthBounceRight 0.3s ease-in-out 0.15s both' : 'none',
+                     animation: isSelected ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
                      transition: isSelected ? 'none' : 'width 0.2s ease-in-out'
                    }}
                    onClick={() => handleCategoryToggle(category)}
@@ -223,18 +223,18 @@ export function CategorySelector({
                     }}
                   />
                   
-                  {/* Colored background that expands/contracts */}
-                  <div 
-                    className="absolute inset-y-0 left-0 rounded-full"
-                    style={{ 
-                      backgroundColor: colors.cardColor,
-                      width: isSelected ? '100%' : '48px',
-                      transition: isSelected 
-                        ? 'width 0.3s ease-in-out'
-                        : 'width 0.2s ease-in-out',
-                      zIndex: 1
-                    }}
-                  />
+                   {/* Colored background that expands/contracts */}
+                   <div 
+                     className="absolute inset-y-0 left-0 rounded-full"
+                     style={{ 
+                       backgroundColor: colors.cardColor,
+                       width: isSelected ? '100%' : '48px',
+                       transition: isSelected 
+                         ? 'width 0.2s ease-in-out'
+                         : 'width 0.2s ease-in-out',
+                       zIndex: 1
+                     }}
+                   />
                   
                    <span className="font-factora font-normal tracking-wide opacity-100 relative z-10" style={{ 
                      color: isSelected ? textColor : 'white', 
@@ -274,7 +274,7 @@ export function CategorySelector({
                            border: `2px solid white`,
                            backgroundColor: isSelected ? 'black' : 'transparent',
                            transition: isSelected 
-                             ? 'background-color 0.1s ease-in-out 0.2s'
+                             ? 'background-color 0.1s ease-in-out 0.1s'
                              : 'background-color 0.2s ease-in-out'
                          }}
                        >
@@ -286,7 +286,7 @@ export function CategorySelector({
                              fill="none"
                              style={{ 
                                color: 'white',
-                               animation: 'checkmarkAppear 0.1s ease-out 0.2s both'
+                               animation: 'checkmarkAppear 0.1s ease-out 0.1s both'
                              }}
                            >
                              <path
