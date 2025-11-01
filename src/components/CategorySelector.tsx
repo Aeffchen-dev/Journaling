@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogPortal, DialogOverlay } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -145,71 +145,13 @@ export function CategorySelector({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <style>
         {`
-          @keyframes checkboxPopBounce {
-            0% {
-              transform: scale(1);
-            }
-            50% {
-              transform: scale(1.1);
-            }
-            100% {
-              transform: scale(1);
-            }
-          }
-          @keyframes widthBounceTwice {
-            0% {
-              width: 90%;
-            }
-            40% {
-              width: 106%;
-            }
-            70% {
-              width: 98%;
-            }
-            100% {
-              width: 100%;
-            }
-          }
-          @keyframes widthBounceRight {
-            0% {
-              width: 90%;
-            }
-            60% {
-              width: 103%;
-            }
-            100% {
-              width: 100%;
-            }
-          }
-          @keyframes checkmarkAppear {
-            0% {
-              opacity: 0;
-              transform: scale(0.8);
-            }
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-          }
-          @keyframes blackFadeIn {
-            0% {
-              opacity: 0;
-            }
-            100% {
-              opacity: 1;
-            }
-          }
-          @keyframes blackFadeOut {
-            0% {
-              opacity: 1;
-            }
-            100% {
-              opacity: 0;
-            }
-          }
+...
         `}
       </style>
-      <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none" style={{ height: '100svh', width: '100vw' }}>
+      <DialogPortal>
+        {/* Disable default overlay, use our custom black fade */}
+        <DialogOverlay className="bg-transparent pointer-events-none" />
+        <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none" style={{ height: '100svh', width: '100vw' }}>
         <DialogDescription className="sr-only">
           Wählen Sie die Kategorien aus, die Sie sehen möchten
         </DialogDescription>
@@ -370,6 +312,7 @@ export function CategorySelector({
           </ScrollArea>
         </div>
       </DialogContent>
+      </DialogPortal>
     </Dialog>
   );
 }
