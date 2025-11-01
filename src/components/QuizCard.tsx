@@ -549,7 +549,7 @@ export function QuizCard({
                 borderColor: categoryColors.pageBg,
                 color: categoryColors.pageBg,
                 fontSize: '12px',
-                mixBlendMode: 'difference',
+                mixBlendMode: 'color-dodge',
                 whiteSpace: 'nowrap'
               }}
             >
