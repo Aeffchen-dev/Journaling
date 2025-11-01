@@ -205,7 +205,7 @@ export function CategorySelector({
                     width: isSelected ? '100%' : '90%',
                     transition: isSelected 
                       ? 'width 0.5s ease-in-out'
-                      : 'width 0.1s ease-in-out'
+                      : 'width 0.2s ease-in-out'
                   }}
                   onClick={() => handleCategoryToggle(category)}
                 >
@@ -226,7 +226,7 @@ export function CategorySelector({
                       width: isSelected ? '100%' : '48px',
                       transition: isSelected 
                         ? 'width 0.5s ease-in-out'
-                        : 'width 0.1s ease-in-out',
+                        : 'width 0.2s ease-in-out',
                       zIndex: 1
                     }}
                   />
@@ -236,7 +236,7 @@ export function CategorySelector({
                     fontSize: '14px', 
                     transition: isSelected 
                       ? 'color 0.5s ease-in-out'
-                      : 'color 0.1s ease-in-out'
+                      : 'color 0.2s ease-in-out'
                   }}>
                     {category}
                   </span>
@@ -271,7 +271,7 @@ export function CategorySelector({
                           animation: isSelected ? 'checkboxPopBounce 0.5s ease-in-out' : 'none',
                           transition: isSelected 
                             ? 'background-color 0.5s ease-in-out, border 0.5s ease-in-out'
-                            : 'background-color 0.1s ease-in-out, border 0.1s ease-in-out'
+                            : 'background-color 0.2s ease-in-out, border 0.2s ease-in-out'
                         }}
                       >
                         {isSelected && (
@@ -282,7 +282,7 @@ export function CategorySelector({
                             fill="none"
                             style={{ 
                               color: 'white',
-                              animation: 'checkmarkAppear 0.25s ease-in-out 0.1s both'
+                              animation: 'checkmarkAppear 0.25s ease-in-out 0.3s both'
                             }}
                           >
                             <path
