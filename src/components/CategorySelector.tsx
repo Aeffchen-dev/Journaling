@@ -33,10 +33,10 @@ export function CategorySelector({
     if (open) {
       setJustToggled(new Set());
       setShowContent(false);
-      // Show content after black fade completes
+      // Show content after black fade completes + 200ms delay
       const timer = setTimeout(() => {
         setShowContent(true);
-      }, 200);
+      }, 400);
       return () => clearTimeout(timer);
     }
   }, [open]);
