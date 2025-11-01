@@ -233,7 +233,6 @@ export function CategorySelector({
                   className="flex items-center justify-between cursor-pointer rounded-full relative overflow-hidden"
                   style={{ 
                     paddingLeft: isSelected ? '32px' : '64px',
-                    paddingRight: '8px',
                     width: isSelected ? '100%' : '90%',
                     animation: shouldAnimate ? 'widthBounceRight 0.3s ease-in-out 0.05s both' : 'none',
                     transition: isSelected ? 'padding-left 0.2s ease-in-out' : 'width 0.2s ease-in-out, padding-left 0.2s ease-in-out'
