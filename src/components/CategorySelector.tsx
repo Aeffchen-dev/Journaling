@@ -185,7 +185,7 @@ export function CategorySelector({
                     paddingBottom: '8px',
                     width: isSelected ? '100%' : '90%',
                     transition: isSelected 
-                      ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                      ? 'width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                       : 'width 0.3s ease-out'
                   }}
                   onClick={() => handleCategoryToggle(category)}
@@ -206,7 +206,7 @@ export function CategorySelector({
                       backgroundColor: colors.cardColor,
                       width: isSelected ? '100%' : '48px',
                       transition: isSelected 
-                        ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                        ? 'width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                         : 'width 0.3s ease-out',
                       zIndex: 1
                     }}
@@ -216,7 +216,7 @@ export function CategorySelector({
                     color: isSelected ? textColor : 'white', 
                     fontSize: '14px', 
                     transition: isSelected 
-                      ? 'color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                      ? 'color 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                       : 'color 0.3s ease-out'
                   }}>
                     {category}
@@ -238,9 +238,9 @@ export function CategorySelector({
                           height: '32px',
                           border: isSelected ? `1px solid black` : `2px solid black`,
                           backgroundColor: isSelected ? 'black' : 'transparent',
-                          animation: isSelected ? 'checkboxPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+                          animation: isSelected ? 'checkboxPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'none',
                           transition: isSelected 
-                            ? 'background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                            ? 'background-color 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), border 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                             : 'background-color 0.3s ease-out, border 0.3s ease-out'
                         }}
                       >
@@ -252,7 +252,7 @@ export function CategorySelector({
                             fill="none"
                             style={{ 
                               color: 'white',
-                              animation: 'checkmarkAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both'
+                              animation: 'checkmarkAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both'
                             }}
                           >
                             <path
