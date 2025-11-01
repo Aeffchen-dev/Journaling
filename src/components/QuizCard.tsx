@@ -562,7 +562,7 @@ export function QuizCard({
         <div ref={containerRef} className={`flex-1 flex w-full ${question.category.toLowerCase() === 'intro' ? 'items-center justify-start text-left' : 'items-start justify-start text-left'}`}>
           <h1 
             ref={textRef}
-            className={`font-factora leading-[120%] w-full ${question.category.toLowerCase() === 'intro' ? 'text-base md:text-lg lg:text-xl max-w-md' : 'text-3xl md:text-4xl lg:text-5xl max-w-full'}`}
+            className={`font-factora leading-[120%] w-full ${question.category.toLowerCase() === 'intro' ? 'text-lg md:text-xl lg:text-2xl max-w-md' : 'text-4xl md:text-5xl lg:text-6xl max-w-full'}`}
             style={{ 
               fontWeight: 'bold',
               fontStyle: 'normal',
