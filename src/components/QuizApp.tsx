@@ -82,6 +82,7 @@ export function QuizApp() {
   const [logoSmileyRotating, setLogoSmileyRotating] = useState(false);
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
+  const [showHintAnimation, setShowHintAnimation] = useState(false);
 
   useEffect(() => {
     fetchQuestions();
@@ -424,6 +425,20 @@ export function QuizApp() {
     const timeoutId = scheduleNextBlink();
     return () => clearTimeout(timeoutId);
   }, []);
+
+  // Show hint animation after 1 second on first slide
+  useEffect(() => {
+    if (currentIndex === 0 && !isTransitioning && !isDragging) {
+      const timer = setTimeout(() => {
+        setShowHintAnimation(true);
+        // Reset after animation completes
+        setTimeout(() => {
+          setShowHintAnimation(false);
+        }, 800);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, isTransitioning, isDragging]);
 
   // Filter and order slides based on categories and mode
   useEffect(() => {
@@ -891,6 +906,9 @@ export function QuizApp() {
                     transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(-5deg)';
                   } else if (isTransitioning && transitionDirection === 'right') {
                     transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(5deg)';
+                  } else if (showHintAnimation && index === 0) {
+                    // Hint animation: briefly move left as if being swiped
+                    transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
                   } else {
                     transform = 'translateX(0) scale(1) rotate(0deg)';
                   }
@@ -916,6 +934,9 @@ export function QuizApp() {
                     transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
                   } else if (isTransitioning && transitionDirection === 'left') {
                     transform = 'translateX(0) scale(1) rotate(0deg)';
+                  } else if (showHintAnimation && index === 1) {
+                    // Hint animation: next slide moves in slightly
+                    transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
                   } else {
                     transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(0deg)';
                   }
@@ -934,7 +955,11 @@ export function QuizApp() {
                     style={{
                       transform,
                       zIndex,
-                      transition: isDragging ? 'none' : 'transform 0.3s ease-in-out'
+                      transition: isDragging 
+                        ? 'none' 
+                        : showHintAnimation && (index === 0 || index === 1)
+                        ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' // Bouncy ease for hint
+                        : 'transform 0.3s ease-in-out'
                     }}
                   >
                     <QuizCard
@@ -947,7 +972,6 @@ export function QuizApp() {
                       onDragEnd={handleDragEnd}
                       dragOffset={isDragging ? dragOffset : 0}
                       isDragging={isDragging}
-                      isFirstCard={index === 0}
                     />
                   </div>
                 );
