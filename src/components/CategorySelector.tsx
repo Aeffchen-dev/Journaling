@@ -339,6 +339,14 @@ export function CategorySelector({
                     .replace(/^ +/, "")
                     .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                 });
+                
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear all sessionStorage
+                sessionStorage.clear();
+                
+                // Reload to reset all state (filters, text entries, show default view)
                 window.location.reload();
               }}
               className="text-white font-factora font-normal hover:opacity-70 transition-opacity"
