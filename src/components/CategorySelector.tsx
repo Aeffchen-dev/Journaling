@@ -174,7 +174,7 @@ export function CategorySelector({
       <DialogPortal>
         {/* Disable default overlay, use our custom black fade */}
         <DialogOverlay className="bg-transparent pointer-events-none" />
-        <DialogContent className="mx-auto bg-background border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none" style={{ height: '100svh', width: '100vw' }}>
+        <DialogContent className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none" style={{ height: '100svh', width: '100vw' }}>
         <DialogDescription className="sr-only">
           Wählen Sie die Kategorien aus, die Sie sehen möchten
         </DialogDescription>
