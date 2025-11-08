@@ -441,32 +441,32 @@ export function QuizApp() {
     }
   }, [currentIndex, isTransitioning, isDragging]);
 
-  // Typing animation for loading text
+  // Typing animation for loading text - hand-written style
   useEffect(() => {
     if (loading) {
       const text = "Lade Fragen...";
       let currentIndex = 0;
+      const delays = [120, 90, 110, 85, 95, 130, 100, 90, 115, 95, 105, 90, 100, 110]; // Varied delays for natural feel
       
       const typeNextLetter = () => {
         if (currentIndex <= text.length) {
           setTypingIndex(currentIndex);
+          const nextDelay = delays[currentIndex % delays.length];
           currentIndex++;
-        } else {
-          // Reset and start over after a brief pause
-          setTimeout(() => {
-            currentIndex = 0;
-          }, 500);
+          
+          if (currentIndex <= text.length) {
+            setTimeout(typeNextLetter, nextDelay);
+          } else {
+            // Reset after complete + pause
+            setTimeout(() => {
+              currentIndex = 0;
+              typeNextLetter();
+            }, 800);
+          }
         }
       };
       
-      // Initial type
       typeNextLetter();
-      
-      // Type letters with 80ms delay, complete cycle takes ~1.2s + 0.5s pause = 1.7s
-      // Then repeat every 2s total
-      const typingInterval = setInterval(typeNextLetter, 80);
-      
-      return () => clearInterval(typingInterval);
     }
   }, [loading]);
 
@@ -914,7 +914,8 @@ export function QuizApp() {
                   key={index}
                   style={{
                     opacity: index < typingIndex ? 1 : 0,
-                    transition: 'opacity 0.05s ease-in'
+                    transform: index < typingIndex ? 'translateY(0)' : 'translateY(2px)',
+                    transition: 'opacity 0.1s ease-out, transform 0.15s ease-out'
                   }}
                 >
                   {char}
