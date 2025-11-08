@@ -765,8 +765,6 @@ export function QuizApp() {
       className="min-h-[100svh] h-[100svh] overflow-hidden flex flex-col" 
       style={{ 
         height: '100svh',
-        backgroundColor: getInterpolatedBgColor(),
-        transition: isDragging ? 'none' : 'background-color 0.3s ease-out',
         overflowY: 'hidden',
         position: 'fixed',
         width: '100%',
@@ -881,7 +879,7 @@ export function QuizApp() {
             <div className="flex items-center justify-center h-full" style={{ fontSize: '14px' }}>
               <span 
                 style={{
-                  background: 'linear-gradient(90deg, #bbb 0%, #fff 50%, #bbb 100%)',
+                  background: 'linear-gradient(90deg, #888 0%, #fff 50%, #888 100%)',
                   backgroundSize: '200% 100%',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
