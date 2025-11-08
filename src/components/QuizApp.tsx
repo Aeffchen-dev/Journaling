@@ -876,20 +876,57 @@ export function QuizApp() {
       <div className="flex-1 flex flex-col px-4 mt-4 gap-3" style={{ minHeight: 0, overflow: 'visible' }}>
         <div className="flex-1 flex items-stretch justify-center min-h-0 relative" style={{ overflow: 'visible' }}>
           {loading ? (
-            <div className="flex items-center justify-center h-full" style={{ fontSize: '14px' }}>
-              <span 
+            <div className="flex items-center justify-center h-full">
+              <div
                 style={{
-                  background: 'linear-gradient(90deg, #888 0%, #fff 50%, #888 100%)',
-                  backgroundSize: '200% 100%',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                  animation: 'shimmer 2s infinite linear',
-                  fontWeight: 'normal'
+                  display: 'inline-block',
+                  width: '16.5px',
+                  height: '16.5px',
+                  backgroundColor: '#FFFF33',
+                  borderRadius: '50%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  transform: `rotate(${loadingSmileyRotating ? '360deg' : '0deg'})`,
+                  transition: 'transform 0.8s ease-in-out',
+                  paddingLeft: '2px',
+                  paddingRight: '2px'
                 }}
               >
-                Lade Fragen ...
-              </span>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '2.2px', 
+                  position: 'absolute', 
+                  top: '5px', 
+                  left: '50%', 
+                  transform: 'translateX(-50%)',
+                }}>
+                  <div style={{ 
+                    width: '2.2px', 
+                    height: '2.2px', 
+                    backgroundColor: 'black', 
+                    borderRadius: '50%'
+                  }}></div>
+                  <div style={{ 
+                    width: '2.2px', 
+                    height: '2.2px', 
+                    backgroundColor: 'black', 
+                    borderRadius: '50%'
+                  }}></div>
+                </div>
+                <div style={{ 
+                  width: '6.6px', 
+                  height: '2.75px', 
+                  border: '1px solid black', 
+                  borderTop: 'none',
+                  borderRadius: '0 0 6.6px 6.6px',
+                  position: 'absolute',
+                  top: '9.35px',
+                  left: '50%',
+                  transform: 'translateX(-50%)'
+                }}></div>
+              </div>
             </div>
           ) : hasSlides ? (
             <div className="relative w-full h-full flex items-center justify-center" style={{ overflow: 'visible' }}>
