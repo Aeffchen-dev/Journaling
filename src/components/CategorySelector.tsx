@@ -23,25 +23,16 @@ export function CategorySelector({
 }: CategorySelectorProps) {
   const [tempSelection, setTempSelection] = useState<string[]>(selectedCategories);
   const [justToggled, setJustToggled] = useState<Set<string>>(new Set());
-  const [showContent, setShowContent] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
 
   // Update temp selection when selectedCategories prop changes
   useEffect(() => {
     setTempSelection(selectedCategories);
   }, [selectedCategories]);
 
-  // Handle modal open animation sequence
+  // Handle modal open - no animation state needed
   useEffect(() => {
     if (open) {
       setJustToggled(new Set());
-      setShowContent(false);
-      setIsClosing(false);
-      // Start content fade after black fully fades in
-      const timer = setTimeout(() => {
-        setShowContent(true);
-      }, 200);
-      return () => clearTimeout(timer);
     }
   }, [open]);
 
@@ -133,14 +124,7 @@ export function CategorySelector({
   };
 
   const handleClose = () => {
-    setIsClosing(true);
-    setShowContent(false);
-    // Wait for content fade + black fade to complete
-    setTimeout(() => {
-      onCategoriesChange(tempSelection);
-      onOpenChange(false);
-      setIsClosing(false);
-    }, 400);
+    onOpenChange(false);
   };
 
   return (
@@ -174,36 +158,14 @@ export function CategorySelector({
         `}
       </style>
       <DialogPortal>
-        {/* Disable default overlay, use our custom black fade */}
+        {/* Fully transparent overlay - no animations */}
         <DialogOverlay className="bg-transparent pointer-events-none" />
-        <DialogContent className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none" style={{ height: '100svh', width: '100vw', backgroundColor: backgroundColor || '#000000', transition: 'background-color 0.3s ease-out' }}>
+        <DialogContent className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col data-[state=open]:animate-none data-[state=closed]:animate-none bg-transparent" style={{ height: '100svh', width: '100vw' }}>
         <DialogDescription className="sr-only">
           Wählen Sie die Kategorien aus, die Sie sehen möchten
         </DialogDescription>
         
-        {/* Black fade overlay */}
-        <div 
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: 'black',
-            zIndex: 50,
-            opacity: (!showContent && !isClosing) ? 1 : 0,
-            transition: (!showContent && !isClosing) 
-              ? 'opacity 200ms cubic-bezier(0.4, 0, 1, 1)' // Ease-out for fade in
-              : 'opacity 300ms cubic-bezier(0, 0, 0.2, 1)', // Ease-in for fade out
-            pointerEvents: 'none'
-          }}
-        />
-        
-        <div className="flex flex-col w-full h-full overflow-hidden" style={{ 
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.98)',
-          filter: showContent ? 'blur(0px)' : 'blur(4px)',
-          transition: showContent
-            ? 'opacity 400ms cubic-bezier(0.4, 0, 0.2, 1), transform 400ms cubic-bezier(0.4, 0, 0.2, 1), filter 400ms cubic-bezier(0.4, 0, 0.2, 1)' // Ease-out for reveal
-            : 'opacity 300ms cubic-bezier(0.4, 0, 1, 1), transform 300ms cubic-bezier(0.4, 0, 1, 1), filter 300ms cubic-bezier(0.4, 0, 1, 1)' // Ease-in for hide
-        }}>
+        <div className="flex flex-col w-full h-full overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-0 shrink-0">
             <DialogHeader>

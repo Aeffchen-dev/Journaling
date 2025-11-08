@@ -84,6 +84,7 @@ export function QuizApp() {
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
   const [typingIndex, setTypingIndex] = useState(0);
+  const [letterPhase, setLetterPhase] = useState<'vertical' | 'horizontal'>('vertical');
 
   useEffect(() => {
     fetchQuestions();
@@ -441,32 +442,45 @@ export function QuizApp() {
     }
   }, [currentIndex, isTransitioning, isDragging]);
 
-  // Typing animation for loading text - hand-written style
+  // Typing animation for loading text - hand-written style with stroke phases
   useEffect(() => {
     if (loading) {
-      const text = "Lade Fragen...";
+      const text = "Lade Fragen ...";
       let currentIndex = 0;
-      const delays = [120, 90, 110, 85, 95, 130, 100, 90, 115, 95, 105, 90, 100, 110]; // Varied delays for natural feel
+      let phase: 'vertical' | 'horizontal' = 'vertical';
+      const verticalDelay = 80;  // Time for vertical stroke
+      const horizontalDelay = 70; // Time for horizontal stroke
+      const betweenLetterDelay = 120; // Pause between letters
       
-      const typeNextLetter = () => {
-        if (currentIndex <= text.length) {
-          setTypingIndex(currentIndex);
-          const nextDelay = delays[currentIndex % delays.length];
-          currentIndex++;
-          
-          if (currentIndex <= text.length) {
-            setTimeout(typeNextLetter, nextDelay);
+      const typeNextPhase = () => {
+        if (currentIndex < text.length) {
+          if (phase === 'vertical') {
+            setTypingIndex(currentIndex);
+            setLetterPhase('vertical');
+            phase = 'horizontal';
+            setTimeout(typeNextPhase, verticalDelay);
           } else {
-            // Reset after complete + pause
-            setTimeout(() => {
-              currentIndex = 0;
-              typeNextLetter();
-            }, 800);
+            setLetterPhase('horizontal');
+            phase = 'vertical';
+            currentIndex++;
+            
+            if (currentIndex < text.length) {
+              // Add extra pause between letters for natural feel
+              const nextDelay = text[currentIndex] === ' ' ? 40 : betweenLetterDelay;
+              setTimeout(typeNextPhase, horizontalDelay + (Math.random() * 40 - 20)); // Add slight randomness
+            } else {
+              // Completed, reset after pause
+              setTimeout(() => {
+                currentIndex = 0;
+                phase = 'vertical';
+                typeNextPhase();
+              }, 1000);
+            }
           }
         }
       };
       
-      typeNextLetter();
+      typeNextPhase();
     }
   }, [loading]);
 
@@ -909,18 +923,30 @@ export function QuizApp() {
         <div className="flex-1 flex items-stretch justify-center min-h-0 relative" style={{ overflow: 'visible' }}>
           {loading ? (
             <div className="flex items-center justify-center h-full text-white" style={{ fontSize: '14px' }}>
-              {"Lade Fragen...".split('').map((char, index) => (
-                <span 
-                  key={index}
-                  style={{
-                    opacity: index < typingIndex ? 1 : 0,
-                    transform: index < typingIndex ? 'translateY(0)' : 'translateY(2px)',
-                    transition: 'opacity 0.1s ease-out, transform 0.15s ease-out'
-                  }}
-                >
-                  {char}
-                </span>
-              ))}
+              {"Lade Fragen ...".split('').map((char, index) => {
+                const isVisible = index < typingIndex;
+                const isCurrentLetter = index === typingIndex && letterPhase === 'vertical';
+                const isCompleted = index < typingIndex || (index === typingIndex && letterPhase === 'horizontal');
+                
+                return (
+                  <span 
+                    key={index}
+                    style={{
+                      display: 'inline-block',
+                      opacity: isVisible || isCurrentLetter ? 1 : 0,
+                      transform: isCurrentLetter 
+                        ? 'scaleX(0.3) scaleY(1)' 
+                        : isCompleted 
+                        ? 'scaleX(1) scaleY(1)' 
+                        : 'scaleX(0.3) scaleY(0.3)',
+                      transformOrigin: 'left center',
+                      transition: 'transform 0.08s ease-out, opacity 0.05s ease-out'
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
             </div>
           ) : hasSlides ? (
             <div className="relative w-full h-full flex items-center justify-center" style={{ overflow: 'visible' }}>
