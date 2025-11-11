@@ -656,6 +656,7 @@ export function QuizCard({
         <div ref={containerRef} className={`flex-1 flex flex-col w-full ${question.category.toLowerCase() === 'intro' ? 'items-center justify-start text-left' : 'items-start justify-start text-left'}`}>
           <h1 
             ref={textRef}
+            lang="de"
             className={`font-factora leading-[120%] w-full ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem] max-w-md' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem] max-w-full'}`}
             style={{ 
               fontWeight: 'bold',
@@ -665,6 +666,9 @@ export function QuizCard({
               fontSize: isEditing ? '14px' : undefined,
               transform: isEditing ? 'scale(0.95)' : 'scale(1)',
               transition: 'all 0.3s ease',
+              hyphens: 'auto',
+              wordBreak: 'normal',
+              overflowWrap: 'break-word',
               ...(isEditing && { color: 'black' })
             }}
           >
