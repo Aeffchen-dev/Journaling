@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Pencil, X } from 'lucide-react';
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
+import Hypher from 'hypher';
+import german from 'hyphenation.de';
 
 // Eye component with synchronized blinking and pupil movement
 function Eye({ 
@@ -240,6 +242,9 @@ export function QuizCard({
     const processText = () => {
       if (!containerRef.current) return;
 
+      // Initialize German hyphenator
+      const h = new Hypher(german);
+
       // Remove all line breaks and let text flow naturally
       console.log('Original question text:', JSON.stringify(question.question));
       const cleanedText = question.question.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -249,52 +254,31 @@ export function QuizCard({
       const textWithoutFirstChar = cleanedText.substring(1);
       const words = textWithoutFirstChar.split(' ');
       console.log('Words:', words.length, words);
-      const containerWidth = containerRef.current.getBoundingClientRect().width;
       
-      // Create temporary element to measure word width with exact same styles
-      const tempElement = document.createElement('span');
-      tempElement.style.cssText = `
-        position: absolute;
-        visibility: hidden;
-        white-space: nowrap;
-        font-size: 4.8rem;
-        font-family: FactorA, sans-serif;
-        font-weight: bold;
-        font-style: normal;
-        padding: 0;
-        margin: 0;
-        border: 0;
-      `;
-      
-      // Add to same container to inherit styles
-      containerRef.current.appendChild(tempElement);
-
-      const processedWords = words.map((word, wordIndex) => {
-        tempElement.textContent = word;
-        const wordWidth = tempElement.getBoundingClientRect().width;
+      // Apply German hyphenation with soft hyphens to each word
+      const hyphenatedWords = words.map((word, wordIndex) => {
+        // Don't hyphenate short words, abbreviations, numbers, or symbols
+        if (word.length < 6 || /^[A-Z]{2,}$/.test(word) || /\d/.test(word)) {
+          return (
+            <span key={wordIndex}>
+              {word}
+              {wordIndex < words.length - 1 && ' '}
+            </span>
+          );
+        }
         
-        // Only apply hyphenation if word is actually wider than available space
-        // Use full container width minus some padding buffer
-        const needsHyphenation = wordWidth > (containerWidth - 20);
+        // Use Hypher to add soft hyphens following German rules
+        const hyphenatedWord = h.hyphenate(word).join('\u00AD'); // \u00AD is soft hyphen
         
         return (
-          <span 
-            key={wordIndex}
-            style={{
-              hyphens: needsHyphenation ? 'auto' : 'none',
-              overflowWrap: needsHyphenation ? 'break-word' : 'normal',
-              wordBreak: 'normal'
-            }}
-            lang="de"
-          >
-            {word}
+          <span key={wordIndex}>
+            {hyphenatedWord}
             {wordIndex < words.length - 1 && ' '}
           </span>
         );
       });
 
-      containerRef.current.removeChild(tempElement);
-      setProcessedText([<span key="single-line">{processedWords}</span>]);
+      setProcessedText([<span key="single-line">{hyphenatedWords}</span>]);
     };
 
     const timeoutId = setTimeout(processText, 50);
@@ -666,11 +650,10 @@ export function QuizCard({
               fontSize: isEditing ? '14px' : undefined,
               transform: isEditing ? 'scale(0.95)' : 'scale(1)',
               transition: 'all 0.3s ease',
-              hyphens: 'auto',
-              WebkitHyphens: 'auto',
-              MozHyphens: 'auto',
-              msHyphens: 'auto',
-              hyphenateLimitChars: '6 3 3',
+              hyphens: 'manual',
+              WebkitHyphens: 'manual',
+              MozHyphens: 'manual',
+              msHyphens: 'manual',
               wordBreak: 'normal',
               overflowWrap: 'break-word',
               ...(isEditing && { color: 'black' })
