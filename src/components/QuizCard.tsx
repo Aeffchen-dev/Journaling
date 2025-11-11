@@ -245,45 +245,53 @@ export function QuizCard({
       // Initialize German hyphenator
       const h = new Hypher(german);
 
-      // Remove all line breaks and let text flow naturally
-      console.log('Original question text:', JSON.stringify(question.question));
+      // Clean source text
       const cleanedText = question.question.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-      console.log('Cleaned text:', JSON.stringify(cleanedText));
-      
-      // Remove first character since we render it separately with special styling
       const textWithoutFirstChar = cleanedText.substring(1);
       const words = textWithoutFirstChar.split(' ');
-      console.log('Words:', words.length, words);
-      
-      // Apply German hyphenation with soft hyphens to each word
-      const hyphenatedWords = words.map((word, wordIndex) => {
-        // Don't hyphenate short words, abbreviations, numbers, or symbols
-        if (word.length < 6 || /^[A-Z]{2,}$/.test(word) || /\d/.test(word)) {
-          return (
-            <span key={wordIndex}>
-              {word}
-              {wordIndex < words.length - 1 && ' '}
-            </span>
-          );
+
+      // Measure container and create measuring span that mirrors the H1 styles
+      const containerWidth = containerRef.current.getBoundingClientRect().width;
+      const measureSpan = document.createElement('span');
+      const computed = textRef.current ? window.getComputedStyle(textRef.current) : undefined;
+      measureSpan.style.position = 'absolute';
+      measureSpan.style.visibility = 'hidden';
+      measureSpan.style.whiteSpace = 'nowrap';
+      measureSpan.style.fontFamily = computed?.fontFamily || 'FactorA, sans-serif';
+      measureSpan.style.fontWeight = computed?.fontWeight || '700';
+      measureSpan.style.fontSize = computed?.fontSize || '48px';
+      measureSpan.style.letterSpacing = computed?.letterSpacing || '0px';
+      containerRef.current.appendChild(measureSpan);
+
+      const buffer = 16; // padding allowance
+      const processed = words.map((word, i) => {
+        // Never hyphenate abbreviations, numbers, or very short words
+        const isAbbrev = /^[A-ZÄÖÜ]{2,}$/.test(word);
+        const hasNumberOrSymbol = /[0-9§$%&/()+#*]/.test(word);
+        if (word.length < 6 || isAbbrev || hasNumberOrSymbol) {
+          return (<span key={i}>{word}{i < words.length - 1 && ' '}</span>);
         }
-        
-        // Use Hypher to add soft hyphens following German rules
-        const hyphenatedWord = h.hyphenate(word).join('\u00AD'); // \u00AD is soft hyphen
-        
-        return (
-          <span key={wordIndex}>
-            {hyphenatedWord}
-            {wordIndex < words.length - 1 && ' '}
-          </span>
-        );
+
+        // Measure word width
+        measureSpan.textContent = word;
+        const wordWidth = measureSpan.getBoundingClientRect().width;
+        const needsHyphenation = wordWidth > (containerWidth - buffer);
+
+        if (!needsHyphenation) {
+          return (<span key={i}>{word}{i < words.length - 1 && ' '}</span>);
+        }
+
+        // Insert soft hyphens at valid German syllable boundaries
+        const hyphenated = h.hyphenate(word).join('\u00AD');
+        return (<span key={i}>{hyphenated}{i < words.length - 1 && ' '}</span>);
       });
 
-      setProcessedText([<span key="single-line">{hyphenatedWords}</span>]);
+      containerRef.current.removeChild(measureSpan);
+      setProcessedText([<span key="single-line">{processed}</span>]);
     };
 
     const timeoutId = setTimeout(processText, 50);
     window.addEventListener('resize', processText);
-    
     return () => {
       clearTimeout(timeoutId);
       window.removeEventListener('resize', processText);
@@ -655,7 +663,7 @@ export function QuizCard({
               MozHyphens: 'manual',
               msHyphens: 'manual',
               wordBreak: 'normal',
-              overflowWrap: 'break-word',
+              overflowWrap: 'normal',
               ...(isEditing && { color: 'black' })
             }}
           >
