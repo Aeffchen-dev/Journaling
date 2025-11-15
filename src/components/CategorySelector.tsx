@@ -110,16 +110,23 @@ export function CategorySelector({
   };
 
   const handleCategoryToggle = (category: string) => {
-    setTempSelection(prev => 
-      prev.includes(category) 
+    setTempSelection(prev => {
+      // Prevent deselecting the last category
+      if (prev.includes(category) && prev.length === 1) {
+        return prev;
+      }
+      return prev.includes(category) 
         ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
+        : [...prev, category];
+    });
     setJustToggled(prev => new Set(prev).add(category));
   };
 
   const handleApply = () => {
-    onCategoriesChange(tempSelection);
+    // Ensure at least one category is selected
+    if (tempSelection.length > 0) {
+      onCategoriesChange(tempSelection);
+    }
     onOpenChange(false);
   };
 
