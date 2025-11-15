@@ -112,12 +112,17 @@ export function CategorySelector({
   const handleCategoryToggle = (category: string) => {
     setTempSelection(prev => {
       // Prevent deselecting the last category
+      let next: string[];
       if (prev.includes(category) && prev.length === 1) {
-        return prev;
+        next = prev;
+      } else {
+        next = prev.includes(category)
+          ? prev.filter(c => c !== category)
+          : [...prev, category];
       }
-      return prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category];
+      // Apply immediately so QuizApp updates slides in real-time
+      onCategoriesChange(next);
+      return next;
     });
     setJustToggled(prev => new Set(prev).add(category));
   };
@@ -247,16 +252,11 @@ export function CategorySelector({
                    }}>
                      {category}
                    </span>
-                   <div onClick={(e) => e.stopPropagation()}>
-                     <div
-                       className="relative cursor-pointer opacity-100 z-10"
-                       onClick={() => {
-                         const newCategories = isSelected 
-                           ? tempSelection.filter(c => c !== category)
-                           : [...tempSelection, category];
-                         setTempSelection(newCategories);
-                       }}
-                     >
+                    <div onClick={(e) => { e.stopPropagation(); handleCategoryToggle(category); }}>
+                      <div
+                        className="relative cursor-pointer opacity-100 z-10"
+                        onClick={() => handleCategoryToggle(category)}
+                      >
                         <div
                           className={`flex items-center justify-center rounded-full`}
                           style={{ 
