@@ -671,7 +671,7 @@ export function QuizCard({
               {question.question.charAt(0)}
             </span>
             <span>
-              {processedText.length > 0 ? <>{processedText}?</> : `${question.question.substring(1)}?`}
+              {processedText.length > 0 ? <>{processedText}</> : question.question.substring(1)}
             </span>
           </h1>
           
