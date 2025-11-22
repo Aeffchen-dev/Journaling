@@ -727,8 +727,7 @@ export function QuizApp() {
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', bgColor);
     }
-    // Apply smooth transition only to body element
-    document.body.style.transition = 'background-color 0.3s ease-out';
+    // Update body background without transition (it's covered by the container)
     document.body.style.backgroundColor = bgColor;
   }, [currentIndex, slides]);
 
@@ -740,9 +739,8 @@ export function QuizApp() {
       if (metaThemeColor && bgColor) {
         metaThemeColor.setAttribute('content', bgColor);
       }
-      // Update body background while dragging (no transition)
+      // Update body background while dragging (no transition needed, covered by container)
       if (bgColor) {
-        document.body.style.transition = 'none';
         document.body.style.backgroundColor = bgColor;
       }
     };
@@ -765,7 +763,9 @@ export function QuizApp() {
         position: 'fixed',
         width: '100%',
         top: 0,
-        left: 0
+        left: 0,
+        backgroundColor: getInterpolatedBgColor(),
+        transition: isDragging || isTransitioning ? 'none' : 'background-color 0.3s ease-out'
       }}
     >
       {/* App Header with controls - Always visible */}
