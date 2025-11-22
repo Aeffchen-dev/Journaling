@@ -727,9 +727,11 @@ export function QuizApp() {
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', bgColor);
     }
-    // Apply smooth transition to body element
+    // Also update document background to color the areas behind Safari's UI with smooth transition
     document.body.style.transition = 'background-color 0.3s ease-out';
+    document.documentElement.style.transition = 'background-color 0.3s ease-out';
     document.body.style.backgroundColor = bgColor;
+    document.documentElement.style.backgroundColor = bgColor;
   }, [currentIndex, slides]);
 
   // Update theme-color during drag and transition for smooth status bar color changes
@@ -740,10 +742,12 @@ export function QuizApp() {
       if (metaThemeColor && bgColor) {
         metaThemeColor.setAttribute('content', bgColor);
       }
-      // Update body background while dragging
+      // Keep body and html backgrounds in sync while dragging
       if (bgColor) {
         document.body.style.transition = 'none';
+        document.documentElement.style.transition = 'none';
         document.body.style.backgroundColor = bgColor;
+        document.documentElement.style.backgroundColor = bgColor;
       }
     };
 
