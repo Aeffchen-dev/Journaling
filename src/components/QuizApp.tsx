@@ -729,7 +729,6 @@ export function QuizApp() {
     }
     // Also update document background to color the areas behind Safari's UI with smooth transition
     document.body.style.transition = 'background-color 0.3s ease-out';
-    document.documentElement.style.transition = 'background-color 0.3s ease-out';
     document.body.style.backgroundColor = bgColor;
     document.documentElement.style.backgroundColor = bgColor;
   }, [currentIndex, slides]);
@@ -745,7 +744,6 @@ export function QuizApp() {
       // Keep body and html backgrounds in sync while dragging
       if (bgColor) {
         document.body.style.transition = 'none';
-        document.documentElement.style.transition = 'none';
         document.body.style.backgroundColor = bgColor;
         document.documentElement.style.backgroundColor = bgColor;
       }
