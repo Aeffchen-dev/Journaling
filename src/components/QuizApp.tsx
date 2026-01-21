@@ -722,38 +722,59 @@ export function QuizApp() {
     const colors = getCurrentColors();
     const bgColor = slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     
-    // Update all theme-color meta tags (including media query variants for iOS)
-    const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-    metaThemeColors.forEach((meta) => {
-      meta.setAttribute('content', bgColor);
-    });
-    // Also update body background to color the areas behind Safari's UI with smooth transition
+    // Update body background first - iOS Safari inherits chrome color from this
     document.body.style.transition = 'background-color 0.3s ease-out';
     document.body.style.backgroundColor = bgColor;
+    
+    // Force iOS Safari to repaint browser chrome by nudging theme-color
+    const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+    metaThemeColors.forEach((meta) => {
+      // Nudge with slightly different color to force repaint
+      meta.setAttribute('content', bgColor + 'fe');
+    });
+    
+    // Then set actual color in next frame
+    requestAnimationFrame(() => {
+      metaThemeColors.forEach((meta) => {
+        meta.setAttribute('content', bgColor);
+      });
+    });
   }, [currentIndex, slides]);
 
   // Update theme-color during drag and transition for smooth status bar color changes
   useEffect(() => {
+    let frameId: number;
+    
     const updateThemeColor = () => {
       const bgColor = getInterpolatedBgColor();
-      // Update all theme-color meta tags
+      if (!bgColor) return;
+      
+      // Update body background - this is what iOS Safari chrome follows
+      document.body.style.transition = 'none';
+      document.body.style.backgroundColor = bgColor;
+      
+      // Force browser chrome repaint by nudging theme-color
       const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-      if (bgColor) {
+      metaThemeColors.forEach((meta) => {
+        meta.setAttribute('content', bgColor + 'fe');
+      });
+      
+      requestAnimationFrame(() => {
         metaThemeColors.forEach((meta) => {
           meta.setAttribute('content', bgColor);
         });
-      }
-      // Keep body background in sync while dragging
-      if (bgColor) {
-        document.body.style.transition = 'none';
-        document.body.style.backgroundColor = bgColor;
+      });
+      
+      if (isDragging || isTransitioning) {
+        frameId = requestAnimationFrame(updateThemeColor);
       }
     };
 
     if (isDragging || isTransitioning) {
       updateThemeColor();
-      const interval = setInterval(updateThemeColor, 16); // 60fps updates
-      return () => clearInterval(interval);
+      return () => {
+        if (frameId) cancelAnimationFrame(frameId);
+      };
     }
   }, [isDragging, isTransitioning, dragOffset, transitionDirection]);
 
