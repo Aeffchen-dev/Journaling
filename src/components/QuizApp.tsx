@@ -785,28 +785,33 @@ export function QuizApp() {
   const currentColors = getCurrentColors();
 
   return (
-    <div 
-      className="overflow-hidden flex flex-col" 
-      style={{ 
-        minHeight: '100svh',
-        height: '100%',
-        overflowY: 'hidden',
-        position: 'fixed',
-        width: '100%',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        backgroundColor: getInterpolatedBgColor() || '#000000',
-        // Extend into safe areas (behind status bar and floating browser bar)
-        paddingTop: 'env(safe-area-inset-top, 0)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0)',
-        paddingLeft: 'env(safe-area-inset-left, 0)',
-        paddingRight: 'env(safe-area-inset-right, 0)'
-      }}
-    >
-      {/* App Header with controls - Always visible */}
-      <div className="mt-4 flex items-baseline justify-between w-full px-4">
+    <>
+      {/* Background layer that extends into safe areas for iOS Safari */}
+      <div 
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: getInterpolatedBgColor() || '#000000',
+          zIndex: -1
+        }}
+        aria-hidden="true"
+      />
+      <div 
+        className="overflow-hidden flex flex-col" 
+        style={{ 
+          minHeight: '100svh',
+          height: '100svh',
+          overflowY: 'hidden',
+          width: '100%',
+          backgroundColor: 'transparent',
+          paddingTop: 'env(safe-area-inset-top, 0)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0)',
+          paddingLeft: 'env(safe-area-inset-left, 0)',
+          paddingRight: 'env(safe-area-inset-right, 0)'
+        }}
+      >
+        {/* App Header with controls - Always visible */}
+        <div className="mt-4 flex items-baseline justify-between w-full px-4">
         <div 
           className="cursor-pointer font-factora" 
           style={{ 
@@ -1036,6 +1041,7 @@ export function QuizApp() {
         onCategoriesChange={handleCategoriesChange}
         backgroundColor={getInterpolatedBgColor()}
       />
-    </div>
+      </div>
+    </>
   );
 }
