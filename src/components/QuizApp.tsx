@@ -722,11 +722,11 @@ export function QuizApp() {
     const colors = getCurrentColors();
     const bgColor = slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     
-    // Update theme-color meta tag
-    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', bgColor);
-    }
+    // Update all theme-color meta tags (including media query variants for iOS)
+    const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+    metaThemeColors.forEach((meta) => {
+      meta.setAttribute('content', bgColor);
+    });
     // Also update body background to color the areas behind Safari's UI with smooth transition
     document.body.style.transition = 'background-color 0.3s ease-out';
     document.body.style.backgroundColor = bgColor;
@@ -736,9 +736,12 @@ export function QuizApp() {
   useEffect(() => {
     const updateThemeColor = () => {
       const bgColor = getInterpolatedBgColor();
-      let metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor && bgColor) {
-        metaThemeColor.setAttribute('content', bgColor);
+      // Update all theme-color meta tags
+      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+      if (bgColor) {
+        metaThemeColors.forEach((meta) => {
+          meta.setAttribute('content', bgColor);
+        });
       }
       // Keep body background in sync while dragging
       if (bgColor) {
