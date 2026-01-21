@@ -789,9 +789,40 @@ export function QuizApp() {
         position: 'fixed',
         width: '100%',
         top: 0,
-        left: 0
+        left: 0,
+        backgroundColor: getInterpolatedBgColor() || '#000000'
       }}
     >
+      {/* iOS Safari Liquid Glass status bar color fix - sticky veil at top */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 'env(safe-area-inset-top, 50px)',
+          backgroundColor: getInterpolatedBgColor() || '#000000',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          WebkitBackdropFilter: 'blur(1px)',
+          backdropFilter: 'blur(1px)'
+        }}
+      />
+      {/* iOS Safari Liquid Glass floating bar color fix - sticky veil at bottom */}
+      <div 
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 'env(safe-area-inset-bottom, 50px)',
+          backgroundColor: getInterpolatedBgColor() || '#000000',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          WebkitBackdropFilter: 'blur(1px)',
+          backdropFilter: 'blur(1px)'
+        }}
+      />
       {/* App Header with controls - Always visible */}
       <div className="mt-4 flex items-baseline justify-between w-full px-4" style={{ paddingTop: 'env(safe-area-inset-top, 0)' }}>
         <div 
