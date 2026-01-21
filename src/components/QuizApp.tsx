@@ -967,14 +967,11 @@ export function QuizApp() {
                     style={{
                       transform,
                       zIndex,
-                      filter: showHintAnimation && index === 0 
-                        ? 'drop-shadow(0 0 20px hsl(280 100% 70% / 0.6))' 
-                        : 'none',
                       transition: isDragging 
                         ? 'none' 
                         : showHintAnimation && (index === 0 || index === 1)
-                        ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease-out' // Faster bouncy ease for hint
-                        : 'transform 0.3s ease-in-out, filter 0.2s ease-out'
+                        ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)' // Faster bouncy ease for hint
+                        : 'transform 0.3s ease-in-out'
                     }}
                   >
                     <QuizCard
