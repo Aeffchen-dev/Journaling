@@ -722,7 +722,9 @@ export function QuizApp() {
     const colors = getCurrentColors();
     const bgColor = slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     
-    // Update body background first - iOS Safari inherits chrome color from this
+    // Update both html and body background - iOS Safari inherits chrome color from these
+    document.documentElement.style.transition = 'background-color 0.3s ease-out';
+    document.documentElement.style.backgroundColor = bgColor;
     document.body.style.transition = 'background-color 0.3s ease-out';
     document.body.style.backgroundColor = bgColor;
     
@@ -749,7 +751,9 @@ export function QuizApp() {
       const bgColor = getInterpolatedBgColor();
       if (!bgColor) return;
       
-      // Update body background - this is what iOS Safari chrome follows
+      // Update both html and body background - this is what iOS Safari chrome follows
+      document.documentElement.style.transition = 'none';
+      document.documentElement.style.backgroundColor = bgColor;
       document.body.style.transition = 'none';
       document.body.style.backgroundColor = bgColor;
       
