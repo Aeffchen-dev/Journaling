@@ -331,22 +331,36 @@ export function QuizCard({
   // Get category-specific colors using specific category mapping
   const getCategoryColors = (categoryIndex: number) => {
     // Use specific color mapping for each category based on the actual category name
-    // Category to color index mapping - must match CategorySelector.tsx exactly
-    const categoryColorMapping: { [key: string]: number } = {
-      'Körperliche Intimität': 1,
-      'Emotionale Intimität': 2,
-      'Kreative Intimität': 3,
-      'Geistige Intimität': 4,
-      'Alltagsintimität': 5,
-      'Spielerische Intimität': 6,
-      'Spirituelle Intimität': 7,
-      'Gemeinsame Abenteuer': 8,
-      'Vision': 9,
-      'Grenzen': 10,
-      'Reflexion': 11,
-    };
-    
-    const colorIndex = categoryColorMapping[question.category] ?? ((categoryIndex % 11) + 1);
+    // Use specific color mapping for each category based on the actual category name
+    let colorIndex;
+    switch(question.category) {
+      case 'Körperliche Intimität':
+        colorIndex = 1;
+        break;
+      case 'Emotionale Intimität':
+        colorIndex = 2;
+        break;
+      case 'Geistige Intimität':
+        colorIndex = 4;
+        break;
+      case 'Kreative Intimität':
+        colorIndex = 3;
+        break;
+      case 'Spielerische Intimität':
+        colorIndex = 6;
+        break;
+      case 'Spirituelle Intimität':
+        colorIndex = 7;
+        break;
+      case 'Alltagsintimität':
+        colorIndex = 5;
+        break;
+      case 'Gemeinsame Abenteuer':
+        colorIndex = 8;
+        break;
+      default:
+        colorIndex = (categoryIndex % 11) + 1;
+    }
     
     // Card color (first hex) for card bg, logo, header text, pill text
     // Page bg color (second hex) for page background

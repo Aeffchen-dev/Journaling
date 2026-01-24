@@ -43,16 +43,12 @@ export function CategorySelector({
     const categoryColorMapping: { [key: string]: number } = {
       'Körperliche Intimität': 1,
       'Emotionale Intimität': 2,
-      'Kreative Intimität': 3,
       'Geistige Intimität': 4,
-      'Alltagsintimität': 5,
+      'Kreative Intimität': 3,
       'Spielerische Intimität': 6,
       'Spirituelle Intimität': 7,
+      'Alltagsintimität': 5,
       'Gemeinsame Abenteuer': 8,
-      'Vision': 9,
-      'Grenzen': 10,
-      'Reflexion': 11,
-      // Additional categories use modulo fallback
     };
     
     colorIndex = categoryColorMapping[category] ?? ((index % 11) + 1);
