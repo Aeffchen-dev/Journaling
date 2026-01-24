@@ -796,7 +796,7 @@ export function QuizApp() {
         style={{
           position: 'fixed',
           inset: 0,
-          backgroundColor: getInterpolatedBgColor() || '#000000',
+          backgroundColor: categorySelectorOpen ? '#000000' : (getInterpolatedBgColor() || '#000000'),
           zIndex: -1
         }}
         aria-hidden="true"
