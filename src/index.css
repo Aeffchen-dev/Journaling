@@ -225,7 +225,8 @@ All colors MUST be HSL.
     min-height: 100vh;
     min-height: 100svh;
     width: 100%;
-    /* Removed position: fixed to allow iOS Safari to extend background into safe areas */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
