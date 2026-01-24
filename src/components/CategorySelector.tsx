@@ -179,7 +179,7 @@ export function CategorySelector({
         
         <div className="flex flex-col w-full h-full overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 pt-4 pb-0 shrink-0">
+          <div className="flex items-center justify-between px-4 pb-0 shrink-0" style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
             <DialogHeader>
                <DialogTitle className="text-white font-factora font-normal" style={{ fontSize: '18px' }}>
                  <span style={{ fontFeatureSettings: '"salt" 1, "ss01" 1, "ss02" 1' }}>K</span>ategorien wählen
