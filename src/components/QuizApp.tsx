@@ -719,8 +719,10 @@ export function QuizApp() {
 
   // Update theme-color meta tag for iOS Safari status bar
   useEffect(() => {
-    const colors = getCurrentColors();
-    const bgColor = slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+    // When category menu is open, always use black
+    const bgColor = categorySelectorOpen 
+      ? '#000000' 
+      : (slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? getCurrentColors().pageBg : '#000000');
     
     // Update both html and body background - iOS Safari inherits chrome color from these
     document.documentElement.style.transition = 'background-color 0.3s ease-out';
@@ -741,10 +743,13 @@ export function QuizApp() {
         meta.setAttribute('content', bgColor);
       });
     });
-  }, [currentIndex, slides]);
+  }, [currentIndex, slides, categorySelectorOpen]);
 
   // Update theme-color during drag and transition for smooth status bar color changes
   useEffect(() => {
+    // Skip drag/transition color updates when category menu is open
+    if (categorySelectorOpen) return;
+    
     let frameId: number;
     
     const updateThemeColor = () => {
