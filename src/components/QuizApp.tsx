@@ -288,31 +288,40 @@ export function QuizApp() {
         categories.forEach((category) => {
           switch(category) {
             case 'Körperliche Intimität':
-              colorMap[category] = 0; // Now cyan (category1)
+              colorMap[category] = 0; // category1
               break;
             case 'Emotionale Intimität':
-              colorMap[category] = 1; // Red (category2)
+              colorMap[category] = 1; // category2
               break;
             case 'Geistige Intimität':
-              colorMap[category] = 2; // Now blue (category3)
+              colorMap[category] = 2; // category3
               break;
             case 'Kreative Intimität':
-              colorMap[category] = 3; // Pink (category4)
+              colorMap[category] = 3; // category4
               break;
             case 'Spielerische Intimität':
-              colorMap[category] = 4; // Yellow (category5)
+              colorMap[category] = 4; // category5
               break;
             case 'Spirituelle Intimität':
-              colorMap[category] = 5; // Mint green (category6)
+              colorMap[category] = 5; // category6
               break;
             case 'Alltagsintimität':
-              colorMap[category] = 5; // Mint green (category6)
+              colorMap[category] = 5; // category6
               break;
             case 'Gemeinsame Abenteuer':
-              colorMap[category] = 6; // Orange (category7)
+              colorMap[category] = 6; // category7
+              break;
+            case 'Vision':
+              colorMap[category] = 7; // category8
+              break;
+            case 'Grenzen':
+              colorMap[category] = 8; // category9
+              break;
+            case 'Reflexion':
+              colorMap[category] = 9; // category10
               break;
             default:
-              colorMap[category] = categories.indexOf(category) % 7;
+              colorMap[category] = categories.indexOf(category) % 11;
           }
         });
         setCategoryColorMap(colorMap);

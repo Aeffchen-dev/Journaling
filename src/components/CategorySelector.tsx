@@ -39,16 +39,19 @@ export function CategorySelector({
   const getCategoryColors = (category: string, index: number) => {
     // Use specific color mapping for each category - same as QuizCard
     let colorIndex;
-    // Category to color index mapping - must match QuizCard.tsx exactly
+    // Category to color index mapping - must match QuizApp.tsx (add 1 to 0-based values)
     const categoryColorMapping: { [key: string]: number } = {
       'Körperliche Intimität': 1,
       'Emotionale Intimität': 2,
-      'Geistige Intimität': 4,
-      'Kreative Intimität': 3,
-      'Spielerische Intimität': 6,
-      'Spirituelle Intimität': 7,
-      'Alltagsintimität': 5,
-      'Gemeinsame Abenteuer': 8,
+      'Geistige Intimität': 3,
+      'Kreative Intimität': 4,
+      'Spielerische Intimität': 5,
+      'Spirituelle Intimität': 6,
+      'Alltagsintimität': 6,
+      'Gemeinsame Abenteuer': 7,
+      'Vision': 8,
+      'Grenzen': 9,
+      'Reflexion': 10,
     };
     
     colorIndex = categoryColorMapping[category] ?? ((index % 11) + 1);
