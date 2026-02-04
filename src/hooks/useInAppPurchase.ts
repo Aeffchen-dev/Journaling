@@ -15,11 +15,31 @@ interface NativelyPurchasesResponse {
   error?: string;
 }
 
+interface NativelyPackage {
+  identifier: string;
+  priceString: string;
+  price: number;
+  currencyCode: string;
+  localizedTitle?: string;
+  localizedDescription?: string;
+}
+
+interface NativelyOfferingsResponse {
+  status: 'SUCCESS' | 'ERROR';
+  offerings?: {
+    current?: {
+      availablePackages?: NativelyPackage[];
+    };
+  };
+  error?: string;
+}
+
 declare global {
   interface Window {
     NativelyPurchases?: new () => {
       purchasePackage: (packageId: string, callback: (resp: NativelyPurchasesResponse) => void) => void;
       restorePurchases: (callback: (resp: NativelyPurchasesResponse & { entitlements?: string[] }) => void) => void;
+      getOfferings: (callback: (resp: NativelyOfferingsResponse) => void) => void;
     };
   }
 }
@@ -29,7 +49,31 @@ export function useInAppPurchase(productId: string) {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [priceString, setPriceString] = useState<string | null>(null);
+  const [isLoadingPrice, setIsLoadingPrice] = useState(true);
   const [sessionBonusApplied, setSessionBonusApplied] = useState(false);
+
+  // Fetch price from store
+  useEffect(() => {
+    if (!window.NativelyPurchases) {
+      // Web mode - no real price available
+      setIsLoadingPrice(false);
+      return;
+    }
+
+    const purchases = new window.NativelyPurchases();
+    purchases.getOfferings((resp) => {
+      setIsLoadingPrice(false);
+      if (resp.status === 'SUCCESS' && resp.offerings?.current?.availablePackages) {
+        const pkg = resp.offerings.current.availablePackages.find(
+          p => p.identifier === productId
+        );
+        if (pkg) {
+          setPriceString(pkg.priceString);
+        }
+      }
+    });
+  }, [productId]);
 
   // Initialize state from localStorage
   useEffect(() => {
@@ -160,6 +204,8 @@ export function useInAppPurchase(productId: string) {
     showPaywall,
     isPurchasing,
     remainingFreeQuestions,
+    priceString,
+    isLoadingPrice,
     incrementQuestionCount,
     canViewQuestion,
     purchaseFullApp,
