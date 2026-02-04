@@ -7,10 +7,12 @@ interface RevenueCatPaywallProps {
   isOpen: boolean;
   isPurchasing: boolean;
   isLoading: boolean;
+  isRestoring: boolean;
   priceString: string | null;
   currentPackage: Package | null;
   managementUrl: string | null;
   onPurchase: () => Promise<boolean>;
+  onRestore: () => Promise<boolean>;
   onDismiss: () => void;
   presentHostedPaywall?: (target: HTMLElement) => Promise<void>;
 }
@@ -19,10 +21,12 @@ export function RevenueCatPaywall({
   isOpen, 
   isPurchasing,
   isLoading,
+  isRestoring,
   priceString,
   currentPackage,
   managementUrl,
-  onPurchase, 
+  onPurchase,
+  onRestore,
   onDismiss,
   presentHostedPaywall,
 }: RevenueCatPaywallProps) {
@@ -48,6 +52,13 @@ export function RevenueCatPaywall({
     }
   };
 
+  const handleRestore = async () => {
+    const success = await onRestore();
+    if (success) {
+      onDismiss();
+    }
+  };
+
   const buttonText = isPurchasing 
     ? 'Wird verarbeitet...' 
     : isLoading 
@@ -56,19 +67,21 @@ export function RevenueCatPaywall({
         ? `Vollversion für ${priceString}` 
         : 'Vollversion kaufen';
 
+  const isDisabled = isPurchasing || isLoading || isRestoring || !currentPackage;
+
   // If using hosted paywall, render the container
   if (useHostedPaywall && !hostedPaywallError) {
     return (
       <Dialog open={isOpen} onOpenChange={(open) => !open && onDismiss()}>
         <DialogPortal>
-          <DialogOverlay className="bg-black/90" />
+          <DialogOverlay className="bg-background/95" />
           <DialogContent 
-            className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden bg-black"
+            className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden bg-background"
             style={{ 
               height: '90vh', 
               width: '95vw',
               maxWidth: '500px',
-              borderRadius: '24px',
+              borderRadius: '2rem',
             }}
           >
             <DialogDescription className="sr-only">
@@ -81,18 +94,18 @@ export function RevenueCatPaywall({
     );
   }
 
-  // Custom paywall UI
+  // Custom paywall UI with app branding
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onDismiss()}>
       <DialogPortal>
-        <DialogOverlay className="bg-black/90" />
+        <DialogOverlay className="bg-background/95" />
         <DialogContent 
-          className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center bg-black max-w-md"
+          className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center bg-background max-w-md"
           style={{ 
             height: 'auto', 
             width: '90vw',
             maxWidth: '400px',
-            borderRadius: '24px',
+            borderRadius: '2rem',
           }}
         >
           <DialogDescription className="sr-only">
@@ -100,33 +113,28 @@ export function RevenueCatPaywall({
           </DialogDescription>
           
           <div className="p-8 flex flex-col items-center text-center gap-6">
-            {/* Icon/Logo */}
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
-              <span className="text-4xl">💝</span>
-            </div>
-
-            {/* Title */}
+            {/* Title with app font */}
             <h2 
-              className="text-2xl text-white"
+              className="text-3xl text-foreground"
               style={{ fontFamily: 'Factor A Bold Italic, sans-serif' }}
             >
               Dir gefällt's?
             </h2>
 
             {/* Description */}
-            <p className="text-white/80 text-base leading-relaxed">
+            <p className="text-muted-foreground text-base leading-relaxed">
               Du hast deine kostenlosen Fragen aufgebraucht. 
               Schalte alle Fragen frei und entdecke noch mehr Intimität!
             </p>
 
-            {/* Product info */}
+            {/* Product info card */}
             {currentPackage && (
-              <div className="bg-white/10 rounded-2xl p-4 w-full">
+              <div className="bg-secondary rounded-2xl p-4 w-full">
                 <div className="flex justify-between items-center">
-                  <span className="text-white font-medium">Lifetime Zugang</span>
-                  <span className="text-white font-bold">{priceString || '...'}</span>
+                  <span className="text-foreground font-medium">Lifetime Zugang</span>
+                  <span className="text-foreground font-bold">{priceString || '...'}</span>
                 </div>
-                <p className="text-white/60 text-sm mt-1 text-left">
+                <p className="text-muted-foreground text-sm mt-1 text-left">
                   Einmalzahlung • Für immer freigeschaltet
                 </p>
               </div>
@@ -135,11 +143,20 @@ export function RevenueCatPaywall({
             {/* Purchase Button */}
             <Button
               onClick={handlePurchase}
-              disabled={isPurchasing || isLoading || !currentPackage}
-              className="w-full py-6 text-lg font-bold rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
+              disabled={isDisabled}
+              className="w-full py-6 text-lg font-bold rounded-full bg-primary hover:bg-primary/90 text-primary-foreground border-0"
             >
               {buttonText}
             </Button>
+
+            {/* Restore Purchases */}
+            <button
+              onClick={handleRestore}
+              disabled={isDisabled}
+              className="text-muted-foreground hover:text-foreground text-sm underline transition-colors disabled:opacity-50"
+            >
+              {isRestoring ? 'Wird wiederhergestellt...' : 'Kauf wiederherstellen'}
+            </button>
 
             {/* Management link (for existing subscribers) */}
             {managementUrl && (
@@ -147,20 +164,11 @@ export function RevenueCatPaywall({
                 href={managementUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/60 hover:text-white/80 text-sm underline transition-colors"
+                className="text-muted-foreground hover:text-foreground text-sm underline transition-colors"
               >
                 Abonnement verwalten
               </a>
             )}
-
-            {/* Dismiss */}
-            <button
-              onClick={onDismiss}
-              disabled={isPurchasing}
-              className="text-white/40 hover:text-white/60 text-xs transition-colors mt-2"
-            >
-              Später
-            </button>
           </div>
         </DialogContent>
       </DialogPortal>

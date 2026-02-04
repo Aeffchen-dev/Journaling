@@ -38,6 +38,7 @@ interface UseRevenueCatReturn {
   // Actions
   checkEntitlement: () => Promise<boolean>;
   purchase: () => Promise<boolean>;
+  restorePurchases: () => Promise<boolean>;
   presentPaywall: (targetElement: HTMLElement) => Promise<void>;
   dismissPaywall: () => void;
   setShowPaywall: (show: boolean) => void;
@@ -264,6 +265,29 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     return customerInfo?.managementURL || null;
   }, [customerInfo]);
 
+  // Restore purchases (on web, this is just refreshing customer info)
+  const restorePurchases = useCallback(async (): Promise<boolean> => {
+    if (!isRevenueCatInitialized()) return false;
+
+    try {
+      const purchases = getPurchases();
+      const info = await purchases.getCustomerInfo();
+      setCustomerInfo(info);
+      
+      const hasEntitlement = ENTITLEMENT_ID in (info.entitlements.active || {});
+      setIsEntitled(hasEntitlement);
+      
+      if (hasEntitlement) {
+        setShowPaywall(false);
+      }
+      
+      return hasEntitlement;
+    } catch (err) {
+      console.error('Failed to restore purchases:', err);
+      return false;
+    }
+  }, []);
+
   return {
     // State
     isInitialized,
@@ -286,6 +310,7 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     // Actions
     checkEntitlement,
     purchase,
+    restorePurchases,
     presentPaywall,
     dismissPaywall,
     setShowPaywall,

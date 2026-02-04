@@ -99,11 +99,21 @@ export function QuizApp() {
     currentPackage,
     incrementQuestionCount,
     purchase,
+    restorePurchases,
     presentPaywall,
     dismissPaywall,
     setShowPaywall,
     getManagementUrl,
   } = useRevenueCat();
+  
+  const [isRestoring, setIsRestoring] = useState(false);
+  
+  const handleRestore = async () => {
+    setIsRestoring(true);
+    const success = await restorePurchases();
+    setIsRestoring(false);
+    return success;
+  };
 
   useEffect(() => {
     fetchQuestions();
@@ -1096,10 +1106,12 @@ export function QuizApp() {
         isOpen={showPaywall}
         isPurchasing={isPurchasing}
         isLoading={isRevenueCatLoading}
+        isRestoring={isRestoring}
         priceString={priceString}
         currentPackage={currentPackage}
         managementUrl={getManagementUrl()}
         onPurchase={purchase}
+        onRestore={handleRestore}
         onDismiss={dismissPaywall}
         presentHostedPaywall={presentPaywall}
       />
