@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { QuizCard } from './QuizCard';
 import { CategorySelector } from './CategorySelector';
 import { IntroSlide } from './IntroSlide';
 import { Switch } from './ui/switch';
+import { Paywall } from './Paywall';
+import { useInAppPurchase } from '@/hooks/useInAppPurchase';
+
+// Your buildnatively product ID - replace with your actual product ID
+const IAP_PRODUCT_ID = 'full_app_unlock';
 
 interface Question {
   question: string;
@@ -83,6 +88,22 @@ export function QuizApp() {
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
+  
+  // Track the highest question index viewed (to count unique questions)
+  const highestIndexViewed = useRef(0);
+
+  // In-app purchase hook
+  const {
+    isUnlocked,
+    showPaywall,
+    isPurchasing,
+    remainingFreeQuestions,
+    incrementQuestionCount,
+    purchaseFullApp,
+    restorePurchases,
+    dismissPaywall,
+    setShowPaywall,
+  } = useInAppPurchase(IAP_PRODUCT_ID);
 
   useEffect(() => {
     fetchQuestions();
@@ -346,6 +367,20 @@ export function QuizApp() {
 
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
+      const nextIndex = currentIndex + 1;
+      
+      // Check if this is a new question the user hasn't seen before
+      if (nextIndex > highestIndexViewed.current && !isUnlocked) {
+        // This is a new question - check if we can view it
+        const canView = incrementQuestionCount();
+        if (!canView) {
+          // Show paywall instead of navigating
+          setShowPaywall(true);
+          return;
+        }
+        highestIndexViewed.current = nextIndex;
+      }
+      
       setIsTransitioning(true);
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
@@ -1054,6 +1089,15 @@ export function QuizApp() {
         selectedCategories={selectedCategories}
         onCategoriesChange={handleCategoriesChange}
         backgroundColor={getInterpolatedBgColor()}
+      />
+      
+      {/* Paywall Dialog */}
+      <Paywall
+        isOpen={showPaywall}
+        isPurchasing={isPurchasing}
+        onPurchase={purchaseFullApp}
+        onRestore={restorePurchases}
+        onDismiss={dismissPaywall}
       />
       </div>
     </>
