@@ -3,11 +3,8 @@ import { QuizCard } from './QuizCard';
 import { CategorySelector } from './CategorySelector';
 import { IntroSlide } from './IntroSlide';
 import { Switch } from './ui/switch';
-import { Paywall } from './Paywall';
-import { useInAppPurchase } from '@/hooks/useInAppPurchase';
-
-// Your buildnatively product ID - replace with your actual product ID
-const IAP_PRODUCT_ID = 'full_app_unlock';
+import { RevenueCatPaywall } from './RevenueCatPaywall';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
 
 interface Question {
   question: string;
@@ -92,19 +89,21 @@ export function QuizApp() {
   // Track the highest question index viewed (to count unique questions)
   const highestIndexViewed = useRef(0);
 
-  // In-app purchase hook
+  // RevenueCat integration
   const {
-    isUnlocked,
+    isEntitled,
+    isLoading: isRevenueCatLoading,
     showPaywall,
     isPurchasing,
     priceString,
-    isLoadingPrice,
+    currentPackage,
     incrementQuestionCount,
-    purchaseFullApp,
-    restorePurchases,
+    purchase,
+    presentPaywall,
     dismissPaywall,
     setShowPaywall,
-  } = useInAppPurchase(IAP_PRODUCT_ID);
+    getManagementUrl,
+  } = useRevenueCat();
 
   useEffect(() => {
     fetchQuestions();
@@ -371,7 +370,7 @@ export function QuizApp() {
       const nextIndex = currentIndex + 1;
       
       // Check if this is a new question the user hasn't seen before
-      if (nextIndex > highestIndexViewed.current && !isUnlocked) {
+      if (nextIndex > highestIndexViewed.current && !isEntitled) {
         // This is a new question - check if we can view it
         const canView = incrementQuestionCount();
         if (!canView) {
@@ -1092,15 +1091,17 @@ export function QuizApp() {
         backgroundColor={getInterpolatedBgColor()}
       />
       
-      {/* Paywall Dialog */}
-      <Paywall
+      {/* RevenueCat Paywall Dialog */}
+      <RevenueCatPaywall
         isOpen={showPaywall}
         isPurchasing={isPurchasing}
+        isLoading={isRevenueCatLoading}
         priceString={priceString}
-        isLoadingPrice={isLoadingPrice}
-        onPurchase={purchaseFullApp}
-        onRestore={restorePurchases}
+        currentPackage={currentPackage}
+        managementUrl={getManagementUrl()}
+        onPurchase={purchase}
         onDismiss={dismissPaywall}
+        presentHostedPaywall={presentPaywall}
       />
       </div>
     </>
