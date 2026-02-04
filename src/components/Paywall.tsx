@@ -4,6 +4,8 @@ import { Dialog, DialogContent, DialogOverlay, DialogPortal, DialogDescription }
 interface PaywallProps {
   isOpen: boolean;
   isPurchasing: boolean;
+  priceString: string | null;
+  isLoadingPrice: boolean;
   onPurchase: () => void;
   onRestore: () => void;
   onDismiss: () => void;
@@ -12,10 +14,19 @@ interface PaywallProps {
 export function Paywall({ 
   isOpen, 
   isPurchasing, 
+  priceString,
+  isLoadingPrice,
   onPurchase, 
   onRestore, 
   onDismiss 
 }: PaywallProps) {
+  const buttonText = isPurchasing 
+    ? 'Wird geladen...' 
+    : isLoadingPrice 
+      ? 'Laden...'
+      : priceString 
+        ? `Vollversion für ${priceString}` 
+        : 'Vollversion kaufen';
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onDismiss()}>
       <DialogPortal>
@@ -56,10 +67,10 @@ export function Paywall({
             {/* Purchase Button */}
             <Button
               onClick={onPurchase}
-              disabled={isPurchasing}
+              disabled={isPurchasing || isLoadingPrice}
               className="w-full py-6 text-lg font-bold rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
             >
-              {isPurchasing ? 'Wird geladen...' : 'Vollversion kaufen'}
+              {buttonText}
             </Button>
 
             {/* Restore Purchases */}

@@ -97,7 +97,8 @@ export function QuizApp() {
     isUnlocked,
     showPaywall,
     isPurchasing,
-    remainingFreeQuestions,
+    priceString,
+    isLoadingPrice,
     incrementQuestionCount,
     purchaseFullApp,
     restorePurchases,
@@ -1095,6 +1096,8 @@ export function QuizApp() {
       <Paywall
         isOpen={showPaywall}
         isPurchasing={isPurchasing}
+        priceString={priceString}
+        isLoadingPrice={isLoadingPrice}
         onPurchase={purchaseFullApp}
         onRestore={restorePurchases}
         onDismiss={dismissPaywall}
