@@ -849,7 +849,9 @@ export function QuizApp() {
 
     // During dragging, interpolate based on drag progress
     if (isDragging && hasSlides) {
-      const dragProgress = Math.abs(dragOffset) / window.innerWidth;
+      // Apply subtle easing to drag progress to reduce flashiness
+      const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
+      const dragProgress = rawProgress * rawProgress * (3 - 2 * rawProgress); // Smoothstep
       const currentBg = getColorsForSlide(currentIndex).pageBg;
       let targetBg;
       
@@ -891,7 +893,9 @@ export function QuizApp() {
 
     // During dragging, interpolate based on drag progress
     if (isDragging && hasSlides) {
-      const dragProgress = Math.abs(dragOffset) / window.innerWidth;
+      // Apply subtle easing to drag progress to reduce flashiness
+      const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
+      const dragProgress = rawProgress * rawProgress * (3 - 2 * rawProgress); // Smoothstep
       const currentCard = getColorsForSlide(currentIndex).cardColor;
       let targetCard;
       
@@ -936,12 +940,15 @@ export function QuizApp() {
     
     let frameId: number;
     let isCancelled = false;
+    let lastBgColor = '';
     
     const updateDragColor = () => {
       if (isCancelled) return;
       
       const bgColor = getInterpolatedBgColor();
-      if (bgColor) {
+      // Only update if color actually changed to reduce repaints
+      if (bgColor && bgColor !== lastBgColor) {
+        lastBgColor = bgColor;
         document.body.style.transition = 'none';
         document.body.style.backgroundColor = bgColor;
       }
