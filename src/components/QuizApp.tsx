@@ -1031,7 +1031,7 @@ export function QuizApp() {
                       flexDirection: 'column',
                       position: 'relative',
                       transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : baseSmileyRotation}deg)`,
-                      transition: loading ? 'transform 0.8s ease-in-out' : `transform ${isMobile ? 0.3 : 0.5}s linear`,
+                      transition: loading ? 'transform 0.8s ease-in-out' : `transform ${isMobile ? 0.2 : 0.35}s ease-out`,
                       paddingLeft: '2px',
                       paddingRight: '2px'
                     }}
