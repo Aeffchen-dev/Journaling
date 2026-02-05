@@ -776,13 +776,15 @@ export function QuizApp() {
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
-  // Interpolate between two colors using CSS color-mix
+  // Interpolate between two colors using CSS color-mix in OKLab color space
+  // OKLab provides perceptually uniform blending - colors pass through natural midtones
   const interpolateColors = (color1: string, color2: string, factor: number) => {
     // Factor is already eased, convert directly to percentage (0-100)
     const percentage = factor * 100;
     
-    // Use CSS color-mix in srgb color space for smooth transitions
-    return `color-mix(in srgb, ${color2} ${percentage}%, ${color1})`;
+    // Use CSS color-mix in OKLab color space for perceptually uniform transitions
+    // OKLab avoids muddy midtones that sRGB produces when blending distant colors
+    return `color-mix(in oklab, ${color2} ${percentage}%, ${color1})`;
   };
 
   // Get current slide's colors for page background and header
