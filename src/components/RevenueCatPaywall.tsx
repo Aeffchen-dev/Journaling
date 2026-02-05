@@ -94,9 +94,15 @@
          <DialogOverlay className="bg-background" />
          <DialogContent 
            className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center max-w-md bg-background"
-            onPointerDownOutside={(e) => e.preventDefault()}
+              onPointerDownOutside={(e) => {
+                // Only prevent dismiss if not purchasing (allow RevenueCat modal clicks)
+                if (!isPurchasing) e.preventDefault();
+              }}
             onEscapeKeyDown={(e) => e.preventDefault()}
-            onInteractOutside={(e) => e.preventDefault()}
+              onInteractOutside={(e) => {
+                // Only prevent dismiss if not purchasing (allow RevenueCat modal clicks)
+                if (!isPurchasing) e.preventDefault();
+              }}
            style={{ 
              height: 'auto', 
              width: '90vw',
