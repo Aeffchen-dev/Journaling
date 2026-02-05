@@ -800,13 +800,13 @@ export function QuizApp() {
 
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
-    // Only animate during transition, not during drag
-    if (!isTransitioning) {
+    // Static state - no drag or transition
+    if (!isDragging && !isTransitioning) {
       return getCurrentColors().pageBg;
     }
 
-    // During arrow key/click transition, interpolate based on progress
-    if (transitionDirection) {
+    // During transition (click/keyboard/after drag), interpolate based on progress
+    if (isTransitioning && transitionDirection) {
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
       const currentBg = getColorsForSlide(currentIndex).pageBg;
       const targetBg = getColorsForSlide(targetIndex).pageBg;
@@ -814,23 +814,57 @@ export function QuizApp() {
       return interpolateColors(currentBg, targetBg, transitionProgress);
     }
 
+    // During dragging, interpolate based on drag progress
+    if (isDragging && hasSlides) {
+      const dragProgress = Math.abs(dragOffset) / window.innerWidth;
+      const currentBg = getColorsForSlide(currentIndex).pageBg;
+      let targetBg;
+      
+      if (dragOffset < 0 && currentIndex < slides.length - 1) {
+        targetBg = getColorsForSlide(currentIndex + 1).pageBg;
+      } else if (dragOffset > 0 && currentIndex > 0) {
+        targetBg = getColorsForSlide(currentIndex - 1).pageBg;
+      } else {
+        return currentBg;
+      }
+      
+      return interpolateColors(currentBg, targetBg, dragProgress);
+    }
+
     return getCurrentColors().pageBg;
   };
 
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
-    // Only animate during transition, not during drag
-    if (!isTransitioning) {
+    // Static state - no drag or transition
+    if (!isDragging && !isTransitioning) {
       return getCurrentColors().cardColor;
     }
 
-    // During arrow key/click transition, interpolate based on progress
-    if (transitionDirection) {
+    // During transition (click/keyboard/after drag), interpolate based on progress
+    if (isTransitioning && transitionDirection) {
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
       const currentCard = getColorsForSlide(currentIndex).cardColor;
       const targetCard = getColorsForSlide(targetIndex).cardColor;
       
       return interpolateColors(currentCard, targetCard, transitionProgress);
+    }
+
+    // During dragging, interpolate based on drag progress
+    if (isDragging && hasSlides) {
+      const dragProgress = Math.abs(dragOffset) / window.innerWidth;
+      const currentCard = getColorsForSlide(currentIndex).cardColor;
+      let targetCard;
+      
+      if (dragOffset < 0 && currentIndex < slides.length - 1) {
+        targetCard = getColorsForSlide(currentIndex + 1).cardColor;
+      } else if (dragOffset > 0 && currentIndex > 0) {
+        targetCard = getColorsForSlide(currentIndex - 1).cardColor;
+      } else {
+        return currentCard;
+      }
+      
+      return interpolateColors(currentCard, targetCard, dragProgress);
     }
 
     return getCurrentColors().cardColor;
@@ -859,7 +893,7 @@ export function QuizApp() {
         meta.setAttribute('content', bgColor);
       });
     });
-  }, [isTransitioning, transitionProgress, currentIndex, categorySelectorOpen]);
+  }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen]);
 
   const currentColors = getCurrentColors();
 
