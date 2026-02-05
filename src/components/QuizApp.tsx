@@ -854,11 +854,6 @@ export function QuizApp() {
       return interpolateColors('#000000', targetColor, initialFadeProgress);
     }
     
-    // Static state - no drag or transition
-    if (!isDragging && !isTransitioning) {
-      return getCurrentColors().pageBg;
-    }
-
     // During transition (click/keyboard/after drag), interpolate based on progress
     if (isTransitioning && transitionDirection) {
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
@@ -868,30 +863,7 @@ export function QuizApp() {
       return interpolateColors(currentBg, targetBg, transitionProgress);
     }
 
-    // During dragging, interpolate based on drag progress
-    if (isDragging && hasSlides) {
-       // Apply velocity-based easing to drag progress
-      const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-       
-       // Velocity factor: clamp between 0.3 (slow drag) and 2.0 (fast drag)
-       const velocityFactor = Math.max(0.3, Math.min(2.0, dragVelocity.current * 0.5));
-       const velocityAdjustedProgress = Math.min(rawProgress * velocityFactor, 1);
-       const dragProgress = velocityAdjustedProgress * velocityAdjustedProgress * (3 - 2 * velocityAdjustedProgress);
-       
-      const currentBg = getColorsForSlide(currentIndex).pageBg;
-      let targetBg;
-      
-      if (dragOffset < 0 && currentIndex < slides.length - 1) {
-        targetBg = getColorsForSlide(currentIndex + 1).pageBg;
-      } else if (dragOffset > 0 && currentIndex > 0) {
-        targetBg = getColorsForSlide(currentIndex - 1).pageBg;
-      } else {
-        return currentBg;
-      }
-      
-      return interpolateColors(currentBg, targetBg, dragProgress);
-    }
-
+     // Static state
     return getCurrentColors().pageBg;
   };
 
@@ -1023,31 +995,6 @@ export function QuizApp() {
       if (frameId) cancelAnimationFrame(frameId);
     };
   }, [isDragging, dragOffset]);
-
-  // Update theme-color after drag ends
-  useEffect(() => {
-    if (isDragging) return;
-    
-    const bgColor = categorySelectorOpen 
-      ? '#000000' 
-      : getInterpolatedBgColor();
-    
-    if (!bgColor) return;
-    
-    // Force browser chrome repaint by nudging theme-color (only when not dragging)
-    const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-    metaThemeColors.forEach((meta) => {
-      meta.setAttribute('content', bgColor + 'fe');
-    });
-    
-    const timeoutId = setTimeout(() => {
-      metaThemeColors.forEach((meta) => {
-        meta.setAttribute('content', bgColor);
-      });
-    }, 16);
-    
-    return () => clearTimeout(timeoutId);
-  }, [isDragging, isTransitioning, currentIndex, categorySelectorOpen]);
 
   const currentColors = getCurrentColors();
 
