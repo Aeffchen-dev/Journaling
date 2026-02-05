@@ -120,10 +120,11 @@
  
              {/* Description - Same styling as small text (14px) */}
              <p 
-               className="font-factora leading-relaxed w-full text-left text-white"
+                className="font-factora leading-relaxed w-full text-left"
                style={{
                  fontSize: '14px',
                  opacity: 0.8,
+                  color: 'white',
                }}
              >
                Du hast alle kostenlosen Fragen aufgebraucht. Schalte für einmalig {priceString || '...'} alle Fragen frei. Du hast lebenslang Zugriff zur Vollversion, es gibt kein Abo. Du erhältst alle Updates.
@@ -146,9 +147,10 @@
              <button
                onClick={handleRestore}
                disabled={isDisabled}
-               className="font-factora text-sm transition-opacity disabled:opacity-50 text-white"
+                className="font-factora text-sm transition-opacity disabled:opacity-50"
                style={{
                  textDecoration: 'none',
+                  color: 'white',
                }}
              >
                {isRestoring ? 'Wird wiederhergestellt...' : 'Kauf wiederherstellen'}
@@ -160,9 +162,10 @@
                  href={managementUrl}
                  target="_blank"
                  rel="noopener noreferrer"
-                 className="font-factora text-sm transition-opacity text-white"
+                  className="font-factora text-sm transition-opacity"
                  style={{
                    textDecoration: 'none',
+                    color: 'white',
                  }}
                >
                  Abonnement verwalten
