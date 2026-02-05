@@ -894,10 +894,10 @@ export function QuizApp() {
       : (slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? getCurrentColors().pageBg : '#000000');
     
     // Update both html and body background - iOS Safari inherits chrome color from these
-    // Use longer transition on desktop (768px+)
+    // Match the JS animation timing: cubic ease-in, longer duration
     const isDesktop = window.innerWidth >= 768;
-    const transitionDuration = isDesktop ? '0.5s' : '0.3s';
-    document.body.style.transition = `background-color ${transitionDuration} ease-out`;
+    const transitionDuration = isDesktop ? '0.7s' : '0.5s';
+    document.body.style.transition = `background-color ${transitionDuration} cubic-bezier(0.55, 0, 1, 0.45)`;
     document.body.style.backgroundColor = bgColor;
     
     // Force iOS Safari to repaint browser chrome by nudging theme-color
