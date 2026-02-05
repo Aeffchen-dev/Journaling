@@ -86,20 +86,18 @@
      );
    }
  
-   // Custom paywall UI with app branding - matches QuizCard styling
+   // Custom paywall UI with app branding
    return (
      <Dialog open={isOpen}>
        <DialogPortal>
-         <DialogOverlay className="bg-background/95" />
+         <DialogOverlay className="bg-background" />
          <DialogContent 
-           className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center max-w-md"
+           className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center max-w-md bg-background"
            style={{ 
              height: 'auto', 
              width: '90vw',
              maxWidth: '400px',
              borderRadius: '2rem',
-             backgroundColor: 'hsl(335, 100%, 81%)',
-             color: 'hsl(347, 95%, 12%)',
            }}
          >
            <DialogDescription className="sr-only">
@@ -109,12 +107,11 @@
            <div className="p-8 flex flex-col items-center text-center gap-6 w-full">
              {/* Title - Same styling as question text */}
              <h1 
-               className="font-factora leading-[120%] w-full text-[2.364rem] md:text-[2.832rem]"
+               className="font-factora leading-[120%] w-full text-[2.364rem] md:text-[2.832rem] text-white"
                style={{ 
                  fontWeight: 'bold',
                  fontStyle: 'normal',
                  letterSpacing: '0px',
-                 color: 'hsl(347, 95%, 12%)',
                }}
              >
                <span style={{ fontFeatureSettings: '"ss01" 1' }}>D</span>
@@ -123,72 +120,34 @@
  
              {/* Description - Same styling as small text (14px) */}
              <p 
-               className="font-factora leading-relaxed w-full text-left"
+               className="font-factora leading-relaxed w-full text-left text-white"
                style={{
                  fontSize: '14px',
-                 color: 'hsl(347, 95%, 12%)',
                  opacity: 0.8,
                }}
              >
-               Du hast deine kostenlosen Fragen aufgebraucht. 
-               Schalte alle Fragen frei und entdecke noch mehr Intimität!
+               Du hast alle kostenlosen Fragen aufgebraucht. Schalte für einmalig {priceString || '...'} alle Fragen frei. Du hast lebenslang Zugriff zur Vollversion, es gibt kein Abo. Du erhältst alle Updates.
              </p>
  
-             {/* Product info card */}
-             {currentPackage && (
-               <div 
-                 className="rounded-2xl p-4 w-full"
-                 style={{
-                   backgroundColor: 'hsla(347, 95%, 12%, 0.15)',
-                 }}
-               >
-                 <div className="flex justify-between items-center">
-                   <span 
-                     className="font-factora font-medium"
-                     style={{ color: 'hsl(347, 95%, 12%)' }}
-                   >
-                     Lifetime Zugang
-                   </span>
-                   <span 
-                     className="font-factora font-bold"
-                     style={{ color: 'hsl(347, 95%, 12%)' }}
-                   >
-                     {priceString || '...'}
-                   </span>
-                 </div>
-                 <p 
-                   className="font-factora text-left mt-1"
-                   style={{ 
-                     fontSize: '12px',
-                     color: 'hsl(347, 95%, 12%)',
-                     opacity: 0.7,
-                   }}
-                 >
-                   Einmalzahlung • Für immer freigeschaltet
-                 </p>
-               </div>
-             )}
- 
-             {/* Purchase Button */}
+             {/* Purchase Button - Pink */}
              <Button
                onClick={handlePurchase}
                disabled={isDisabled}
-               className="w-full py-6 text-lg font-factora font-bold rounded-full border-0"
+               className="w-full py-6 text-lg font-factora font-bold rounded-full border-0 text-white"
                style={{
-                 backgroundColor: 'hsl(347, 95%, 12%)',
-                 color: 'hsl(335, 100%, 81%)',
+                 backgroundColor: 'hsl(335, 100%, 81%)',
+                 color: 'hsl(347, 95%, 12%)',
                }}
              >
-               {buttonText}
+               {isPurchasing ? 'Wird verarbeitet...' : 'Vollversion kaufen'}
              </Button>
  
              {/* Restore Purchases - White text, no underline */}
              <button
                onClick={handleRestore}
                disabled={isDisabled}
-               className="font-factora text-sm transition-opacity disabled:opacity-50"
+               className="font-factora text-sm transition-opacity disabled:opacity-50 text-white"
                style={{
-                 color: 'white',
                  textDecoration: 'none',
                }}
              >
@@ -201,9 +160,8 @@
                  href={managementUrl}
                  target="_blank"
                  rel="noopener noreferrer"
-                 className="font-factora text-sm transition-opacity"
+                 className="font-factora text-sm transition-opacity text-white"
                  style={{
-                   color: 'white',
                    textDecoration: 'none',
                  }}
                >
