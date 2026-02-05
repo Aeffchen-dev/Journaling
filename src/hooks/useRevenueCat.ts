@@ -87,12 +87,7 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     let mounted = true;
 
     async function init() {
-      // Skip RevenueCat initialization if not in native app
-      if (!isInNativeApp) {
-        setIsLoading(false);
-        setIsEntitled(true); // Grant full access on web
-        return;
-      }
+      // Initialize RevenueCat on all platforms (web and native)
 
       try {
         setIsLoading(true);
@@ -270,8 +265,8 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
 
   // Increment question count
   const incrementQuestionCount = useCallback((): boolean => {
-    // Always allow on web (non-native)
-    if (!isInNativeApp || isEntitled) return true;
+    // Allow if user has purchased
+    if (isEntitled) return true;
 
     const newCount = questionsViewed + 1;
     
@@ -283,7 +278,7 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     setQuestionsViewed(newCount);
     localStorage.setItem(STORAGE_KEYS.QUESTIONS_VIEWED, newCount.toString());
     return true;
-  }, [isInNativeApp, isEntitled, questionsViewed]);
+  }, [isEntitled, questionsViewed]);
 
   // Get subscription management URL
   const getManagementUrl = useCallback((): string | null => {
