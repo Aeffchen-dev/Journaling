@@ -888,9 +888,6 @@ export function QuizApp() {
 
   // Update theme-color meta tag for iOS Safari status bar
   useEffect(() => {
-    // Skip if currently transitioning - let the transition effect handle colors
-    if (isTransitioning) return;
-    
     // When category menu is open, always use black
     const bgColor = categorySelectorOpen 
       ? '#000000' 
@@ -916,7 +913,7 @@ export function QuizApp() {
         meta.setAttribute('content', bgColor);
       });
     });
-  }, [currentIndex, slides, categorySelectorOpen, isTransitioning]);
+  }, [currentIndex, slides, categorySelectorOpen]);
 
   // Update theme-color during drag and transition for smooth status bar color changes
   useEffect(() => {
@@ -924,8 +921,12 @@ export function QuizApp() {
     if (categorySelectorOpen) return;
     
     let frameId: number;
+    let nudgeFrameId: number;
+    let isCancelled = false;
     
     const updateThemeColor = () => {
+      if (isCancelled) return;
+      
       const bgColor = getInterpolatedBgColor();
       if (!bgColor) return;
       
@@ -941,7 +942,8 @@ export function QuizApp() {
         meta.setAttribute('content', bgColor + 'fe');
       });
       
-      requestAnimationFrame(() => {
+      nudgeFrameId = requestAnimationFrame(() => {
+        if (isCancelled) return;
         metaThemeColors.forEach((meta) => {
           meta.setAttribute('content', bgColor);
         });
@@ -955,7 +957,9 @@ export function QuizApp() {
     if (isDragging || isTransitioning) {
       updateThemeColor();
       return () => {
+        isCancelled = true;
         if (frameId) cancelAnimationFrame(frameId);
+        if (nudgeFrameId) cancelAnimationFrame(nudgeFrameId);
       };
     }
   }, [isDragging, isTransitioning, dragOffset, transitionDirection]);
