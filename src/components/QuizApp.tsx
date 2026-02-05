@@ -776,9 +776,9 @@ export function QuizApp() {
 
   // Interpolate between two colors using CSS color-mix
   const interpolateColors = (color1: string, color2: string, factor: number) => {
-    // Apply sine ease-out for smooth deceleration
-    const easeOutSine = (t: number) => Math.sin((t * Math.PI) / 2);
-    const easedFactor = easeOutSine(factor);
+    // Apply standard ease-out (quadratic) for smooth deceleration
+    const easeOut = (t: number) => t * (2 - t);
+    const easedFactor = easeOut(factor);
     
     // Convert factor to percentage (0-100)
     const percentage = easedFactor * 100;
