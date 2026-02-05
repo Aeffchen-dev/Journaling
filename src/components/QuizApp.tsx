@@ -851,10 +851,7 @@ export function QuizApp() {
     if (isDragging && hasSlides) {
       // Apply subtle easing to drag progress to reduce flashiness
       const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-      // Dead zone: no color change for first 3% of drag to avoid initial flash
-      const deadZone = 0.03;
-      const adjustedProgress = rawProgress <= deadZone ? 0 : (rawProgress - deadZone) / (1 - deadZone);
-      const dragProgress = adjustedProgress * adjustedProgress * (3 - 2 * adjustedProgress); // Smoothstep
+      const dragProgress = rawProgress * rawProgress * (3 - 2 * rawProgress); // Smoothstep
       const currentBg = getColorsForSlide(currentIndex).pageBg;
       let targetBg;
       
@@ -898,10 +895,7 @@ export function QuizApp() {
     if (isDragging && hasSlides) {
       // Apply subtle easing to drag progress to reduce flashiness
       const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-      // Dead zone: no color change for first 3% of drag to avoid initial flash
-      const deadZone = 0.03;
-      const adjustedProgress = rawProgress <= deadZone ? 0 : (rawProgress - deadZone) / (1 - deadZone);
-      const dragProgress = adjustedProgress * adjustedProgress * (3 - 2 * adjustedProgress); // Smoothstep
+      const dragProgress = rawProgress * rawProgress * (3 - 2 * rawProgress); // Smoothstep
       const currentCard = getColorsForSlide(currentIndex).cardColor;
       let targetCard;
       
