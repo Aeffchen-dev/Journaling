@@ -714,7 +714,7 @@ export function QuizApp() {
   useEffect(() => {
     if (!loading && hasSlides && !hasInitialFadeCompleted) {
       const startTime = performance.now();
-      const fadeDuration = 800; // 800ms fade-in
+      const fadeDuration = 400; // 400ms fade-in - faster
       
       const animateFade = (currentTime: number) => {
         const elapsed = currentTime - startTime;
