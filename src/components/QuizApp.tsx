@@ -5,6 +5,7 @@ import { IntroSlide } from './IntroSlide';
 import { Switch } from './ui/switch';
 import { RevenueCatPaywall } from './RevenueCatPaywall';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Question {
   question: string;
@@ -64,6 +65,7 @@ const smartShuffle = (questions: Question[]): Question[] => {
 };
 
 export function QuizApp() {
+  const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -398,12 +400,14 @@ export function QuizApp() {
       
       // Animate transition progress from 0 to 1
       const startTime = performance.now();
-      const duration = 300;
+      const duration = isMobile ? 300 : 500;
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+        const linearProgress = Math.min(elapsed / duration, 1);
+        // Ease-out: 1 - (1 - t)^2
+        const progress = 1 - Math.pow(1 - linearProgress, 2);
         setTransitionProgress(progress);
-        if (progress < 1) {
+        if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
         }
       };
@@ -414,7 +418,7 @@ export function QuizApp() {
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, 300);
+      }, isMobile ? 300 : 500);
     }
   };
 
@@ -426,12 +430,14 @@ export function QuizApp() {
       
       // Animate transition progress from 0 to 1
       const startTime = performance.now();
-      const duration = 300;
+      const duration = isMobile ? 300 : 500;
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+        const linearProgress = Math.min(elapsed / duration, 1);
+        // Ease-out: 1 - (1 - t)^2
+        const progress = 1 - Math.pow(1 - linearProgress, 2);
         setTransitionProgress(progress);
-        if (progress < 1) {
+        if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
         }
       };
@@ -442,7 +448,7 @@ export function QuizApp() {
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, 300);
+      }, isMobile ? 300 : 500);
     }
   };
 
