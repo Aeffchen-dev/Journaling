@@ -800,12 +800,13 @@ export function QuizApp() {
 
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
-    if (!isDragging && !isTransitioning) {
+    // Only animate during transition, not during drag
+    if (!isTransitioning) {
       return getCurrentColors().pageBg;
     }
 
     // During arrow key/click transition, interpolate based on progress
-    if (isTransitioning && !isDragging && transitionDirection) {
+    if (transitionDirection) {
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
       const currentBg = getColorsForSlide(currentIndex).pageBg;
       const targetBg = getColorsForSlide(targetIndex).pageBg;
@@ -813,39 +814,18 @@ export function QuizApp() {
       return interpolateColors(currentBg, targetBg, transitionProgress);
     }
 
-    // During dragging, interpolate based on progress
-    if (!hasSlides) {
-      return getCurrentColors().pageBg;
-    }
-
-    // Color transition proportional to screen width, no fixed threshold
-    const dragProgress = Math.abs(dragOffset) / window.innerWidth;
-
-    const currentBg = getColorsForSlide(currentIndex).pageBg;
-    let targetBg;
-    
-    if (dragOffset < 0 && currentIndex < slides.length - 1) {
-      // Swiping left (next slide)
-      targetBg = getColorsForSlide(currentIndex + 1).pageBg;
-    } else if (dragOffset > 0 && currentIndex > 0) {
-      // Swiping right (prev slide)
-      targetBg = getColorsForSlide(currentIndex - 1).pageBg;
-    } else {
-      // No valid target, stay at current
-      return currentBg;
-    }
-
-    return interpolateColors(currentBg, targetBg, dragProgress);
+    return getCurrentColors().pageBg;
   };
 
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
-    if (!isDragging && !isTransitioning) {
+    // Only animate during transition, not during drag
+    if (!isTransitioning) {
       return getCurrentColors().cardColor;
     }
 
     // During arrow key/click transition, interpolate based on progress
-    if (isTransitioning && !isDragging && transitionDirection) {
+    if (transitionDirection) {
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
       const currentCard = getColorsForSlide(currentIndex).cardColor;
       const targetCard = getColorsForSlide(targetIndex).cardColor;
@@ -853,103 +833,33 @@ export function QuizApp() {
       return interpolateColors(currentCard, targetCard, transitionProgress);
     }
 
-    // During dragging, interpolate based on progress
-    if (!hasSlides) {
-      return getCurrentColors().cardColor;
-    }
-
-    // Color transition proportional to screen width, no fixed threshold
-    const dragProgress = Math.abs(dragOffset) / window.innerWidth;
-
-    const currentCard = getColorsForSlide(currentIndex).cardColor;
-    let targetCard;
-    
-    if (dragOffset < 0 && currentIndex < slides.length - 1) {
-      // Swiping left (next slide)
-      targetCard = getColorsForSlide(currentIndex + 1).cardColor;
-    } else if (dragOffset > 0 && currentIndex > 0) {
-      // Swiping right (prev slide)
-      targetCard = getColorsForSlide(currentIndex - 1).cardColor;
-    } else {
-      // No valid target, stay at current
-      return currentCard;
-    }
-
-    return interpolateColors(currentCard, targetCard, dragProgress);
+    return getCurrentColors().cardColor;
   };
 
-  // Update theme-color meta tag for iOS Safari status bar
+  // Update body background and theme-color for iOS Safari
   useEffect(() => {
-    // When category menu is open, always use black
     const bgColor = categorySelectorOpen 
       ? '#000000' 
-      : getColorsForSlide(currentIndex).pageBg;
+      : getInterpolatedBgColor();
     
-    // Update body background to match (for iOS Safari chrome)
+    if (!bgColor) return;
+    
+    // Update body background only
     document.body.style.transition = 'none';
     document.body.style.backgroundColor = bgColor;
     
-    // Force iOS Safari to repaint browser chrome by nudging theme-color
+    // Force browser chrome repaint by nudging theme-color
     const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
     metaThemeColors.forEach((meta) => {
-      // Nudge with slightly different color to force repaint
       meta.setAttribute('content', bgColor + 'fe');
     });
     
-    // Then set actual color in next frame
     requestAnimationFrame(() => {
       metaThemeColors.forEach((meta) => {
         meta.setAttribute('content', bgColor);
       });
     });
-  }, [currentIndex, slides, categorySelectorOpen]);
-
-  // Update theme-color during drag and transition for smooth status bar color changes
-  useEffect(() => {
-    // Skip drag/transition color updates when category menu is open
-    if (categorySelectorOpen) return;
-    
-    let frameId: number;
-    let nudgeFrameId: number;
-    let isCancelled = false;
-    
-    const updateThemeColor = () => {
-      if (isCancelled) return;
-      
-      const bgColor = getInterpolatedBgColor();
-      if (!bgColor) return;
-      
-      // Update body background only - iOS Safari chrome follows this
-      document.body.style.transition = 'none';
-      document.body.style.backgroundColor = bgColor;
-      
-      // Force browser chrome repaint by nudging theme-color
-      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-      metaThemeColors.forEach((meta) => {
-        meta.setAttribute('content', bgColor + 'fe');
-      });
-      
-      nudgeFrameId = requestAnimationFrame(() => {
-        if (isCancelled) return;
-        metaThemeColors.forEach((meta) => {
-          meta.setAttribute('content', bgColor);
-        });
-      });
-      
-      if (isDragging || isTransitioning) {
-        frameId = requestAnimationFrame(updateThemeColor);
-      }
-    };
-
-    if (isDragging || isTransitioning) {
-      updateThemeColor();
-      return () => {
-        isCancelled = true;
-        if (frameId) cancelAnimationFrame(frameId);
-        if (nudgeFrameId) cancelAnimationFrame(nudgeFrameId);
-      };
-    }
-  }, [isDragging, isTransitioning, dragOffset, transitionDirection]);
+  }, [isTransitioning, transitionProgress, currentIndex, categorySelectorOpen]);
 
   const currentColors = getCurrentColors();
 
@@ -962,7 +872,7 @@ export function QuizApp() {
           height: '100svh',
           overflowY: 'hidden',
           width: '100%',
-          backgroundColor: categorySelectorOpen ? '#000000' : (getInterpolatedBgColor() || '#000000'),
+          backgroundColor: 'transparent',
           paddingTop: 'env(safe-area-inset-top, 0)',
           paddingBottom: 'env(safe-area-inset-bottom, 0)',
           paddingLeft: 'env(safe-area-inset-left, 0)',
