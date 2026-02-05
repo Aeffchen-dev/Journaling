@@ -957,7 +957,7 @@ export function QuizApp() {
                       flexDirection: 'column',
                       position: 'relative',
                       transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + (isDragging ? -(dragOffset / window.innerWidth) * 360 : 0))}deg)`,
-                      transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : `transform ${isMobile ? 0.3 : 0.5}s cubic-bezier(0.39, 0.575, 0.565, 1)`),
+                      transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : `transform ${isMobile ? 0.3 : 0.5}s cubic-bezier(0.445, 0.05, 0.55, 0.95)`),
                       paddingLeft: '2px',
                       paddingRight: '2px'
                     }}
