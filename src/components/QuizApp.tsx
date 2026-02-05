@@ -400,7 +400,7 @@ export function QuizApp() {
       
       // Animate transition progress from 0 to 1
       const startTime = performance.now();
-      const duration = isMobile ? 300 : 500;
+      const duration = isMobile ? 500 : 700;
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / duration, 1);
@@ -418,7 +418,7 @@ export function QuizApp() {
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, isMobile ? 300 : 500);
+      }, isMobile ? 500 : 700);
     }
   };
 
@@ -430,7 +430,7 @@ export function QuizApp() {
       
       // Animate transition progress from 0 to 1
       const startTime = performance.now();
-      const duration = isMobile ? 300 : 500;
+      const duration = isMobile ? 500 : 700;
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / duration, 1);
@@ -448,7 +448,7 @@ export function QuizApp() {
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, isMobile ? 300 : 500);
+      }, isMobile ? 500 : 700);
     }
   };
 
@@ -776,9 +776,9 @@ export function QuizApp() {
 
   // Interpolate between two colors using CSS color-mix
   const interpolateColors = (color1: string, color2: string, factor: number) => {
-    // Apply sine ease-in-out for ultra-smooth transitions matching slide movement
-    const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
-    const easedFactor = easeInOutSine(factor);
+    // Apply sine ease-out for smooth deceleration
+    const easeOutSine = (t: number) => Math.sin((t * Math.PI) / 2);
+    const easedFactor = easeOutSine(factor);
     
     // Convert factor to percentage (0-100)
     const percentage = easedFactor * 100;
