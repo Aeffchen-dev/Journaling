@@ -405,8 +405,9 @@ export function QuizApp() {
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Ease-out: fast start, decelerates at the end (cubic ease-out)
-        const progress = 1 - Math.pow(1 - linearProgress, 3);
+        // Custom cubic-bezier(0.16, 1, 0.3, 1) approximation
+        const t = linearProgress;
+        const progress = 1 - Math.pow(1 - t, 3.5);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
@@ -436,8 +437,9 @@ export function QuizApp() {
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Ease-out: fast start, decelerates at the end (cubic ease-out)
-        const progress = 1 - Math.pow(1 - linearProgress, 3);
+        // Custom cubic-bezier(0.16, 1, 0.3, 1) approximation
+        const t = linearProgress;
+        const progress = 1 - Math.pow(1 - t, 3.5);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
