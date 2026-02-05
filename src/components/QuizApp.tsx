@@ -400,12 +400,13 @@ export function QuizApp() {
       
       // Animate transition progress from 0 to 1
       const startTime = performance.now();
-      const duration = isMobile ? 500 : 700;
+      const slideDuration = isMobile ? 300 : 500;
+      const colorDuration = slideDuration + 100; // Color completes 100ms after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / duration, 1);
-        // Sine ease-out: sin(t * π/2)
-        const progress = Math.sin(linearProgress * Math.PI / 2);
+        const linearProgress = Math.min(elapsed / colorDuration, 1);
+        // Standard ease-out
+        const progress = linearProgress * (2 - linearProgress);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
@@ -418,7 +419,7 @@ export function QuizApp() {
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, isMobile ? 500 : 700);
+      }, colorDuration);
     }
   };
 
@@ -430,12 +431,13 @@ export function QuizApp() {
       
       // Animate transition progress from 0 to 1
       const startTime = performance.now();
-      const duration = isMobile ? 500 : 700;
+      const slideDuration = isMobile ? 300 : 500;
+      const colorDuration = slideDuration + 100; // Color completes 100ms after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / duration, 1);
-        // Sine ease-out: sin(t * π/2)
-        const progress = Math.sin(linearProgress * Math.PI / 2);
+        const linearProgress = Math.min(elapsed / colorDuration, 1);
+        // Standard ease-out
+        const progress = linearProgress * (2 - linearProgress);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
@@ -448,7 +450,7 @@ export function QuizApp() {
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, isMobile ? 500 : 700);
+      }, colorDuration);
     }
   };
 
@@ -817,8 +819,8 @@ export function QuizApp() {
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     }
 
-    // Match card animation progress - finishes at 300px drag
-    const dragProgress = Math.min(Math.abs(dragOffset) / 300, 1);
+    // Color transition completes at navigation threshold (120px)
+    const dragProgress = Math.min(Math.abs(dragOffset) / 120, 1);
 
     const currentColors = getColorsForSlide(currentIndex);
     let targetColors;
@@ -865,8 +867,8 @@ export function QuizApp() {
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
     }
 
-    // Match card animation progress - finishes at 300px drag
-    const dragProgress = Math.min(Math.abs(dragOffset) / 300, 1);
+    // Color transition completes at navigation threshold (120px)
+    const dragProgress = Math.min(Math.abs(dragOffset) / 120, 1);
 
     const currentColors = getColorsForSlide(currentIndex);
     let targetColors;
