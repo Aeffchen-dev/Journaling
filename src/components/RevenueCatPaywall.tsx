@@ -89,9 +89,14 @@
  
    // Custom paywall UI with app branding
    return (
-     <Dialog open={isOpen}>
+     <Dialog open={isOpen} modal={!isPurchasing}>
        <DialogPortal>
-         <DialogOverlay className="bg-background" />
+         <DialogOverlay 
+           className="bg-background"
+           style={{
+             pointerEvents: isPurchasing ? 'none' : 'auto',
+           }}
+         />
          <DialogContent 
            className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center max-w-md bg-background"
               onPointerDownOutside={(e) => {
@@ -108,6 +113,7 @@
              width: '90vw',
              maxWidth: '400px',
              borderRadius: '2rem',
+             pointerEvents: isPurchasing ? 'none' : 'auto',
            }}
          >
            <DialogDescription className="sr-only">
