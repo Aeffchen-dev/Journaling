@@ -765,9 +765,12 @@ export function QuizApp() {
       : (slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? getCurrentColors().pageBg : '#000000');
     
     // Update both html and body background - iOS Safari inherits chrome color from these
-    document.documentElement.style.transition = 'background-color 0.3s ease-out';
+    // Use longer transition on desktop (768px+)
+    const isDesktop = window.innerWidth >= 768;
+    const transitionDuration = isDesktop ? '0.5s' : '0.3s';
+    document.documentElement.style.transition = `background-color ${transitionDuration} ease-out`;
     document.documentElement.style.backgroundColor = bgColor;
-    document.body.style.transition = 'background-color 0.3s ease-out';
+    document.body.style.transition = `background-color ${transitionDuration} ease-out`;
     document.body.style.backgroundColor = bgColor;
     
     // Force iOS Safari to repaint browser chrome by nudging theme-color
