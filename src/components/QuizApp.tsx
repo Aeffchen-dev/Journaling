@@ -471,7 +471,7 @@ export function QuizApp() {
     setDragOffset(offset);
     
     // Trigger rotation immediately when threshold is crossed
-    const threshold = 60;
+    const threshold = 10;
     if (!dragRotationTriggered && Math.abs(offset) > threshold) {
       if (offset > 0 && currentIndex > 0) {
         setBaseSmileyRotation(prev => prev - 360);
