@@ -68,7 +68,11 @@ export function Paywall({
             <Button
               onClick={onPurchase}
               disabled={isPurchasing || isLoadingPrice}
-              className="w-full py-6 text-lg font-bold rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-0"
+              className="w-full py-6 text-lg font-bold rounded-full border-0"
+              style={{ 
+                backgroundColor: 'hsl(285, 73%, 75%)', 
+                color: '#1a1a1a'
+              }}
             >
               {buttonText}
             </Button>
