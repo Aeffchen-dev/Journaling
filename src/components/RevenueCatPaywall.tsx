@@ -59,8 +59,7 @@
          ? `Vollversion für ${priceString}` 
          : 'Vollversion kaufen';
  
-    const isPurchaseDisabled = isPurchasing || isLoading || isRestoring || !currentPackage;
-    const isRestoreDisabled = isPurchasing || isLoading || isRestoring;
+   const isDisabled = isPurchasing || isLoading || isRestoring || !currentPackage;
  
    // If using hosted paywall, render the container
    if (useHostedPaywall && !hostedPaywallError) {
@@ -137,7 +136,7 @@
              {/* Purchase Button - Pink */}
              <Button
                onClick={handlePurchase}
-                disabled={isPurchaseDisabled}
+               disabled={isDisabled}
                className="w-full py-6 text-lg font-factora font-bold rounded-full border-0 text-white"
                style={{
                  backgroundColor: 'hsl(335, 100%, 81%)',
@@ -150,7 +149,7 @@
              {/* Restore Purchases - White text, no underline */}
              <button
                onClick={handleRestore}
-                disabled={isRestoreDisabled}
+               disabled={isDisabled}
                 className="font-factora text-sm transition-opacity disabled:opacity-50"
                style={{
                  textDecoration: 'none',
