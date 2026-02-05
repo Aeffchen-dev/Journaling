@@ -8,7 +8,8 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
+    /* Initial background matches first category for seamless load */
+    --background: 347 95% 12%;
     --foreground: 0 0% 98%;
     --card-background: 0 0% 8.6%;
 
@@ -138,7 +139,7 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 0 0% 0%;
+    --background: 347 95% 12%;
     --foreground: 210 40% 98%;
     --card-background: 0 0% 8.6%;
 
