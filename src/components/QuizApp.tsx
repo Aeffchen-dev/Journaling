@@ -730,18 +730,9 @@ export function QuizApp() {
 
     const question = slide.question;
     
-    // Intro slides use the color of the next slide (first question)
+    // Intro slides have black background
     if (question.category.toLowerCase() === 'intro') {
-      // Get colors from the next slide if available
-      if (index + 1 < slides.length && slides[index + 1]?.question) {
-        const nextQuestion = slides[index + 1].question!;
-        // Recursively get colors for next slide (but avoid infinite loop by checking category)
-        if (nextQuestion.category.toLowerCase() !== 'intro') {
-          return getColorsForSlide(index + 1);
-        }
-      }
-      // Fallback to first category color
-      return { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 12%)' };
+      return { cardColor: '#ffffff', pageBg: '#000000' };
     }
     
     let colorIndex;

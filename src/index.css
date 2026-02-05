@@ -8,8 +8,8 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Initial background matches first category for seamless load */
-    --background: 347 95% 12%;
+    /* Initial background is black for intro slide */
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
     --card-background: 0 0% 8.6%;
 
@@ -139,7 +139,7 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 347 95% 12%;
+    --background: 0 0% 0%;
     --foreground: 210 40% 98%;
     --card-background: 0 0% 8.6%;
 
