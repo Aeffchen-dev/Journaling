@@ -527,13 +527,23 @@ export function QuizCard({
       {/* Left Click Area - Previous */}
       <div 
         className="absolute left-0 top-0 w-20 h-full z-20 cursor-pointer"
-        onClick={onSwipeRight}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSwipeRight();
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
       />
 
       {/* Right Click Area - Next */}
       <div 
         className="absolute right-0 top-0 w-20 h-full z-20 cursor-pointer"
-        onClick={onSwipeLeft}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSwipeLeft();
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
       />
 
       {/* Category Pill - Positioned at bottom corner opposite to monster, moved up for button, rotated -90deg */}
