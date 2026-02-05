@@ -459,38 +459,18 @@ export function QuizApp() {
   };
 
   // Real-time drag handlers
-  const [dragRotationTriggered, setDragRotationTriggered] = useState(false);
-  const [dragSmileyRotation, setDragSmileyRotation] = useState(0);
 
   const handleDragStart = (clientX: number) => {
     if (isTransitioning) return;
     setIsDragging(true);
     setDragStartX(clientX);
     setDragOffset(0);
-    setDragRotationTriggered(false);
-    setDragSmileyRotation(0);
   };
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return;
     const offset = clientX - dragStartX;
     setDragOffset(offset);
-
-    // Calculate smiley rotation based on drag progress
-    const swipeThreshold = 120;
-    const dragProgress = Math.min(Math.abs(offset) / swipeThreshold, 1);
-    
-    if (offset > 0 && currentIndex > 0) {
-      // Swiping right (going to previous) - rotate counter-clockwise
-      setDragSmileyRotation(-360 * dragProgress);
-      setDragRotationTriggered(true);
-    } else if (offset < 0 && currentIndex < slides.length - 1) {
-      // Swiping left (going to next) - rotate clockwise
-      setDragSmileyRotation(360 * dragProgress);
-      setDragRotationTriggered(true);
-    } else {
-      setDragSmileyRotation(0);
-    }
   };
 
   const handleDragEnd = () => {
@@ -500,10 +480,10 @@ export function QuizApp() {
 
     if (Math.abs(dragOffset) > threshold) {
       if (dragOffset > 0 && currentIndex > 0) {
-        // Commit the rotation to base and navigate
-        setBaseSmileyRotation(prev => prev - 360);
+        // Navigate to previous - rotate left (counter-clockwise)
         setIsTransitioning(true);
         setTransitionDirection('right');
+        setBaseSmileyRotation(prev => prev - 360);
 
         const startTime = performance.now();
         const slideDuration = isMobile ? 300 : 500;
@@ -537,16 +517,15 @@ export function QuizApp() {
             setShowPaywall(true);
             setIsDragging(false);
             setDragOffset(0);
-            setDragSmileyRotation(0);
             return;
           }
           highestIndexViewed.current = nextIndex;
         }
 
-        // Commit the rotation to base and navigate
-        setBaseSmileyRotation(prev => prev + 360);
+        // Navigate to next - rotate right (clockwise)
         setIsTransitioning(true);
         setTransitionDirection('left');
+        setBaseSmileyRotation(prev => prev + 360);
 
         const startTime = performance.now();
         const slideDuration = isMobile ? 300 : 500;
@@ -573,11 +552,9 @@ export function QuizApp() {
         }, colorDuration);
       }
     }
-    // No need to reverse - dragSmileyRotation just resets to 0
 
     setIsDragging(false);
     setDragOffset(0);
-    setDragSmileyRotation(0);
   };
 
   const handleKeyPress = (e: KeyboardEvent) => {
@@ -1058,8 +1035,8 @@ export function QuizApp() {
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
-                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + dragSmileyRotation)}deg)`,
-                      transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : `transform ${isMobile ? 0.2 : 0.35}s ease-out`),
+                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : baseSmileyRotation}deg)`,
+                      transition: loading ? 'transform 0.8s ease-in-out' : `transform ${isMobile ? 0.2 : 0.35}s ease-out`,
                       paddingLeft: '2px',
                       paddingRight: '2px'
                     }}
