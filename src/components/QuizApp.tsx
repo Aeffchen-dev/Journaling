@@ -553,6 +553,13 @@ export function QuizApp() {
           setTransitionProgress(0);
         }, isMobile ? 300 : 500);
       }
+    } else if (dragRotationTriggered) {
+      // Swipe didn't complete - reverse the rotation
+      if (dragOffset > 0 && currentIndex > 0) {
+        setBaseSmileyRotation(prev => prev + 360);
+      } else if (dragOffset < 0 && currentIndex < slides.length - 1) {
+        setBaseSmileyRotation(prev => prev - 360);
+      }
     }
     
     setIsDragging(false);
