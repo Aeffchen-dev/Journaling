@@ -719,12 +719,13 @@ export function QuizApp() {
   // Helper to get colors for any slide index
   const getColorsForSlide = (index: number) => {
     if (!hasSlides || index < 0 || index >= slides.length) {
-      return { cardColor: '#ffffff', pageBg: '#000000' };
+      // Fallback to first category color instead of black
+      return { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 12%)' };
     }
     
     const slide = slides[index];
     if (!slide || !slide.question) {
-      return { cardColor: '#ffffff', pageBg: '#000000' };
+      return { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 12%)' };
     }
 
     const question = slide.question;
