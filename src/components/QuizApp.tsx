@@ -401,28 +401,25 @@ export function QuizApp() {
       // Animate transition progress - delayed start, slow ease-out at the end
       const startTime = performance.now();
       const slideDuration = isMobile ? 300 : 500;
-      const colorDelay = slideDuration * 0.6; // Start color transition at 60% of slide
-      const colorDuration = slideDuration * 0.6; // Color fades over remaining time
+      const colorDuration = slideDuration + 200; // Color completes after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const delayedElapsed = Math.max(0, elapsed - colorDelay);
-        const linearProgress = Math.min(delayedElapsed / colorDuration, 1);
-        // Slow ease-out (cubic) for gradual fade to final color
-        const progress = 1 - Math.pow(1 - linearProgress, 3);
+        const linearProgress = Math.min(elapsed / colorDuration, 1);
+        // Very slow start, accelerates at the end (ease-in curve keeps original color longer)
+        const progress = Math.pow(linearProgress, 3);
         setTransitionProgress(progress);
-        if (elapsed < colorDelay + colorDuration) {
+        if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
         }
       };
       requestAnimationFrame(animateProgress);
       
-      const totalDuration = colorDelay + colorDuration;
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, totalDuration);
+      }, colorDuration);
     }
   };
 
@@ -435,28 +432,25 @@ export function QuizApp() {
       // Animate transition progress - delayed start, slow ease-out at the end
       const startTime = performance.now();
       const slideDuration = isMobile ? 300 : 500;
-      const colorDelay = slideDuration * 0.6; // Start color transition at 60% of slide
-      const colorDuration = slideDuration * 0.6; // Color fades over remaining time
+      const colorDuration = slideDuration + 200; // Color completes after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const delayedElapsed = Math.max(0, elapsed - colorDelay);
-        const linearProgress = Math.min(delayedElapsed / colorDuration, 1);
-        // Slow ease-out (cubic) for gradual fade to final color
-        const progress = 1 - Math.pow(1 - linearProgress, 3);
+        const linearProgress = Math.min(elapsed / colorDuration, 1);
+        // Very slow start, accelerates at the end (ease-in curve keeps original color longer)
+        const progress = Math.pow(linearProgress, 3);
         setTransitionProgress(progress);
-        if (elapsed < colorDelay + colorDuration) {
+        if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
         }
       };
       requestAnimationFrame(animateProgress);
       
-      const totalDuration = colorDelay + colorDuration;
       setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, totalDuration);
+      }, colorDuration);
     }
   };
 
