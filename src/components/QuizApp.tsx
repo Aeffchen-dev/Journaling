@@ -453,17 +453,32 @@ export function QuizApp() {
   };
 
   // Real-time drag handlers
+  const [dragRotationTriggered, setDragRotationTriggered] = useState(false);
+
   const handleDragStart = (clientX: number) => {
     if (isTransitioning) return;
     setIsDragging(true);
     setDragStartX(clientX);
     setDragOffset(0);
+    setDragRotationTriggered(false);
   };
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return;
     const offset = clientX - dragStartX;
     setDragOffset(offset);
+    
+    // Trigger rotation immediately when threshold is crossed
+    const threshold = 120;
+    if (!dragRotationTriggered && Math.abs(offset) > threshold) {
+      if (offset > 0 && currentIndex > 0) {
+        setBaseSmileyRotation(prev => prev - 360);
+        setDragRotationTriggered(true);
+      } else if (offset < 0 && currentIndex < slides.length - 1) {
+        setBaseSmileyRotation(prev => prev + 360);
+        setDragRotationTriggered(true);
+      }
+    }
   };
 
   const handleDragEnd = () => {
@@ -473,9 +488,66 @@ export function QuizApp() {
     
     if (Math.abs(dragOffset) > threshold) {
       if (dragOffset > 0 && currentIndex > 0) {
-        prevQuestion();
+        // Rotation already triggered in handleDragMove, just navigate
+        setIsTransitioning(true);
+        setTransitionDirection('right');
+        
+        const startTime = performance.now();
+        const duration = isMobile ? 300 : 500;
+        const animateProgress = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const linearProgress = Math.min(elapsed / duration, 1);
+          const progress = Math.sin(linearProgress * Math.PI / 2);
+          setTransitionProgress(progress);
+          if (linearProgress < 1) {
+            requestAnimationFrame(animateProgress);
+          }
+        };
+        requestAnimationFrame(animateProgress);
+        
+        setTimeout(() => {
+          setCurrentIndex(prev => prev - 1);
+          setIsTransitioning(false);
+          setTransitionDirection(null);
+          setTransitionProgress(0);
+        }, isMobile ? 300 : 500);
       } else if (dragOffset < 0 && currentIndex < slides.length - 1) {
-        nextQuestion();
+        // Rotation already triggered in handleDragMove, just navigate
+        const nextIndex = currentIndex + 1;
+        
+        if (nextIndex > highestIndexViewed.current && !isEntitled) {
+          const canView = incrementQuestionCount();
+          if (!canView) {
+            setShowPaywall(true);
+            setIsDragging(false);
+            setDragOffset(0);
+            return;
+          }
+          highestIndexViewed.current = nextIndex;
+        }
+        
+        setIsTransitioning(true);
+        setTransitionDirection('left');
+        
+        const startTime = performance.now();
+        const duration = isMobile ? 300 : 500;
+        const animateProgress = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const linearProgress = Math.min(elapsed / duration, 1);
+          const progress = Math.sin(linearProgress * Math.PI / 2);
+          setTransitionProgress(progress);
+          if (linearProgress < 1) {
+            requestAnimationFrame(animateProgress);
+          }
+        };
+        requestAnimationFrame(animateProgress);
+        
+        setTimeout(() => {
+          setCurrentIndex(prev => prev + 1);
+          setIsTransitioning(false);
+          setTransitionDirection(null);
+          setTransitionProgress(0);
+        }, isMobile ? 300 : 500);
       }
     }
     
