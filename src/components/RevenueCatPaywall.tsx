@@ -59,8 +59,7 @@
          ? `Vollversion für ${priceString}` 
          : 'Vollversion kaufen';
  
-    // Only disable during active operations, allow clicking even if package not loaded yet
-    const isDisabled = isPurchasing || isRestoring;
+   const isDisabled = isPurchasing || isLoading || isRestoring || !currentPackage;
  
    // If using hosted paywall, render the container
    if (useHostedPaywall && !hostedPaywallError) {
@@ -94,12 +93,12 @@
          <DialogOverlay className="bg-background" />
          <DialogContent 
            className="mx-auto border-0 p-0 overflow-hidden [&>button]:hidden flex flex-col items-center justify-center max-w-md bg-background"
-            style={{ 
-              height: 'auto', 
-              width: '100vw',
-              maxWidth: '100vw',
-              borderRadius: '0',
-            }}
+           style={{ 
+             height: 'auto', 
+             width: '90vw',
+             maxWidth: '400px',
+             borderRadius: '2rem',
+           }}
          >
            <DialogDescription className="sr-only">
              Kaufe die Vollversion um alle Fragen freizuschalten
