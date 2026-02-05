@@ -92,6 +92,11 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
           purchases.getOfferings(),
         ]);
 
+        console.log('RevenueCat Customer Info:', info);
+        console.log('RevenueCat Offerings:', offers);
+        console.log('Current Offering:', offers?.current);
+        console.log('Available Packages:', offers?.current?.availablePackages);
+
         if (!mounted) return;
 
         setCustomerInfo(info);
