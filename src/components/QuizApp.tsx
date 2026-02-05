@@ -89,6 +89,17 @@ export function QuizApp() {
   const [showHintAnimation, setShowHintAnimation] = useState(false);
   const [initialFadeProgress, setInitialFadeProgress] = useState(0);
   const [hasInitialFadeCompleted, setHasInitialFadeCompleted] = useState(false);
+   
+   // Opacity crossfade system: two background layers that fade between each other
+   const [bgLayerA, setBgLayerA] = useState('#000000');
+   const [bgLayerB, setBgLayerB] = useState('#000000');
+   const [activeLayer, setActiveLayer] = useState<'A' | 'B'>('A');
+   const [crossfadeProgress, setCrossfadeProgress] = useState(0);
+   
+   // Velocity tracking for drag
+   const lastDragTime = useRef(performance.now());
+   const lastDragOffset = useRef(0);
+   const dragVelocity = useRef(0);
   
   // Track the highest question index viewed (to count unique questions)
   const highestIndexViewed = useRef(0);
@@ -468,6 +479,16 @@ export function QuizApp() {
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return;
     const offset = clientX - dragStartX;
+     
+     // Track velocity
+     const now = performance.now();
+     const dt = now - lastDragTime.current;
+     if (dt > 0) {
+       dragVelocity.current = Math.abs(offset - lastDragOffset.current) / dt;
+     }
+     lastDragTime.current = now;
+     lastDragOffset.current = offset;
+     
     setDragOffset(offset);
   };
 
@@ -849,9 +870,14 @@ export function QuizApp() {
 
     // During dragging, interpolate based on drag progress
     if (isDragging && hasSlides) {
-      // Apply subtle easing to drag progress to reduce flashiness
+       // Apply velocity-based easing to drag progress
       const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-      const dragProgress = rawProgress * rawProgress * (3 - 2 * rawProgress); // Smoothstep
+       
+       // Velocity factor: clamp between 0.3 (slow drag) and 2.0 (fast drag)
+       const velocityFactor = Math.max(0.3, Math.min(2.0, dragVelocity.current * 0.5));
+       const velocityAdjustedProgress = Math.min(rawProgress * velocityFactor, 1);
+       const dragProgress = velocityAdjustedProgress * velocityAdjustedProgress * (3 - 2 * velocityAdjustedProgress);
+       
       const currentBg = getColorsForSlide(currentIndex).pageBg;
       let targetBg;
       
@@ -893,9 +919,14 @@ export function QuizApp() {
 
     // During dragging, interpolate based on drag progress
     if (isDragging && hasSlides) {
-      // Apply subtle easing to drag progress to reduce flashiness
+       // Apply velocity-based easing to drag progress
       const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-      const dragProgress = rawProgress * rawProgress * (3 - 2 * rawProgress); // Smoothstep
+       
+       // Velocity factor: clamp between 0.3 (slow drag) and 2.0 (fast drag)
+       const velocityFactor = Math.max(0.3, Math.min(2.0, dragVelocity.current * 0.5));
+       const velocityAdjustedProgress = Math.min(rawProgress * velocityFactor, 1);
+       const dragProgress = velocityAdjustedProgress * velocityAdjustedProgress * (3 - 2 * velocityAdjustedProgress);
+       
       const currentCard = getColorsForSlide(currentIndex).cardColor;
       let targetCard;
       
@@ -915,23 +946,28 @@ export function QuizApp() {
 
   // Update body background and theme-color for iOS Safari
   useEffect(() => {
-    const bgColor = categorySelectorOpen 
-      ? '#000000' 
-      : getInterpolatedBgColor();
+     // For opacity crossfade, we use two layers instead of direct body background
+     // This effect now just handles the static/non-drag cases
+     if (isDragging) return; // Drag is handled by crossfade system
     
-    if (!bgColor) return;
-    
-    // Update body background only
-    document.body.style.transition = 'none';
-    document.body.style.backgroundColor = bgColor;
+     const bgColor = categorySelectorOpen 
+       ? '#000000' 
+       : getInterpolatedBgColor();
+     
+     if (!bgColor) return;
+     
+     // Update both layers to the same color for static state
+     setBgLayerA(bgColor);
+     setBgLayerB(bgColor);
+     setCrossfadeProgress(0);
+     setActiveLayer('A');
+     document.body.style.backgroundColor = 'transparent';
     
     // Only update theme-color on transition end or static state (not during drag to avoid flicker)
-    if (!isDragging) {
-      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-      metaThemeColors.forEach((meta) => {
-        meta.setAttribute('content', bgColor);
-      });
-    }
+     const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+     metaThemeColors.forEach((meta) => {
+       meta.setAttribute('content', bgColor);
+     });
   }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen, initialFadeProgress, hasInitialFadeCompleted]);
 
   // Separate effect for smooth drag updates using requestAnimationFrame
@@ -940,18 +976,40 @@ export function QuizApp() {
     
     let frameId: number;
     let isCancelled = false;
-    let lastBgColor = '';
+     
+     // Set up initial layer states when drag starts
+     const currentBg = getColorsForSlide(currentIndex).pageBg;
+     setBgLayerA(currentBg);
+     setActiveLayer('A');
+     setCrossfadeProgress(0);
     
     const updateDragColor = () => {
       if (isCancelled) return;
       
-      const bgColor = getInterpolatedBgColor();
-      // Only update if color actually changed to reduce repaints
-      if (bgColor && bgColor !== lastBgColor) {
-        lastBgColor = bgColor;
-        document.body.style.transition = 'none';
-        document.body.style.backgroundColor = bgColor;
+       // Calculate velocity-influenced progress
+       // Higher velocity = more responsive color change
+       const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
+       
+       // Velocity factor: clamp between 0.3 (slow drag) and 2.0 (fast drag)
+       const velocityFactor = Math.max(0.3, Math.min(2.0, dragVelocity.current * 0.5));
+       
+       // Apply velocity to progress - faster drag = more progress per distance
+       const velocityAdjustedProgress = Math.min(rawProgress * velocityFactor, 1);
+       
+       // Smoothstep for final easing
+       const smoothProgress = velocityAdjustedProgress * velocityAdjustedProgress * (3 - 2 * velocityAdjustedProgress);
+       
+       // Determine target color based on drag direction
+       let targetBg = currentBg;
+       if (dragOffset < 0 && currentIndex < slides.length - 1) {
+         targetBg = getColorsForSlide(currentIndex + 1).pageBg;
+       } else if (dragOffset > 0 && currentIndex > 0) {
+         targetBg = getColorsForSlide(currentIndex - 1).pageBg;
       }
+       
+       // Update the inactive layer with target color and crossfade to it
+       setBgLayerB(targetBg);
+       setCrossfadeProgress(smoothProgress);
       
       if (isDragging) {
         frameId = requestAnimationFrame(updateDragColor);
@@ -995,6 +1053,33 @@ export function QuizApp() {
 
   return (
     <>
+       {/* Opacity crossfade background layers */}
+       <div
+         style={{
+           position: 'fixed',
+           top: 0,
+           left: 0,
+           right: 0,
+           bottom: 0,
+           backgroundColor: bgLayerA,
+           zIndex: -2,
+           opacity: activeLayer === 'A' ? 1 : 1 - crossfadeProgress,
+           transition: isDragging ? 'none' : 'opacity 0.3s ease-out',
+         }}
+       />
+       <div
+         style={{
+           position: 'fixed',
+           top: 0,
+           left: 0,
+           right: 0,
+           bottom: 0,
+           backgroundColor: bgLayerB,
+           zIndex: -1,
+           opacity: activeLayer === 'A' ? crossfadeProgress : 1,
+           transition: isDragging ? 'none' : 'opacity 0.3s ease-out',
+         }}
+       />
       <div 
         className="overflow-hidden flex flex-col" 
         style={{ 
