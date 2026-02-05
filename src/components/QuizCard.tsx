@@ -531,8 +531,6 @@ export function QuizCard({
           e.stopPropagation();
           onSwipeRight();
         }}
-        onMouseDown={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
       />
 
       {/* Right Click Area - Next */}
@@ -542,8 +540,6 @@ export function QuizCard({
           e.stopPropagation();
           onSwipeLeft();
         }}
-        onMouseDown={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
       />
 
       {/* Category Pill - Positioned at bottom corner opposite to monster, moved up for button, rotated -90deg */}
