@@ -470,7 +470,12 @@ export function QuizApp() {
   // Real-time drag handlers
 
   const handleDragStart = (clientX: number) => {
-    if (isTransitioning) return;
+     // Cancel any ongoing transition when user starts dragging
+     if (isTransitioning) {
+       setIsTransitioning(false);
+       setTransitionDirection(null);
+       setTransitionProgress(0);
+     }
     setIsDragging(true);
     setDragStartX(clientX);
     setDragOffset(0);
