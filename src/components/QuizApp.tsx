@@ -919,9 +919,7 @@ export function QuizApp() {
       const bgColor = getInterpolatedBgColor();
       if (!bgColor) return;
       
-      // Update both html and body background - this is what iOS Safari chrome follows
-      document.documentElement.style.transition = 'none';
-      document.documentElement.style.backgroundColor = bgColor;
+      // Update body background only - iOS Safari chrome follows this
       document.body.style.transition = 'none';
       document.body.style.backgroundColor = bgColor;
       
@@ -957,16 +955,6 @@ export function QuizApp() {
 
   return (
     <>
-      {/* Background layer that extends into safe areas for iOS Safari */}
-      <div 
-        style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: categorySelectorOpen ? '#000000' : (getInterpolatedBgColor() || '#000000'),
-          zIndex: -1
-        }}
-        aria-hidden="true"
-      />
       <div 
         className="overflow-hidden flex flex-col" 
         style={{ 
@@ -974,7 +962,7 @@ export function QuizApp() {
           height: '100svh',
           overflowY: 'hidden',
           width: '100%',
-          backgroundColor: 'transparent',
+          backgroundColor: categorySelectorOpen ? '#000000' : (getInterpolatedBgColor() || '#000000'),
           paddingTop: 'env(safe-area-inset-top, 0)',
           paddingBottom: 'env(safe-area-inset-bottom, 0)',
           paddingLeft: 'env(safe-area-inset-left, 0)',
