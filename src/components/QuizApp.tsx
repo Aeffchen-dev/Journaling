@@ -374,6 +374,7 @@ export function QuizApp() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [dragStartX, setDragStartX] = useState(0);
+  const [transitionProgress, setTransitionProgress] = useState(0);
 
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
@@ -395,10 +396,24 @@ export function QuizApp() {
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
       
+      // Animate transition progress from 0 to 1
+      const startTime = performance.now();
+      const duration = 300;
+      const animateProgress = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        setTransitionProgress(progress);
+        if (progress < 1) {
+          requestAnimationFrame(animateProgress);
+        }
+      };
+      requestAnimationFrame(animateProgress);
+      
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
+        setTransitionProgress(0);
       }, 300);
     }
   };
@@ -409,10 +424,24 @@ export function QuizApp() {
       setTransitionDirection('right');
       setBaseSmileyRotation(prev => prev - 360);
       
+      // Animate transition progress from 0 to 1
+      const startTime = performance.now();
+      const duration = 300;
+      const animateProgress = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        setTransitionProgress(progress);
+        if (progress < 1) {
+          requestAnimationFrame(animateProgress);
+        }
+      };
+      requestAnimationFrame(animateProgress);
+      
       setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
+        setTransitionProgress(0);
       }, 300);
     }
   };
@@ -687,9 +716,21 @@ export function QuizApp() {
 
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
-    if (!isDragging) {
+    if (!isDragging && !isTransitioning) {
       const colors = getCurrentColors();
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+    }
+
+    // During arrow key/click transition, interpolate based on progress
+    if (isTransitioning && !isDragging && transitionDirection) {
+      const currentColors = getColorsForSlide(currentIndex);
+      const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
+      const targetColors = getColorsForSlide(targetIndex);
+      
+      const currentBg = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
+      const targetBg = targetColors.pageBg;
+      
+      return interpolateColors(currentBg, targetBg, transitionProgress);
     }
 
     // During dragging, interpolate based on progress
@@ -723,9 +764,21 @@ export function QuizApp() {
 
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
-    if (!isDragging) {
+    if (!isDragging && !isTransitioning) {
       const colors = getCurrentColors();
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
+    }
+
+    // During arrow key/click transition, interpolate based on progress
+    if (isTransitioning && !isDragging && transitionDirection) {
+      const currentColors = getColorsForSlide(currentIndex);
+      const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
+      const targetColors = getColorsForSlide(targetIndex);
+      
+      const currentCard = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
+      const targetCard = targetColors.cardColor;
+      
+      return interpolateColors(currentCard, targetCard, transitionProgress);
     }
 
     // During dragging, interpolate based on progress
