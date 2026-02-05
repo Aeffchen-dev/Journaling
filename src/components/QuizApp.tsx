@@ -404,8 +404,8 @@ export function QuizApp() {
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / duration, 1);
-        // Ease-out: 1 - (1 - t)^2
-        const progress = 1 - Math.pow(1 - linearProgress, 2);
+        // Sine ease-out: sin(t * π/2)
+        const progress = Math.sin(linearProgress * Math.PI / 2);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
@@ -434,8 +434,8 @@ export function QuizApp() {
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / duration, 1);
-        // Ease-out: 1 - (1 - t)^2
-        const progress = 1 - Math.pow(1 - linearProgress, 2);
+        // Sine ease-out: sin(t * π/2)
+        const progress = Math.sin(linearProgress * Math.PI / 2);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
