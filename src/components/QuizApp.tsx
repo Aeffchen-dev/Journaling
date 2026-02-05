@@ -883,7 +883,11 @@ export function QuizApp() {
     // When category menu is open, always use black
     const bgColor = categorySelectorOpen 
       ? '#000000' 
-      : (slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? getCurrentColors().pageBg : '#000000');
+      : getColorsForSlide(currentIndex).pageBg;
+    
+    // Update body background to match (for iOS Safari chrome)
+    document.body.style.transition = 'none';
+    document.body.style.backgroundColor = bgColor;
     
     // Force iOS Safari to repaint browser chrome by nudging theme-color
     const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
