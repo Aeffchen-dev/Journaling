@@ -768,8 +768,6 @@ export function QuizApp() {
     // Use longer transition on desktop (768px+)
     const isDesktop = window.innerWidth >= 768;
     const transitionDuration = isDesktop ? '0.5s' : '0.3s';
-    document.documentElement.style.transition = `background-color ${transitionDuration} ease-out`;
-    document.documentElement.style.backgroundColor = bgColor;
     document.body.style.transition = `background-color ${transitionDuration} ease-out`;
     document.body.style.backgroundColor = bgColor;
     
