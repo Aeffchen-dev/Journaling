@@ -87,6 +87,8 @@ export function QuizApp() {
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
+  const [initialFadeProgress, setInitialFadeProgress] = useState(0);
+  const [hasInitialFadeCompleted, setHasInitialFadeCompleted] = useState(false);
   
   // Track the highest question index viewed (to count unique questions)
   const highestIndexViewed = useRef(0);
@@ -708,6 +710,30 @@ export function QuizApp() {
   const safeIndex = hasSlides ? Math.min(currentIndex, slides.length - 1) : 0;
   const safeSlide = hasSlides ? slides[safeIndex] : undefined;
 
+  // Initial background fade-in when content loads
+  useEffect(() => {
+    if (!loading && hasSlides && !hasInitialFadeCompleted) {
+      const startTime = performance.now();
+      const fadeDuration = 800; // 800ms fade-in
+      
+      const animateFade = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const linearProgress = Math.min(elapsed / fadeDuration, 1);
+        // Smooth ease-out sine
+        const progress = Math.sin((linearProgress * Math.PI) / 2);
+        setInitialFadeProgress(progress);
+        
+        if (linearProgress < 1) {
+          requestAnimationFrame(animateFade);
+        } else {
+          setHasInitialFadeCompleted(true);
+        }
+      };
+      
+      requestAnimationFrame(animateFade);
+    }
+  }, [loading, hasSlides, hasInitialFadeCompleted]);
+
   // Helper to get colors for any slide index
   const getColorsForSlide = (index: number) => {
     if (!hasSlides || index < 0 || index >= slides.length) {
@@ -724,7 +750,15 @@ export function QuizApp() {
     
     // Intro slides have black background
     if (question.category.toLowerCase() === 'intro') {
-      return { cardColor: '#ffffff', pageBg: '#000000' };
+      // Get colors from the next slide (first question) for fade-in effect
+      if (index + 1 < slides.length && slides[index + 1]?.question) {
+        const nextQuestion = slides[index + 1].question!;
+        if (nextQuestion.category.toLowerCase() !== 'intro') {
+          return getColorsForSlide(index + 1);
+        }
+      }
+      // Fallback to first category color
+      return { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 12%)' };
     }
     
     let colorIndex;
@@ -793,6 +827,12 @@ export function QuizApp() {
 
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
+    // During initial fade-in from black
+    if (!hasInitialFadeCompleted && hasSlides) {
+      const targetColor = getColorsForSlide(0).pageBg;
+      return interpolateColors('#000000', targetColor, initialFadeProgress);
+    }
+    
     // Static state - no drag or transition
     if (!isDragging && !isTransitioning) {
       return getCurrentColors().pageBg;
@@ -829,6 +869,12 @@ export function QuizApp() {
 
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
+    // During initial fade-in from white
+    if (!hasInitialFadeCompleted && hasSlides) {
+      const targetColor = getColorsForSlide(0).cardColor;
+      return interpolateColors('#ffffff', targetColor, initialFadeProgress);
+    }
+    
     // Static state - no drag or transition
     if (!isDragging && !isTransitioning) {
       return getCurrentColors().cardColor;
@@ -882,7 +928,7 @@ export function QuizApp() {
         meta.setAttribute('content', bgColor);
       });
     }
-  }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen]);
+  }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen, initialFadeProgress, hasInitialFadeCompleted]);
 
   // Separate effect for smooth drag updates using requestAnimationFrame
   useEffect(() => {
