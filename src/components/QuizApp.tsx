@@ -396,7 +396,7 @@ export function QuizApp() {
       
       setIsTransitioning(true);
       setTransitionDirection('left');
-      setBaseSmileyRotation(prev => prev + 360);
+        setBaseSmileyRotation(prev => prev - 360);
 
       // Animate transition progress with ease-in-out
       const startTime = performance.now();
@@ -525,7 +525,7 @@ export function QuizApp() {
         // Navigate to next - rotate right (clockwise)
         setIsTransitioning(true);
         setTransitionDirection('left');
-        setBaseSmileyRotation(prev => prev + 360);
+        setBaseSmileyRotation(prev => prev - 360);
 
         const startTime = performance.now();
         const slideDuration = isMobile ? 300 : 500;
