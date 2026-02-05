@@ -120,7 +120,7 @@
  
              {/* Description - Same styling as small text (14px) */}
              <p 
-                className="font-factora leading-relaxed w-full text-left"
+                 className="font-factora leading-relaxed w-full text-center"
                style={{
                  fontSize: '14px',
                  opacity: 0.8,
