@@ -7,6 +7,15 @@ import {
   ENTITLEMENT_ID 
 } from '@/lib/revenuecat';
 
+// Check if running inside BuildNatively native app
+function isNativeApp(): boolean {
+  return typeof window !== 'undefined' && (
+    !!(window as any).NativelyPurchases ||
+    !!(window as any).natively ||
+    !!(window as any).webkit?.messageHandlers?.natively
+  );
+}
+
 // Local storage keys for persistence
 const STORAGE_KEYS = {
   QUESTIONS_VIEWED: 'rc_questions_viewed',
@@ -70,11 +79,21 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     ? Infinity 
     : Math.max(0, FREE_QUESTIONS_LIMIT - questionsViewed);
 
+  // Only enable paywall functionality for native app
+  const isInNativeApp = isNativeApp();
+
   // Initialize RevenueCat and load initial data
   useEffect(() => {
     let mounted = true;
 
     async function init() {
+      // Skip RevenueCat initialization if not in native app
+      if (!isInNativeApp) {
+        setIsLoading(false);
+        setIsEntitled(true); // Grant full access on web
+        return;
+      }
+
       try {
         setIsLoading(true);
         setError(null);
@@ -251,7 +270,8 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
 
   // Increment question count
   const incrementQuestionCount = useCallback((): boolean => {
-    if (isEntitled) return true;
+    // Always allow on web (non-native)
+    if (!isInNativeApp || isEntitled) return true;
 
     const newCount = questionsViewed + 1;
     
@@ -263,7 +283,7 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     setQuestionsViewed(newCount);
     localStorage.setItem(STORAGE_KEYS.QUESTIONS_VIEWED, newCount.toString());
     return true;
-  }, [isEntitled, questionsViewed]);
+  }, [isInNativeApp, isEntitled, questionsViewed]);
 
   // Get subscription management URL
   const getManagementUrl = useCallback((): string | null => {
