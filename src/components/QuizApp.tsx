@@ -1101,20 +1101,19 @@ export function QuizApp() {
         backgroundColor={getInterpolatedBgColor()}
       />
       
-      {/* RevenueCat Paywall Dialog */}
-      <RevenueCatPaywall
-        isOpen={showPaywall}
-        isPurchasing={isPurchasing}
-        isLoading={isRevenueCatLoading}
-        isRestoring={isRestoring}
-        priceString={priceString}
-        currentPackage={currentPackage}
-        managementUrl={getManagementUrl()}
-        onPurchase={purchase}
-        onRestore={handleRestore}
-        onDismiss={dismissPaywall}
-        presentHostedPaywall={presentPaywall}
-      />
+       {/* RevenueCat Paywall Dialog */}
+       <RevenueCatPaywall
+         isOpen={showPaywall}
+         isPurchasing={isPurchasing}
+         isLoading={isRevenueCatLoading}
+         isRestoring={isRestoring}
+         priceString={priceString}
+         currentPackage={currentPackage}
+         managementUrl={getManagementUrl()}
+         onPurchase={purchase}
+         onRestore={handleRestore}
+         presentHostedPaywall={presentPaywall}
+       />
       </div>
     </>
   );

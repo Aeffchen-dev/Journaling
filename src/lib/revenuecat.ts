@@ -9,29 +9,48 @@ export const PRODUCT_ID = 'lifetime';
 let purchasesInstance: Purchases | null = null;
 let isConfigured = false;
 
-/**
- * Initialize RevenueCat SDK
- * Call this once when the app starts
- */
-export async function initializeRevenueCat(appUserId?: string): Promise<Purchases> {
-  if (isConfigured && purchasesInstance) {
-    return purchasesInstance;
-  }
-
-  try {
-    // Configure with API key and optional user ID
-    purchasesInstance = await Purchases.configure(
-      REVENUECAT_API_KEY,
-      appUserId || undefined
-    );
-    isConfigured = true;
-    console.log('RevenueCat initialized successfully');
-    return purchasesInstance;
-  } catch (error) {
-    console.error('Failed to initialize RevenueCat:', error);
-    throw error;
-  }
-}
+ /**
+  * Generate or retrieve a unique anonymous user ID
+  */
+ function getOrCreateAnonymousUserId(): string {
+   const STORAGE_KEY = 'rc_anonymous_user_id';
+   let userId = localStorage.getItem(STORAGE_KEY);
+   
+   if (!userId) {
+     // Generate a unique ID
+     userId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+     localStorage.setItem(STORAGE_KEY, userId);
+   }
+   
+   return userId;
+ }
+ 
+ /**
+  * Initialize RevenueCat SDK
+  * Call this once when the app starts
+  */
+ export async function initializeRevenueCat(appUserId?: string): Promise<Purchases> {
+   if (isConfigured && purchasesInstance) {
+     return purchasesInstance;
+   }
+ 
+   try {
+     // Use provided user ID or generate anonymous one
+     const userId = appUserId || getOrCreateAnonymousUserId();
+     
+     // Configure with API key and user ID
+     purchasesInstance = await Purchases.configure(
+       REVENUECAT_API_KEY,
+       userId
+     );
+     isConfigured = true;
+     console.log('RevenueCat initialized successfully with user:', userId);
+     return purchasesInstance;
+   } catch (error) {
+     console.error('Failed to initialize RevenueCat:', error);
+     throw error;
+   }
+ }
 
 /**
  * Get the RevenueCat Purchases instance
