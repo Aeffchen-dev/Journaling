@@ -895,18 +895,68 @@ export function QuizApp() {
     document.body.style.transition = 'none';
     document.body.style.backgroundColor = bgColor;
     
-    // Force browser chrome repaint by nudging theme-color
+    // Only update theme-color on transition end or static state (not during drag to avoid flicker)
+    if (!isDragging) {
+      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+      metaThemeColors.forEach((meta) => {
+        meta.setAttribute('content', bgColor);
+      });
+    }
+  }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen]);
+
+  // Separate effect for smooth drag updates using requestAnimationFrame
+  useEffect(() => {
+    if (!isDragging) return;
+    
+    let frameId: number;
+    let isCancelled = false;
+    
+    const updateDragColor = () => {
+      if (isCancelled) return;
+      
+      const bgColor = getInterpolatedBgColor();
+      if (bgColor) {
+        document.body.style.transition = 'none';
+        document.body.style.backgroundColor = bgColor;
+      }
+      
+      if (isDragging) {
+        frameId = requestAnimationFrame(updateDragColor);
+      }
+    };
+    
+    frameId = requestAnimationFrame(updateDragColor);
+    
+    return () => {
+      isCancelled = true;
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [isDragging, dragOffset]);
+
+  // Update theme-color after drag ends
+  useEffect(() => {
+    if (isDragging) return;
+    
+    const bgColor = categorySelectorOpen 
+      ? '#000000' 
+      : getInterpolatedBgColor();
+    
+    if (!bgColor) return;
+    
+    // Force browser chrome repaint by nudging theme-color (only when not dragging)
     const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
     metaThemeColors.forEach((meta) => {
       meta.setAttribute('content', bgColor + 'fe');
     });
     
-    requestAnimationFrame(() => {
+    const timeoutId = setTimeout(() => {
       metaThemeColors.forEach((meta) => {
         meta.setAttribute('content', bgColor);
       });
-    });
-  }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen]);
+    }, 16);
+    
+    return () => clearTimeout(timeoutId);
+  }, [isDragging, isTransitioning, currentIndex, categorySelectorOpen]);
 
   const currentColors = getCurrentColors();
 
