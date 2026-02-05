@@ -397,24 +397,25 @@ export function QuizApp() {
       setIsTransitioning(true);
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
-      
-      // Animate transition progress - delayed start, slow ease-out at the end
+
+      // Animate transition progress with ease-in-out
       const startTime = performance.now();
       const slideDuration = isMobile ? 300 : 500;
       const colorDuration = slideDuration + 200; // Color completes after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Custom cubic-bezier(0.16, 1, 0.3, 1) approximation
-        const t = linearProgress;
-        const progress = 1 - Math.pow(1 - t, 3.5);
+        // Ease-in-out (cubic)
+        const progress = linearProgress < 0.5
+          ? 4 * linearProgress * linearProgress * linearProgress
+          : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
         }
       };
       requestAnimationFrame(animateProgress);
-      
+
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
@@ -429,25 +430,26 @@ export function QuizApp() {
       setIsTransitioning(true);
       setTransitionDirection('right');
       setBaseSmileyRotation(prev => prev - 360);
-      
-      // Animate transition progress - delayed start, slow ease-out at the end
+
+    // Animate transition progress with ease-in-out
       const startTime = performance.now();
       const slideDuration = isMobile ? 300 : 500;
       const colorDuration = slideDuration + 200; // Color completes after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Custom cubic-bezier(0.16, 1, 0.3, 1) approximation
-        const t = linearProgress;
-        const progress = 1 - Math.pow(1 - t, 3.5);
+      // Ease-in-out (cubic)
+      const progress = linearProgress < 0.5
+        ? 4 * linearProgress * linearProgress * linearProgress
+        : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
         }
       };
       requestAnimationFrame(animateProgress);
-      
-      setTimeout(() => {
+
+    setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
@@ -458,6 +460,7 @@ export function QuizApp() {
 
   // Real-time drag handlers
   const [dragRotationTriggered, setDragRotationTriggered] = useState(false);
+  const [dragSmileyRotation, setDragSmileyRotation] = useState(0);
 
   const handleDragStart = (clientX: number) => {
     if (isTransitioning) return;
@@ -465,105 +468,116 @@ export function QuizApp() {
     setDragStartX(clientX);
     setDragOffset(0);
     setDragRotationTriggered(false);
+    setDragSmileyRotation(0);
   };
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return;
     const offset = clientX - dragStartX;
     setDragOffset(offset);
+
+    // Calculate smiley rotation based on drag progress
+    const swipeThreshold = 120;
+    const dragProgress = Math.min(Math.abs(offset) / swipeThreshold, 1);
     
-    // Trigger rotation immediately when threshold is crossed
-    const threshold = 10;
-    if (!dragRotationTriggered && Math.abs(offset) > threshold) {
-      if (offset > 0 && currentIndex > 0) {
-        setBaseSmileyRotation(prev => prev - 360);
-        setDragRotationTriggered(true);
-      } else if (offset < 0 && currentIndex < slides.length - 1) {
-        setBaseSmileyRotation(prev => prev + 360);
-        setDragRotationTriggered(true);
-      }
+    if (offset > 0 && currentIndex > 0) {
+      // Swiping right (going to previous) - rotate counter-clockwise
+      setDragSmileyRotation(-360 * dragProgress);
+      setDragRotationTriggered(true);
+    } else if (offset < 0 && currentIndex < slides.length - 1) {
+      // Swiping left (going to next) - rotate clockwise
+      setDragSmileyRotation(360 * dragProgress);
+      setDragRotationTriggered(true);
+    } else {
+      setDragSmileyRotation(0);
     }
   };
 
   const handleDragEnd = () => {
     if (!isDragging) return;
-    
+
     const threshold = 120;
-    
+
     if (Math.abs(dragOffset) > threshold) {
       if (dragOffset > 0 && currentIndex > 0) {
-        // Rotation already triggered in handleDragMove, just navigate
+        // Commit the rotation to base and navigate
+        setBaseSmileyRotation(prev => prev - 360);
         setIsTransitioning(true);
         setTransitionDirection('right');
-        
+
         const startTime = performance.now();
-        const duration = isMobile ? 300 : 500;
+        const slideDuration = isMobile ? 300 : 500;
+        const colorDuration = slideDuration + 200;
         const animateProgress = (currentTime: number) => {
           const elapsed = currentTime - startTime;
-          const linearProgress = Math.min(elapsed / duration, 1);
-          const progress = Math.sin(linearProgress * Math.PI / 2);
+          const linearProgress = Math.min(elapsed / colorDuration, 1);
+          // Ease-in-out (cubic)
+          const progress = linearProgress < 0.5
+            ? 4 * linearProgress * linearProgress * linearProgress
+            : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
           setTransitionProgress(progress);
           if (linearProgress < 1) {
             requestAnimationFrame(animateProgress);
           }
         };
         requestAnimationFrame(animateProgress);
-        
+
         setTimeout(() => {
           setCurrentIndex(prev => prev - 1);
           setIsTransitioning(false);
           setTransitionDirection(null);
           setTransitionProgress(0);
-        }, isMobile ? 300 : 500);
+        }, colorDuration);
       } else if (dragOffset < 0 && currentIndex < slides.length - 1) {
-        // Rotation already triggered in handleDragMove, just navigate
         const nextIndex = currentIndex + 1;
-        
+
         if (nextIndex > highestIndexViewed.current && !isEntitled) {
           const canView = incrementQuestionCount();
           if (!canView) {
             setShowPaywall(true);
             setIsDragging(false);
             setDragOffset(0);
+            setDragSmileyRotation(0);
             return;
           }
           highestIndexViewed.current = nextIndex;
         }
-        
+
+        // Commit the rotation to base and navigate
+        setBaseSmileyRotation(prev => prev + 360);
         setIsTransitioning(true);
         setTransitionDirection('left');
-        
+
         const startTime = performance.now();
-        const duration = isMobile ? 300 : 500;
+        const slideDuration = isMobile ? 300 : 500;
+        const colorDuration = slideDuration + 200;
         const animateProgress = (currentTime: number) => {
           const elapsed = currentTime - startTime;
-          const linearProgress = Math.min(elapsed / duration, 1);
-          const progress = Math.sin(linearProgress * Math.PI / 2);
+          const linearProgress = Math.min(elapsed / colorDuration, 1);
+          // Ease-in-out (cubic)
+          const progress = linearProgress < 0.5
+            ? 4 * linearProgress * linearProgress * linearProgress
+            : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
           setTransitionProgress(progress);
           if (linearProgress < 1) {
             requestAnimationFrame(animateProgress);
           }
         };
         requestAnimationFrame(animateProgress);
-        
+
         setTimeout(() => {
           setCurrentIndex(prev => prev + 1);
           setIsTransitioning(false);
           setTransitionDirection(null);
           setTransitionProgress(0);
-        }, isMobile ? 300 : 500);
-      }
-    } else if (dragRotationTriggered) {
-      // Swipe didn't complete - reverse the rotation
-      if (dragOffset > 0 && currentIndex > 0) {
-        setBaseSmileyRotation(prev => prev + 360);
-      } else if (dragOffset < 0 && currentIndex < slides.length - 1) {
-        setBaseSmileyRotation(prev => prev - 360);
+        }, colorDuration);
       }
     }
-    
+    // No need to reverse - dragSmileyRotation just resets to 0
+
     setIsDragging(false);
     setDragOffset(0);
+    setDragSmileyRotation(0);
   };
 
   const handleKeyPress = (e: KeyboardEvent) => {
@@ -1044,8 +1058,8 @@ export function QuizApp() {
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
-                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : baseSmileyRotation}deg)`,
-                      transition: loading ? 'transform 0.8s ease-in-out' : `transform ${isMobile ? 0.2 : 0.35}s ease-out`,
+                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + dragSmileyRotation)}deg)`,
+                      transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : `transform ${isMobile ? 0.2 : 0.35}s ease-out`),
                       paddingLeft: '2px',
                       paddingRight: '2px'
                     }}
