@@ -400,15 +400,13 @@ export function QuizApp() {
 
       // Animate transition progress with ease-in-out
       const startTime = performance.now();
-      const slideDuration = isMobile ? 300 : 500;
-      const colorDuration = slideDuration + 200; // Color completes after slide
+      const slideDuration = isMobile ? 400 : 600;
+      const colorDuration = slideDuration + 300; // Color completes after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Ease-in-out (cubic)
-        const progress = linearProgress < 0.5
-          ? 4 * linearProgress * linearProgress * linearProgress
-          : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
+        // Smooth ease-out sine for buttery feel
+        const progress = Math.sin((linearProgress * Math.PI) / 2);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
@@ -433,15 +431,13 @@ export function QuizApp() {
 
     // Animate transition progress with ease-in-out
       const startTime = performance.now();
-      const slideDuration = isMobile ? 300 : 500;
-      const colorDuration = slideDuration + 200; // Color completes after slide
+      const slideDuration = isMobile ? 400 : 600;
+      const colorDuration = slideDuration + 300; // Color completes after slide
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const linearProgress = Math.min(elapsed / colorDuration, 1);
-      // Ease-in-out (cubic)
-      const progress = linearProgress < 0.5
-        ? 4 * linearProgress * linearProgress * linearProgress
-        : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
+        // Smooth ease-out sine for buttery feel
+        const progress = Math.sin((linearProgress * Math.PI) / 2);
         setTransitionProgress(progress);
         if (linearProgress < 1) {
           requestAnimationFrame(animateProgress);
@@ -486,15 +482,13 @@ export function QuizApp() {
         setBaseSmileyRotation(prev => prev - 360);
 
         const startTime = performance.now();
-        const slideDuration = isMobile ? 300 : 500;
-        const colorDuration = slideDuration + 200;
+        const slideDuration = isMobile ? 400 : 600;
+        const colorDuration = slideDuration + 300;
         const animateProgress = (currentTime: number) => {
           const elapsed = currentTime - startTime;
           const linearProgress = Math.min(elapsed / colorDuration, 1);
-          // Ease-in-out (cubic)
-          const progress = linearProgress < 0.5
-            ? 4 * linearProgress * linearProgress * linearProgress
-            : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
+          // Smooth ease-out sine for buttery feel
+          const progress = Math.sin((linearProgress * Math.PI) / 2);
           setTransitionProgress(progress);
           if (linearProgress < 1) {
             requestAnimationFrame(animateProgress);
@@ -528,15 +522,13 @@ export function QuizApp() {
         setBaseSmileyRotation(prev => prev + 360);
 
         const startTime = performance.now();
-        const slideDuration = isMobile ? 300 : 500;
-        const colorDuration = slideDuration + 200;
+        const slideDuration = isMobile ? 400 : 600;
+        const colorDuration = slideDuration + 300;
         const animateProgress = (currentTime: number) => {
           const elapsed = currentTime - startTime;
           const linearProgress = Math.min(elapsed / colorDuration, 1);
-          // Ease-in-out (cubic)
-          const progress = linearProgress < 0.5
-            ? 4 * linearProgress * linearProgress * linearProgress
-            : 1 - Math.pow(-2 * linearProgress + 2, 3) / 2;
+          // Smooth ease-out sine for buttery feel
+          const progress = Math.sin((linearProgress * Math.PI) / 2);
           setTransitionProgress(progress);
           if (linearProgress < 1) {
             requestAnimationFrame(animateProgress);
@@ -786,11 +778,8 @@ export function QuizApp() {
   // Interpolate between two colors using CSS color-mix in OKLCH color space
   // OKLCH provides perceptually uniform blending with natural hue transitions
   const interpolateColors = (color1: string, color2: string, factor: number) => {
-    // Apply smooth easing to the factor for more natural feel
-    const easedFactor = factor < 0.5
-      ? 2 * factor * factor
-      : 1 - Math.pow(-2 * factor + 2, 2) / 2;
-    const percentage = easedFactor * 100;
+    // Factor is already eased by the animation loop
+    const percentage = factor * 100;
     
     // Use CSS color-mix in OKLCH for perceptually uniform transitions with natural hue blending
     // OKLCH (cylindrical OKLab) blends through hue more naturally than rectangular OKLab
