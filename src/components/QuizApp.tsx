@@ -819,8 +819,8 @@ export function QuizApp() {
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     }
 
-    // Color transition completes at navigation threshold (120px)
-    const dragProgress = Math.min(Math.abs(dragOffset) / 120, 1);
+    // Color transition proportional to screen width, no fixed threshold
+    const dragProgress = Math.abs(dragOffset) / window.innerWidth;
 
     const currentColors = getColorsForSlide(currentIndex);
     let targetColors;
@@ -867,8 +867,8 @@ export function QuizApp() {
       return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
     }
 
-    // Color transition completes at navigation threshold (120px)
-    const dragProgress = Math.min(Math.abs(dragOffset) / 120, 1);
+    // Color transition proportional to screen width, no fixed threshold
+    const dragProgress = Math.abs(dragOffset) / window.innerWidth;
 
     const currentColors = getColorsForSlide(currentIndex);
     let targetColors;
