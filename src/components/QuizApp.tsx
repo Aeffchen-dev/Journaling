@@ -728,6 +728,12 @@ export function QuizApp() {
     }
 
     const question = slide.question;
+    
+    // Intro slides always get black background and white card
+    if (question.category.toLowerCase() === 'intro') {
+      return { cardColor: '#ffffff', pageBg: '#000000' };
+    }
+    
     let colorIndex;
     
     switch(question.category) {
@@ -795,47 +801,39 @@ export function QuizApp() {
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
     if (!isDragging && !isTransitioning) {
-      const colors = getCurrentColors();
-      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+      return getCurrentColors().pageBg;
     }
 
     // During arrow key/click transition, interpolate based on progress
     if (isTransitioning && !isDragging && transitionDirection) {
-      const currentColors = getColorsForSlide(currentIndex);
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
-      const targetColors = getColorsForSlide(targetIndex);
-      
-      const currentBg = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
-      const targetBg = targetColors.pageBg;
+      const currentBg = getColorsForSlide(currentIndex).pageBg;
+      const targetBg = getColorsForSlide(targetIndex).pageBg;
       
       return interpolateColors(currentBg, targetBg, transitionProgress);
     }
 
     // During dragging, interpolate based on progress
     if (!hasSlides) {
-      const colors = getCurrentColors();
-      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+      return getCurrentColors().pageBg;
     }
 
     // Color transition proportional to screen width, no fixed threshold
     const dragProgress = Math.abs(dragOffset) / window.innerWidth;
 
-    const currentColors = getColorsForSlide(currentIndex);
-    let targetColors;
+    const currentBg = getColorsForSlide(currentIndex).pageBg;
+    let targetBg;
     
     if (dragOffset < 0 && currentIndex < slides.length - 1) {
       // Swiping left (next slide)
-      targetColors = getColorsForSlide(currentIndex + 1);
+      targetBg = getColorsForSlide(currentIndex + 1).pageBg;
     } else if (dragOffset > 0 && currentIndex > 0) {
       // Swiping right (prev slide)
-      targetColors = getColorsForSlide(currentIndex - 1);
+      targetBg = getColorsForSlide(currentIndex - 1).pageBg;
     } else {
       // No valid target, stay at current
-      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
+      return currentBg;
     }
-
-    const currentBg = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
-    const targetBg = targetColors.pageBg;
 
     return interpolateColors(currentBg, targetBg, dragProgress);
   };
@@ -843,47 +841,39 @@ export function QuizApp() {
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
     if (!isDragging && !isTransitioning) {
-      const colors = getCurrentColors();
-      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
+      return getCurrentColors().cardColor;
     }
 
     // During arrow key/click transition, interpolate based on progress
     if (isTransitioning && !isDragging && transitionDirection) {
-      const currentColors = getColorsForSlide(currentIndex);
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
-      const targetColors = getColorsForSlide(targetIndex);
-      
-      const currentCard = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
-      const targetCard = targetColors.cardColor;
+      const currentCard = getColorsForSlide(currentIndex).cardColor;
+      const targetCard = getColorsForSlide(targetIndex).cardColor;
       
       return interpolateColors(currentCard, targetCard, transitionProgress);
     }
 
     // During dragging, interpolate based on progress
     if (!hasSlides) {
-      const colors = getCurrentColors();
-      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
+      return getCurrentColors().cardColor;
     }
 
     // Color transition proportional to screen width, no fixed threshold
     const dragProgress = Math.abs(dragOffset) / window.innerWidth;
 
-    const currentColors = getColorsForSlide(currentIndex);
-    let targetColors;
+    const currentCard = getColorsForSlide(currentIndex).cardColor;
+    let targetCard;
     
     if (dragOffset < 0 && currentIndex < slides.length - 1) {
       // Swiping left (next slide)
-      targetColors = getColorsForSlide(currentIndex + 1);
+      targetCard = getColorsForSlide(currentIndex + 1).cardColor;
     } else if (dragOffset > 0 && currentIndex > 0) {
       // Swiping right (prev slide)
-      targetColors = getColorsForSlide(currentIndex - 1);
+      targetCard = getColorsForSlide(currentIndex - 1).cardColor;
     } else {
       // No valid target, stay at current
-      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
+      return currentCard;
     }
-
-    const currentCard = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
-    const targetCard = targetColors.cardColor;
 
     return interpolateColors(currentCard, targetCard, dragProgress);
   };
