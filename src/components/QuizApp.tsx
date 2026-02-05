@@ -398,28 +398,31 @@ export function QuizApp() {
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
       
-      // Animate transition progress from 0 to 1
+      // Animate transition progress - delayed start, slow ease-out at the end
       const startTime = performance.now();
       const slideDuration = isMobile ? 300 : 500;
-      const colorDuration = slideDuration + 100; // Color completes 100ms after slide
+      const colorDelay = slideDuration * 0.6; // Start color transition at 60% of slide
+      const colorDuration = slideDuration * 0.6; // Color fades over remaining time
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Standard ease-out
-        const progress = linearProgress * (2 - linearProgress);
+        const delayedElapsed = Math.max(0, elapsed - colorDelay);
+        const linearProgress = Math.min(delayedElapsed / colorDuration, 1);
+        // Slow ease-out (cubic) for gradual fade to final color
+        const progress = 1 - Math.pow(1 - linearProgress, 3);
         setTransitionProgress(progress);
-        if (linearProgress < 1) {
+        if (elapsed < colorDelay + colorDuration) {
           requestAnimationFrame(animateProgress);
         }
       };
       requestAnimationFrame(animateProgress);
       
+      const totalDuration = colorDelay + colorDuration;
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, colorDuration);
+      }, totalDuration);
     }
   };
 
@@ -429,28 +432,31 @@ export function QuizApp() {
       setTransitionDirection('right');
       setBaseSmileyRotation(prev => prev - 360);
       
-      // Animate transition progress from 0 to 1
+      // Animate transition progress - delayed start, slow ease-out at the end
       const startTime = performance.now();
       const slideDuration = isMobile ? 300 : 500;
-      const colorDuration = slideDuration + 100; // Color completes 100ms after slide
+      const colorDelay = slideDuration * 0.6; // Start color transition at 60% of slide
+      const colorDuration = slideDuration * 0.6; // Color fades over remaining time
       const animateProgress = (currentTime: number) => {
         const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Standard ease-out
-        const progress = linearProgress * (2 - linearProgress);
+        const delayedElapsed = Math.max(0, elapsed - colorDelay);
+        const linearProgress = Math.min(delayedElapsed / colorDuration, 1);
+        // Slow ease-out (cubic) for gradual fade to final color
+        const progress = 1 - Math.pow(1 - linearProgress, 3);
         setTransitionProgress(progress);
-        if (linearProgress < 1) {
+        if (elapsed < colorDelay + colorDuration) {
           requestAnimationFrame(animateProgress);
         }
       };
       requestAnimationFrame(animateProgress);
       
+      const totalDuration = colorDelay + colorDuration;
       setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
-      }, colorDuration);
+      }, totalDuration);
     }
   };
 
