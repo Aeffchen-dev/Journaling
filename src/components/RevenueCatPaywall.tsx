@@ -137,7 +137,7 @@
              <Button
                onClick={handlePurchase}
                disabled={isDisabled}
-               className="w-full py-6 text-lg font-factora font-bold rounded-full border-0 text-white"
+                className="w-full py-6 text-lg font-factora font-bold rounded-full border-0 text-white focus:outline-none focus-visible:outline-none"
                style={{
                  backgroundColor: 'hsl(335, 100%, 81%)',
                  color: 'hsl(347, 95%, 12%)',
