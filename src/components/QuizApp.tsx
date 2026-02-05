@@ -778,12 +778,8 @@ export function QuizApp() {
 
   // Interpolate between two colors using CSS color-mix
   const interpolateColors = (color1: string, color2: string, factor: number) => {
-    // Apply standard ease-out (quadratic) for smooth deceleration
-    const easeOut = (t: number) => t * (2 - t);
-    const easedFactor = easeOut(factor);
-    
-    // Convert factor to percentage (0-100)
-    const percentage = easedFactor * 100;
+    // Factor is already eased, convert directly to percentage (0-100)
+    const percentage = factor * 100;
     
     // Use CSS color-mix in srgb color space for smooth transitions
     return `color-mix(in srgb, ${color2} ${percentage}%, ${color1})`;
@@ -892,6 +888,9 @@ export function QuizApp() {
 
   // Update theme-color meta tag for iOS Safari status bar
   useEffect(() => {
+    // Skip if currently transitioning - let the transition effect handle colors
+    if (isTransitioning) return;
+    
     // When category menu is open, always use black
     const bgColor = categorySelectorOpen 
       ? '#000000' 
@@ -917,7 +916,7 @@ export function QuizApp() {
         meta.setAttribute('content', bgColor);
       });
     });
-  }, [currentIndex, slides, categorySelectorOpen]);
+  }, [currentIndex, slides, categorySelectorOpen, isTransitioning]);
 
   // Update theme-color during drag and transition for smooth status bar color changes
   useEffect(() => {
