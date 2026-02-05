@@ -776,9 +776,9 @@ export function QuizApp() {
 
   // Interpolate between two colors using CSS color-mix
   const interpolateColors = (color1: string, color2: string, factor: number) => {
-    // Apply ease-out cubic easing for smoother transitions
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-    const easedFactor = easeOutCubic(factor);
+    // Apply sine ease-in-out for ultra-smooth transitions matching slide movement
+    const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+    const easedFactor = easeInOutSine(factor);
     
     // Convert factor to percentage (0-100)
     const percentage = easedFactor * 100;
