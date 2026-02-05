@@ -1,7 +1,7 @@
 import { Purchases } from '@revenuecat/purchases-js';
 
 // RevenueCat Configuration
-export const REVENUECAT_API_KEY = 'app0333d9cb65';
+export const REVENUECAT_API_KEY = 'test_cAUcnvXzumOxjgZLEENCOdYexAI';
 export const ENTITLEMENT_ID = 'Journaling';
 export const PRODUCT_ID = 'prod53efac0b7a';
 
