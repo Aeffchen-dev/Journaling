@@ -1195,19 +1195,12 @@ export function QuizApp() {
                   safeIndex + 2,
                 ].filter(i => i >= 0 && i < slides.length);
 
-                // Debug: log which slides are rendered and their roles
-                console.log('[SlideRender]', {
-                  safeIndex,
-                  isTransitioning,
-                  transitionDirection,
-                  suppressTransition: suppressTransition.current,
-                  visibleIndices,
-                  slideContents: visibleIndices.map(i => ({
-                    index: i,
-                    role: i === safeIndex ? 'active' : i === safeIndex - 1 ? 'prev' : i === safeIndex + 1 ? 'next' : i < safeIndex ? 'prev2' : 'next2',
-                    question: slides[i]?.question?.question?.substring(0, 30)
-                  }))
-                });
+                // Compute slide-specific progress (slides complete faster than color)
+                const slideDuration = isMobile ? 400 : 600;
+                const colorDuration = slideDuration + 300;
+                const slideProgress = isTransitioning 
+                  ? Math.min(1, transitionProgress * (colorDuration / slideDuration))
+                  : 0;
 
                 return visibleIndices.map((index) => {
                   const slide = slides[index];
@@ -1221,6 +1214,7 @@ export function QuizApp() {
                 
                   let transform = '';
                   let zIndex = 1;
+                  let useTransition = false; // Only for hint animation
                 
                   if (isActive) {
                     if (isDragging) {
@@ -1229,11 +1223,20 @@ export function QuizApp() {
                       const rotation = dragOffset > 0 ? dragProgress * 5 : -dragProgress * 5;
                       transform = `translateX(${dragOffset}px) scale(${scale}) rotate(${rotation}deg)`;
                     } else if (isTransitioning && transitionDirection === 'left') {
-                      transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(-5deg)';
+                      // JS-interpolated: center → exit left
+                      const x = -slideProgress * 110;
+                      const scale = 1 - slideProgress * 0.2;
+                      const rot = -slideProgress * 5;
+                      transform = `translateX(${x}%) scale(${scale}) rotate(${rot}deg)`;
                     } else if (isTransitioning && transitionDirection === 'right') {
-                      transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(5deg)';
+                      // JS-interpolated: center → exit right
+                      const x = slideProgress * 110;
+                      const scale = 1 - slideProgress * 0.2;
+                      const rot = slideProgress * 5;
+                      transform = `translateX(${x}%) scale(${scale}) rotate(${rot}deg)`;
                     } else if (showHintAnimation && index === 0) {
                       transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
+                      useTransition = true;
                     } else {
                       transform = 'translateX(0) scale(1) rotate(0deg)';
                     }
@@ -1244,7 +1247,10 @@ export function QuizApp() {
                       const scale = Math.min(1, 0.8 + dragProgress * 0.2);
                       transform = `translateX(calc(-100% - 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
                     } else if (isTransitioning && transitionDirection === 'right') {
-                      transform = 'translateX(0) scale(1) rotate(0deg)';
+                      // JS-interpolated: offscreen left → center
+                      const x = -110 * (1 - slideProgress);
+                      const scale = 0.8 + slideProgress * 0.2;
+                      transform = `translateX(${x}%) scale(${scale}) rotate(0deg)`;
                     } else {
                       transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(0deg)';
                     }
@@ -1254,9 +1260,13 @@ export function QuizApp() {
                       const scale = Math.min(1, 0.8 + dragProgress * 0.2);
                       transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
                     } else if (isTransitioning && transitionDirection === 'left') {
-                      transform = 'translateX(0) scale(1) rotate(0deg)';
+                      // JS-interpolated: offscreen right → center
+                      const x = 110 * (1 - slideProgress);
+                      const scale = 0.8 + slideProgress * 0.2;
+                      transform = `translateX(${x}%) scale(${scale}) rotate(0deg)`;
                     } else if (showHintAnimation && index === 1) {
                       transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
+                      useTransition = true;
                     } else {
                       transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(0deg)';
                     }
@@ -1273,12 +1283,10 @@ export function QuizApp() {
                       style={{
                         transform,
                         zIndex,
-                        transition: isDragging || suppressTransition.current
-                          ? 'none' 
-                          : showHintAnimation && (index === 0 || index === 1)
+                        transition: useTransition 
                           ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                          : 'transform 0.3s ease-in-out',
-                        willChange: 'transform',
+                          : 'none',
+                        willChange: isTransitioning || isDragging ? 'transform' : 'auto',
                       }}
                     >
                       <QuizCard
