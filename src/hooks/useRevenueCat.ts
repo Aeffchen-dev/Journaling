@@ -87,7 +87,12 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
     let mounted = true;
 
     async function init() {
-      // Initialize RevenueCat on all platforms (web and native)
+      // Only initialize RevenueCat in native iOS webview
+      if (!isInNativeApp) {
+        setIsLoading(false);
+        setIsEntitled(true); // Grant full access on web
+        return;
+      }
 
       try {
         setIsLoading(true);
@@ -265,8 +270,8 @@ export function useRevenueCat(appUserId?: string): UseRevenueCatReturn {
 
   // Increment question count
   const incrementQuestionCount = useCallback((): boolean => {
-    // Allow if user has purchased
-    if (isEntitled) return true;
+    // Allow if user has purchased or not in native app
+    if (isEntitled || !isInNativeApp) return true;
 
     const newCount = questionsViewed + 1;
     
