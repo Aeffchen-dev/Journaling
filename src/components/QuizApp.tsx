@@ -392,6 +392,9 @@ export function QuizApp() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<'left' | 'right' | null>(null);
 
+  // Suppress CSS transitions for one frame after index change to prevent edge-card flicker
+  const suppressTransition = useRef(false);
+
   // Real-time dragging state
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
@@ -435,10 +438,12 @@ export function QuizApp() {
       requestAnimationFrame(animateProgress);
 
       setTimeout(() => {
+        suppressTransition.current = true;
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
+        requestAnimationFrame(() => { suppressTransition.current = false; });
       }, colorDuration);
     }
   };
@@ -466,10 +471,12 @@ export function QuizApp() {
       requestAnimationFrame(animateProgress);
 
     setTimeout(() => {
+        suppressTransition.current = true;
         setCurrentIndex(prev => prev - 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
         setTransitionProgress(0);
+        requestAnimationFrame(() => { suppressTransition.current = false; });
       }, colorDuration);
     }
   };
@@ -532,10 +539,12 @@ export function QuizApp() {
         requestAnimationFrame(animateProgress);
 
         setTimeout(() => {
+          suppressTransition.current = true;
           setCurrentIndex(prev => prev - 1);
           setIsTransitioning(false);
           setTransitionDirection(null);
           setTransitionProgress(0);
+          requestAnimationFrame(() => { suppressTransition.current = false; });
         }, colorDuration);
       } else if (dragOffset < 0 && currentIndex < slides.length - 1) {
         const nextIndex = currentIndex + 1;
@@ -572,10 +581,12 @@ export function QuizApp() {
         requestAnimationFrame(animateProgress);
 
         setTimeout(() => {
+          suppressTransition.current = true;
           setCurrentIndex(prev => prev + 1);
           setIsTransitioning(false);
           setTransitionDirection(null);
           setTransitionProgress(0);
+          requestAnimationFrame(() => { suppressTransition.current = false; });
         }, colorDuration);
       }
     }
@@ -1248,7 +1259,7 @@ export function QuizApp() {
                       style={{
                         transform,
                         zIndex,
-                        transition: isDragging 
+                        transition: isDragging || suppressTransition.current
                           ? 'none' 
                           : showHintAnimation && (index === 0 || index === 1)
                           ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
