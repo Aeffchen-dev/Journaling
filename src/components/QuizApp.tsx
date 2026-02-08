@@ -1174,101 +1174,103 @@ export function QuizApp() {
             </div>
           ) : hasSlides ? (
             <div className="relative w-full h-full flex items-center justify-center" style={{ overflow: 'visible' }}>
-              {/* Render current slide and adjacent slides for transitions */}
-              {slides.map((slide, index) => {
-                const isActive = index === safeIndex;
-                const isPrev = index === safeIndex - 1;
-                const isNext = index === safeIndex + 1;
-                const isPrev2 = index === safeIndex - 2;
-                const isNext2 = index === safeIndex + 2;
+              {/* Render only the 5 visible slides (current ±2) */}
+              {(() => {
+                const visibleIndices = [
+                  safeIndex - 2,
+                  safeIndex - 1,
+                  safeIndex,
+                  safeIndex + 1,
+                  safeIndex + 2,
+                ].filter(i => i >= 0 && i < slides.length);
+
+                return visibleIndices.map((index) => {
+                  const slide = slides[index];
+                  const isActive = index === safeIndex;
+                  const isPrev = index === safeIndex - 1;
+                  const isNext = index === safeIndex + 1;
+                  const isPrev2 = index === safeIndex - 2;
+                  const isNext2 = index === safeIndex + 2;
                 
-                if (!isActive && !isPrev && !isNext && !isPrev2 && !isNext2) return null;
+                  if (slide.type === 'intro') return null;
                 
-                let transform = '';
-                let zIndex = 1;
+                  let transform = '';
+                  let zIndex = 1;
                 
-                if (isActive) {
-                  // Current slide positioning
-                  if (isDragging) {
-                    // Calculate drag progress for scaling and rotation
-                    const dragProgress = Math.abs(dragOffset) / 300; // Normalize to 0-1
-                    const scale = Math.max(0.8, 1 - dragProgress * 0.2); // Scale from 1 to 0.8
-                    const rotation = dragOffset > 0 ? dragProgress * 5 : -dragProgress * 5; // Rotate up to 5 degrees
-                    transform = `translateX(${dragOffset}px) scale(${scale}) rotate(${rotation}deg)`;
-                  } else if (isTransitioning && transitionDirection === 'left') {
-                    transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(-5deg)';
-                  } else if (isTransitioning && transitionDirection === 'right') {
-                    transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(5deg)';
-                  } else if (showHintAnimation && index === 0) {
-                    // Hint animation: briefly move left as if being swiped
-                    transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
-                  } else {
-                    transform = 'translateX(0) scale(1) rotate(0deg)';
+                  if (isActive) {
+                    if (isDragging) {
+                      const dragProgress = Math.abs(dragOffset) / 300;
+                      const scale = Math.max(0.8, 1 - dragProgress * 0.2);
+                      const rotation = dragOffset > 0 ? dragProgress * 5 : -dragProgress * 5;
+                      transform = `translateX(${dragOffset}px) scale(${scale}) rotate(${rotation}deg)`;
+                    } else if (isTransitioning && transitionDirection === 'left') {
+                      transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(-5deg)';
+                    } else if (isTransitioning && transitionDirection === 'right') {
+                      transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(5deg)';
+                    } else if (showHintAnimation && index === 0) {
+                      transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
+                    } else {
+                      transform = 'translateX(0) scale(1) rotate(0deg)';
+                    }
+                    zIndex = 2;
+                  } else if (isPrev) {
+                    if (isDragging) {
+                      const dragProgress = Math.abs(dragOffset) / 300;
+                      const scale = Math.min(1, 0.8 + dragProgress * 0.2);
+                      transform = `translateX(calc(-100% - 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
+                    } else if (isTransitioning && transitionDirection === 'right') {
+                      transform = 'translateX(0) scale(1) rotate(0deg)';
+                    } else {
+                      transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(0deg)';
+                    }
+                  } else if (isNext) {
+                    if (isDragging) {
+                      const dragProgress = Math.abs(dragOffset) / 300;
+                      const scale = Math.min(1, 0.8 + dragProgress * 0.2);
+                      transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
+                    } else if (isTransitioning && transitionDirection === 'left') {
+                      transform = 'translateX(0) scale(1) rotate(0deg)';
+                    } else if (showHintAnimation && index === 1) {
+                      transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
+                    } else {
+                      transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(0deg)';
+                    }
+                  } else if (isPrev2) {
+                    transform = 'translateX(calc(-200% - 32px)) scale(0.8) rotate(0deg)';
+                  } else if (isNext2) {
+                    transform = 'translateX(calc(200% + 32px)) scale(0.8) rotate(0deg)';
                   }
-                  zIndex = 2;
-                } else if (isPrev) {
-                  // Previous slide positioning
-                  if (isDragging) {
-                    // Calculate scale for incoming slide based on drag progress
-                    const dragProgress = Math.abs(dragOffset) / 300;
-                    const scale = Math.min(1, 0.8 + dragProgress * 0.2); // Scale from 0.8 to 1
-                    transform = `translateX(calc(-100% - 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
-                  } else if (isTransitioning && transitionDirection === 'right') {
-                    transform = 'translateX(0) scale(1) rotate(0deg)';
-                  } else {
-                    transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(0deg)';
-                  }
-                } else if (isNext) {
-                  // Next slide positioning
-                  if (isDragging) {
-                    // Calculate scale for incoming slide based on drag progress
-                    const dragProgress = Math.abs(dragOffset) / 300;
-                    const scale = Math.min(1, 0.8 + dragProgress * 0.2); // Scale from 0.8 to 1
-                    transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
-                  } else if (isTransitioning && transitionDirection === 'left') {
-                    transform = 'translateX(0) scale(1) rotate(0deg)';
-                  } else if (showHintAnimation && index === 1) {
-                    // Hint animation: next slide moves in slightly
-                    transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
-                  } else {
-                    transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(0deg)';
-                  }
-                } else if (isPrev2) {
-                  // Two slides back positioning - hidden but in DOM
-                  transform = 'translateX(calc(-200% - 32px)) scale(0.8) rotate(0deg)';
-                } else if (isNext2) {
-                  // Two slides forward positioning - hidden but in DOM
-                  transform = 'translateX(calc(200% + 32px)) scale(0.8) rotate(0deg)';
-                }
                 
-                return (
-                  <div
-                    key={`slide-${index}`}
-                    className="absolute inset-0 w-full h-full"
-                    style={{
-                      transform,
-                      zIndex,
-                      transition: isDragging 
-                        ? 'none' 
-                        : showHintAnimation && (index === 0 || index === 1)
-                        ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)' // Faster bouncy ease for hint
-                        : 'transform 0.3s ease-in-out'
-                    }}
-                  >
-                    <QuizCard
-                      question={slide.question!}
-                      onSwipeLeft={nextQuestion}
-                      onSwipeRight={prevQuestion}
-                      categoryIndex={categoryColorMap[slide.question!.category] || 0}
-                      onDragStart={handleDragStart}
-                      onDragMove={handleDragMove}
-                      onDragEnd={handleDragEnd}
-                      dragOffset={isDragging ? dragOffset : 0}
-                      isDragging={isDragging}
-                    />
-                  </div>
-                );
-              })}
+                  return (
+                    <div
+                      key={`slide-${index}`}
+                      className="absolute inset-0 w-full h-full"
+                      style={{
+                        transform,
+                        zIndex,
+                        transition: isDragging 
+                          ? 'none' 
+                          : showHintAnimation && (index === 0 || index === 1)
+                          ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                          : 'transform 0.3s ease-in-out',
+                        willChange: 'transform',
+                      }}
+                    >
+                      <QuizCard
+                        question={slide.question!}
+                        onSwipeLeft={nextQuestion}
+                        onSwipeRight={prevQuestion}
+                        categoryIndex={categoryColorMap[slide.question!.category] || 0}
+                        onDragStart={handleDragStart}
+                        onDragMove={handleDragMove}
+                        onDragEnd={handleDragEnd}
+                        dragOffset={isDragging ? dragOffset : 0}
+                        isDragging={isDragging}
+                      />
+                    </div>
+                  );
+                });
+              })()}
             </div>
           ) : (
             <div className="flex items-center justify-center h-full text-white" style={{ fontSize: '14px' }}>Keine Fragen verfügbar</div>
