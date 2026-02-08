@@ -23,12 +23,50 @@ interface PaywallProps {
 export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+  const [price, setPrice] = useState<string | null>(null);
+
   const showError = (message: string) => {
     toast({
       description: message,
       variant: 'destructive',
     });
   };
+
+  // Fetch price when paywall opens
+  useEffect(() => {
+    if (!open) return;
+
+    const fetchPrice = async () => {
+      try {
+        if (typeof window.NativelyPurchases !== 'undefined') {
+          const purchases = new window.NativelyPurchases();
+          purchases.getOfferings((resp: any) => {
+            if (resp.status === 'SUCCESS' && resp.offerings) {
+              const currentOffering = resp.offerings.find((o: any) => o.isCurrent) || resp.offerings[0];
+              const pkg = currentOffering?.availablePackages?.find((p: any) => p.identifier === '$rc_lifetime')
+                || currentOffering?.availablePackages?.[0];
+              if (pkg?.product?.priceString) {
+                setPrice(pkg.product.priceString);
+              }
+            }
+          });
+        } else {
+          const { Purchases } = await import('@revenuecat/purchases-js');
+          const userId = getOrCreateUserId();
+          const purchases = Purchases.configure('appl_pmfaGQMjIIiPzVbbGpkjhccvWHm', userId);
+          const offerings = await purchases.getOfferings();
+          const pkg = offerings.current?.availablePackages?.[0];
+          if (pkg?.rcBillingProduct?.currentPrice?.formattedPrice) {
+            setPrice(pkg.rcBillingProduct.currentPrice.formattedPrice);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch price:', e);
+      }
+    };
+
+    fetchPrice();
+  }, [open]);
 
   const handlePurchase = async () => {
     setIsPurchasing(true);
@@ -170,7 +208,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
               boxShadow: 'none',
             }}
           >
-            {isPurchasing ? 'Wird geladen...' : 'Vollversion kaufen'}
+            {isPurchasing ? 'Wird geladen...' : price ? `Vollversion kaufen – ${price}` : 'Vollversion kaufen'}
           </Button>
 
           <button
