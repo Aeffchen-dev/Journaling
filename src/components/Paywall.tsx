@@ -41,13 +41,10 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         if (typeof window.NativelyPurchases !== 'undefined') {
           const purchases = new window.NativelyPurchases();
           purchases.getOfferings((resp: any) => {
-            console.log('💰 Native getOfferings full response:', JSON.stringify(resp, null, 2));
             if (resp.status === 'SUCCESS' && resp.offerings) {
               const currentOffering = resp.offerings.find((o: any) => o.isCurrent) || resp.offerings[0];
-              console.log('💰 Current offering:', JSON.stringify(currentOffering, null, 2));
               const pkg = currentOffering?.availablePackages?.find((p: any) => p.identifier === '$rc_lifetime')
                 || currentOffering?.availablePackages?.[0];
-              console.log('💰 Selected package:', JSON.stringify(pkg, null, 2));
               if (pkg?.product?.priceString) {
                 setPrice(pkg.product.priceString);
               }
@@ -79,16 +76,12 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         const packageId = '$rc_lifetime';
 
         purchases.purchasePackage(packageId, (resp: any) => {
-          console.log('🛒 Native purchase full response:', JSON.stringify(resp, null, 2));
-          console.log('🛒 Response status:', resp.status);
-          console.log('🛒 Response keys:', Object.keys(resp));
           if (resp.status === 'SUCCESS') {
             localStorage.setItem('journaling_premium', 'true');
             onPurchaseSuccess();
           } else if (resp.status === 'CANCELLED') {
-            console.log('🛒 Purchase cancelled by user');
+            // User cancelled
           } else {
-            console.error('🛒 Purchase failed with status:', resp.status, 'Full resp:', JSON.stringify(resp, null, 2));
             showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
           }
           setIsPurchasing(false);
@@ -132,12 +125,10 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
       if (typeof window.NativelyPurchases !== 'undefined') {
         const purchases = new window.NativelyPurchases();
         purchases.customerId((resp: any) => {
-          console.log('🔄 Native restore full response:', JSON.stringify(resp, null, 2));
           if (resp.status === 'SUCCESS' && resp.customerId) {
             localStorage.setItem('journaling_premium', 'true');
             onPurchaseSuccess();
           } else {
-            console.warn('🔄 Restore failed or no active purchase:', JSON.stringify(resp, null, 2));
             showError('Kein aktiver Kauf gefunden.');
           }
           setIsRestoring(false);
