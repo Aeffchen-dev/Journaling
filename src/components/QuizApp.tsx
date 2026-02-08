@@ -571,11 +571,6 @@ export function QuizApp() {
     
     setSlides(slides);
     setCurrentIndex(0); // Reset to first slide when filtering/mode changes
-    
-    // Track the first question
-    if (slides.length > 0 && slides[0].question) {
-      trackQuestion(slides[0].question.question);
-    }
   }, [selectedCategories, allQuestions, availableCategories.length, isMixedMode, hasToggleBeenChanged]);
 
   // Clamp current index whenever slides length changes to prevent out-of-bounds access
