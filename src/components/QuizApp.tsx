@@ -6,6 +6,7 @@ import { Switch } from './ui/switch';
 import { RevenueCatPaywall } from './RevenueCatPaywall';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface Question {
   question: string;
@@ -122,11 +123,17 @@ export function QuizApp() {
   } = useRevenueCat();
   
   const [isRestoring, setIsRestoring] = useState(false);
+  const { toast } = useToast();
   
   const handleRestore = async () => {
     setIsRestoring(true);
     const success = await restorePurchases();
     setIsRestoring(false);
+    if (success) {
+      toast({ title: 'Kauf wiederhergestellt', description: 'Deine Vollversion wurde erfolgreich aktiviert.' });
+    } else {
+      toast({ title: 'Kein Kauf gefunden', description: 'Es wurde kein vorheriger Kauf gefunden. Bitte versuche es mit dem gleichen Account.', variant: 'destructive' });
+    }
     return success;
   };
 
