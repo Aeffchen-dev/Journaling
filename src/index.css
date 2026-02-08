@@ -8,7 +8,6 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Initial background is black for intro slide */
     --background: 0 0% 0%;
     --foreground: 0 0% 98%;
     --card-background: 0 0% 8.6%;

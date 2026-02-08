@@ -527,19 +527,13 @@ export function QuizCard({
       {/* Left Click Area - Previous */}
       <div 
         className="absolute left-0 top-0 w-20 h-full z-20 cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          onSwipeRight();
-        }}
+        onClick={onSwipeRight}
       />
 
       {/* Right Click Area - Next */}
       <div 
         className="absolute right-0 top-0 w-20 h-full z-20 cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          onSwipeLeft();
-        }}
+        onClick={onSwipeLeft}
       />
 
       {/* Category Pill - Positioned at bottom corner opposite to monster, moved up for button, rotated -90deg */}
@@ -629,7 +623,7 @@ export function QuizCard({
           <h1 
             ref={textRef}
             lang="de"
-            className={`font-factora leading-[120%] w-full ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem] max-w-md' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[2.832rem] max-w-full'}`}
+            className={`font-factora leading-[120%] w-full ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem] max-w-md' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem] max-w-full'}`}
             style={{ 
               fontWeight: 'bold',
               fontStyle: 'normal',
@@ -691,7 +685,7 @@ export function QuizCard({
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
                 placeholder="Deine Antwort"
-                className={`font-factora w-full h-full resize-none edit-textarea ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem]' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[2.832rem]'}`}
+                className={`font-factora w-full h-full resize-none edit-textarea ${question.category.toLowerCase() === 'intro' ? 'text-[1.26rem] md:text-[1.44rem] lg:text-[1.56rem]' : 'text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem]'}`}
                 style={{
                   fontWeight: 'bold',
                   fontStyle: 'normal',

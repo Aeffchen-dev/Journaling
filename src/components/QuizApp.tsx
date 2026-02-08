@@ -1,12 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { QuizCard } from './QuizCard';
 import { CategorySelector } from './CategorySelector';
 import { IntroSlide } from './IntroSlide';
 import { Switch } from './ui/switch';
-import { RevenueCatPaywall } from './RevenueCatPaywall';
-import { useRevenueCat } from '@/hooks/useRevenueCat';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useToast } from '@/hooks/use-toast';
 
 interface Question {
   question: string;
@@ -66,7 +62,6 @@ const smartShuffle = (questions: Question[]): Question[] => {
 };
 
 export function QuizApp() {
-  const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationClass, setAnimationClass] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -88,54 +83,6 @@ export function QuizApp() {
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
-  const [initialFadeProgress, setInitialFadeProgress] = useState(0);
-  const [hasInitialFadeCompleted, setHasInitialFadeCompleted] = useState(false);
-   
-   // Opacity crossfade system: two background layers that fade between each other
-   const [bgLayerA, setBgLayerA] = useState('#000000');
-   const [bgLayerB, setBgLayerB] = useState('#000000');
-   const [activeLayer, setActiveLayer] = useState<'A' | 'B'>('A');
-   const [crossfadeProgress, setCrossfadeProgress] = useState(0);
-   
-   // Velocity tracking for drag
-   const lastDragTime = useRef(performance.now());
-   const lastDragOffset = useRef(0);
-   const dragVelocity = useRef(0);
-  
-  // Track the highest question index viewed (to count unique questions)
-  const highestIndexViewed = useRef(0);
-
-  // RevenueCat integration
-  const {
-    isEntitled,
-    isLoading: isRevenueCatLoading,
-    showPaywall,
-    isPurchasing,
-    priceString,
-    currentPackage,
-    incrementQuestionCount,
-    purchase,
-    restorePurchases,
-    presentPaywall,
-    dismissPaywall,
-    setShowPaywall,
-    getManagementUrl,
-  } = useRevenueCat();
-  
-  const [isRestoring, setIsRestoring] = useState(false);
-  const { toast } = useToast();
-  
-  const handleRestore = async () => {
-    setIsRestoring(true);
-    const success = await restorePurchases();
-    setIsRestoring(false);
-    if (success) {
-      toast({ title: 'Kauf wiederhergestellt', description: 'Deine Vollversion wurde erfolgreich aktiviert.' });
-    } else {
-      toast({ title: 'Kein Kauf gefunden', description: 'Es wurde kein vorheriger Kauf gefunden. Bitte versuche es mit dem gleichen Account.', variant: 'destructive' });
-    }
-    return success;
-  };
 
   useEffect(() => {
     fetchQuestions();
@@ -151,8 +98,66 @@ export function QuizApp() {
     }
   }, [loading]);
 
+  // Add touch/mouse handlers for desktop swipe
+  useEffect(() => {
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
 
+    const handleStart = (clientX: number, clientY: number) => {
+      startX = clientX;
+      startY = clientY;
+      isDragging = true;
+    };
 
+    const handleEnd = (clientX: number, clientY: number) => {
+      if (!isDragging) return;
+      
+      const deltaX = clientX - startX;
+      const deltaY = clientY - startY;
+      
+      // Only trigger if horizontal movement is greater than vertical
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+        if (deltaX > 0) {
+          prevQuestion();
+        } else {
+          nextQuestion();
+        }
+      }
+      
+      isDragging = false;
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      handleStart(e.clientX, e.clientY);
+    };
+
+    const handleMouseUp = (e: MouseEvent) => {
+      handleEnd(e.clientX, e.clientY);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      handleStart(touch.clientX, touch.clientY);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touch = e.changedTouches[0];
+      handleEnd(touch.clientX, touch.clientY);
+    };
+
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, []);
 
   const fetchQuestions = async () => {
     try {
@@ -334,108 +339,42 @@ export function QuizApp() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<'left' | 'right' | null>(null);
 
-  // Suppress CSS transitions for one frame after index change to prevent edge-card flicker
-  const suppressTransition = useRef(false);
-
   // Real-time dragging state
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [dragStartX, setDragStartX] = useState(0);
-  const [transitionProgress, setTransitionProgress] = useState(0);
-  // Store the drag offset at the moment transition starts (for smooth handoff)
-  const dragOffsetAtTransitionStart = useRef(0);
 
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
-      const nextIndex = currentIndex + 1;
-      
-      // Check if this is a new question the user hasn't seen before
-      if (nextIndex > highestIndexViewed.current && !isEntitled) {
-        // This is a new question - check if we can view it
-        const canView = incrementQuestionCount();
-        if (!canView) {
-          // Show paywall instead of navigating
-          setShowPaywall(true);
-          return;
-        }
-        highestIndexViewed.current = nextIndex;
-      }
-      
-      dragOffsetAtTransitionStart.current = 0;
       setIsTransitioning(true);
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
-
-      // Animate transition progress with ease-in-out
-      const startTime = performance.now();
-      const slideDuration = isMobile ? 400 : 600;
-      const colorDuration = slideDuration + 300; // Color completes after slide
-      const animateProgress = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Smooth ease-out sine for buttery feel
-        const progress = Math.sin((linearProgress * Math.PI) / 2);
-        setTransitionProgress(progress);
-        if (linearProgress < 1) {
-          requestAnimationFrame(animateProgress);
-        }
-      };
-      requestAnimationFrame(animateProgress);
-
+      
       setTimeout(() => {
-        suppressTransition.current = true;
         setCurrentIndex(prev => prev + 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
-        setTransitionProgress(0);
-        requestAnimationFrame(() => { suppressTransition.current = false; });
-      }, colorDuration);
+      }, 300);
     }
   };
 
   const prevQuestion = () => {
     if (currentIndex > 0 && !isTransitioning) {
-      dragOffsetAtTransitionStart.current = 0;
       setIsTransitioning(true);
       setTransitionDirection('right');
       setBaseSmileyRotation(prev => prev - 360);
-
-    // Animate transition progress with ease-in-out
-      const startTime = performance.now();
-      const slideDuration = isMobile ? 400 : 600;
-      const colorDuration = slideDuration + 300; // Color completes after slide
-      const animateProgress = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / colorDuration, 1);
-        // Smooth ease-out sine for buttery feel
-        const progress = Math.sin((linearProgress * Math.PI) / 2);
-        setTransitionProgress(progress);
-        if (linearProgress < 1) {
-          requestAnimationFrame(animateProgress);
-        }
-      };
-      requestAnimationFrame(animateProgress);
-
-    setTimeout(() => {
-        suppressTransition.current = true;
+      
+      setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
         setIsTransitioning(false);
         setTransitionDirection(null);
-        setTransitionProgress(0);
-        requestAnimationFrame(() => { suppressTransition.current = false; });
-      }, colorDuration);
+      }, 300);
     }
   };
 
   // Real-time drag handlers
-
   const handleDragStart = (clientX: number) => {
-     // Cancel any ongoing transition when user starts dragging
-     if (isTransitioning) {
-       setIsTransitioning(false);
-       setTransitionDirection(null);
-       setTransitionProgress(0);
-     }
+    if (isTransitioning) return;
     setIsDragging(true);
     setDragStartX(clientX);
     setDragOffset(0);
@@ -444,101 +383,22 @@ export function QuizApp() {
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return;
     const offset = clientX - dragStartX;
-     
-     // Track velocity
-     const now = performance.now();
-     const dt = now - lastDragTime.current;
-     if (dt > 0) {
-       dragVelocity.current = Math.abs(offset - lastDragOffset.current) / dt;
-     }
-     lastDragTime.current = now;
-     lastDragOffset.current = offset;
-     
     setDragOffset(offset);
   };
 
   const handleDragEnd = () => {
     if (!isDragging) return;
-
+    
     const threshold = 120;
-
+    
     if (Math.abs(dragOffset) > threshold) {
       if (dragOffset > 0 && currentIndex > 0) {
-        dragOffsetAtTransitionStart.current = dragOffset;
-        // Navigate to previous - rotate left (counter-clockwise)
-        setIsTransitioning(true);
-        setTransitionDirection('right');
-        setBaseSmileyRotation(prev => prev - 360);
-
-        const startTime = performance.now();
-        const slideDuration = isMobile ? 400 : 600;
-        const colorDuration = slideDuration + 300;
-        const animateProgress = (currentTime: number) => {
-          const elapsed = currentTime - startTime;
-          const linearProgress = Math.min(elapsed / colorDuration, 1);
-          // Smooth ease-out sine for buttery feel
-          const progress = Math.sin((linearProgress * Math.PI) / 2);
-          setTransitionProgress(progress);
-          if (linearProgress < 1) {
-            requestAnimationFrame(animateProgress);
-          }
-        };
-        requestAnimationFrame(animateProgress);
-
-        setTimeout(() => {
-          suppressTransition.current = true;
-          setCurrentIndex(prev => prev - 1);
-          setIsTransitioning(false);
-          setTransitionDirection(null);
-          setTransitionProgress(0);
-          requestAnimationFrame(() => { suppressTransition.current = false; });
-        }, colorDuration);
+        prevQuestion();
       } else if (dragOffset < 0 && currentIndex < slides.length - 1) {
-        const nextIndex = currentIndex + 1;
-
-        if (nextIndex > highestIndexViewed.current && !isEntitled) {
-          const canView = incrementQuestionCount();
-          if (!canView) {
-            setShowPaywall(true);
-            setIsDragging(false);
-            setDragOffset(0);
-            return;
-          }
-          highestIndexViewed.current = nextIndex;
-        }
-
-        dragOffsetAtTransitionStart.current = dragOffset;
-        // Navigate to next - rotate right (clockwise)
-        setIsTransitioning(true);
-        setTransitionDirection('left');
-        setBaseSmileyRotation(prev => prev + 360);
-
-        const startTime = performance.now();
-        const slideDuration = isMobile ? 400 : 600;
-        const colorDuration = slideDuration + 300;
-        const animateProgress = (currentTime: number) => {
-          const elapsed = currentTime - startTime;
-          const linearProgress = Math.min(elapsed / colorDuration, 1);
-          // Smooth ease-out sine for buttery feel
-          const progress = Math.sin((linearProgress * Math.PI) / 2);
-          setTransitionProgress(progress);
-          if (linearProgress < 1) {
-            requestAnimationFrame(animateProgress);
-          }
-        };
-        requestAnimationFrame(animateProgress);
-
-        setTimeout(() => {
-          suppressTransition.current = true;
-          setCurrentIndex(prev => prev + 1);
-          setIsTransitioning(false);
-          setTransitionDirection(null);
-          setTransitionProgress(0);
-          requestAnimationFrame(() => { suppressTransition.current = false; });
-        }, colorDuration);
+        nextQuestion();
       }
     }
-
+    
     setIsDragging(false);
     setDragOffset(0);
   };
@@ -702,34 +562,9 @@ export function QuizApp() {
   const safeIndex = hasSlides ? Math.min(currentIndex, slides.length - 1) : 0;
   const safeSlide = hasSlides ? slides[safeIndex] : undefined;
 
-  // Initial background fade-in when content loads
-  useEffect(() => {
-    if (!loading && hasSlides && !hasInitialFadeCompleted) {
-      const startTime = performance.now();
-      const fadeDuration = 400; // 400ms fade-in - faster
-      
-      const animateFade = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const linearProgress = Math.min(elapsed / fadeDuration, 1);
-        // Smooth ease-out sine
-        const progress = Math.sin((linearProgress * Math.PI) / 2);
-        setInitialFadeProgress(progress);
-        
-        if (linearProgress < 1) {
-          requestAnimationFrame(animateFade);
-        } else {
-          setHasInitialFadeCompleted(true);
-        }
-      };
-      
-      requestAnimationFrame(animateFade);
-    }
-  }, [loading, hasSlides, hasInitialFadeCompleted]);
-
   // Helper to get colors for any slide index
   const getColorsForSlide = (index: number) => {
     if (!hasSlides || index < 0 || index >= slides.length) {
-      // Fallback to black - will fade in when content loads
       return { cardColor: '#ffffff', pageBg: '#000000' };
     }
     
@@ -739,20 +574,6 @@ export function QuizApp() {
     }
 
     const question = slide.question;
-    
-    // Intro slides have black background
-    if (question.category.toLowerCase() === 'intro') {
-      // Get colors from the next slide (first question) for fade-in effect
-      if (index + 1 < slides.length && slides[index + 1]?.question) {
-        const nextQuestion = slides[index + 1].question!;
-        if (nextQuestion.category.toLowerCase() !== 'intro') {
-          return getColorsForSlide(index + 1);
-        }
-      }
-      // Fallback to first category color
-      return { cardColor: 'hsl(335, 100%, 81%)', pageBg: 'hsl(347, 95%, 12%)' };
-    }
-    
     let colorIndex;
     
     switch(question.category) {
@@ -801,15 +622,17 @@ export function QuizApp() {
     return colorMap[colorIndex as keyof typeof colorMap] || colorMap[1];
   };
 
-  // Interpolate between two colors using CSS color-mix in OKLab color space
-  // OKLab provides perceptually uniform blending without hue rotation - more muted, direct transitions
+  // Interpolate between two colors using CSS color-mix
   const interpolateColors = (color1: string, color2: string, factor: number) => {
-    // Factor is already eased by the animation loop
-    const percentage = factor * 100;
+    // Apply ease-out cubic easing for smoother transitions
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const easedFactor = easeOutCubic(factor);
     
-    // Use CSS color-mix in OKLab for perceptually uniform transitions
-    // OKLab blends directly without hue rotation - produces muted, natural midtones
-    return `color-mix(in oklab, ${color2} ${percentage}%, ${color1})`;
+    // Convert factor to percentage (0-100)
+    const percentage = easedFactor * 100;
+    
+    // Use CSS color-mix in srgb color space for smooth transitions
+    return `color-mix(in srgb, ${color2} ${percentage}%, ${color1})`;
   };
 
   // Get current slide's colors for page background and header
@@ -819,185 +642,174 @@ export function QuizApp() {
 
   // Calculate interpolated background color based on drag
   const getInterpolatedBgColor = () => {
-    // During initial fade-in from black
-    if (!hasInitialFadeCompleted && hasSlides) {
-      const targetColor = getColorsForSlide(0).pageBg;
-      return interpolateColors('#000000', targetColor, initialFadeProgress);
-    }
-    
-    // During transition (click/keyboard/after drag), interpolate based on progress
-    if (isTransitioning && transitionDirection) {
-      const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
-      const currentBg = getColorsForSlide(currentIndex).pageBg;
-      const targetBg = getColorsForSlide(targetIndex).pageBg;
-      
-      return interpolateColors(currentBg, targetBg, transitionProgress);
+    if (!isDragging && !isTransitioning) {
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
     }
 
-     // Static state
-    return getCurrentColors().pageBg;
+    // During transition, show target color immediately
+    if (isTransitioning && !isDragging) {
+      const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
+      const targetColors = getColorsForSlide(targetIndex);
+      return targetColors.pageBg;
+    }
+
+    // During dragging, interpolate based on progress
+    if (!hasSlides) {
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.pageBg : '#000000';
+    }
+
+    // Match card animation progress - finishes at 300px drag
+    const dragProgress = Math.min(Math.abs(dragOffset) / 300, 1);
+
+    const currentColors = getColorsForSlide(currentIndex);
+    let targetColors;
+    
+    if (dragOffset < 0 && currentIndex < slides.length - 1) {
+      // Swiping left (next slide)
+      targetColors = getColorsForSlide(currentIndex + 1);
+    } else if (dragOffset > 0 && currentIndex > 0) {
+      // Swiping right (prev slide)
+      targetColors = getColorsForSlide(currentIndex - 1);
+    } else {
+      // No valid target, stay at current
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
+    }
+
+    const currentBg = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.pageBg : '#000000';
+    const targetBg = targetColors.pageBg;
+
+    return interpolateColors(currentBg, targetBg, dragProgress);
   };
 
   // Calculate interpolated card color for header based on drag
   const getInterpolatedCardColor = () => {
-    // During initial fade-in from white
-    if (!hasInitialFadeCompleted && hasSlides) {
-      const targetColor = getColorsForSlide(0).cardColor;
-      return interpolateColors('#ffffff', targetColor, initialFadeProgress);
-    }
-    
-    // Static state - no drag or transition
     if (!isDragging && !isTransitioning) {
-      return getCurrentColors().cardColor;
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
     }
 
-    // During transition (click/keyboard/after drag), interpolate based on progress
-    if (isTransitioning && transitionDirection) {
+    // During transition, show target color immediately
+    if (isTransitioning && !isDragging) {
       const targetIndex = transitionDirection === 'left' ? currentIndex + 1 : currentIndex - 1;
-      const currentCard = getColorsForSlide(currentIndex).cardColor;
-      const targetCard = getColorsForSlide(targetIndex).cardColor;
-      
-      return interpolateColors(currentCard, targetCard, transitionProgress);
+      const targetColors = getColorsForSlide(targetIndex);
+      return targetColors.cardColor;
     }
 
-    // During dragging, interpolate based on drag progress
-    if (isDragging && hasSlides) {
-       // Apply velocity-based easing to drag progress
-      const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-       
-       // Velocity factor: clamp between 0.3 (slow drag) and 2.0 (fast drag)
-       const velocityFactor = Math.max(0.3, Math.min(2.0, dragVelocity.current * 0.5));
-       const velocityAdjustedProgress = Math.min(rawProgress * velocityFactor, 1);
-       const dragProgress = velocityAdjustedProgress * velocityAdjustedProgress * (3 - 2 * velocityAdjustedProgress);
-       
-      const currentCard = getColorsForSlide(currentIndex).cardColor;
-      let targetCard;
-      
-      if (dragOffset < 0 && currentIndex < slides.length - 1) {
-        targetCard = getColorsForSlide(currentIndex + 1).cardColor;
-      } else if (dragOffset > 0 && currentIndex > 0) {
-        targetCard = getColorsForSlide(currentIndex - 1).cardColor;
-      } else {
-        return currentCard;
-      }
-      
-      return interpolateColors(currentCard, targetCard, dragProgress);
+    // During dragging, interpolate based on progress
+    if (!hasSlides) {
+      const colors = getCurrentColors();
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? colors.cardColor : '#ffffff';
     }
 
-    return getCurrentColors().cardColor;
+    // Match card animation progress - finishes at 300px drag
+    const dragProgress = Math.min(Math.abs(dragOffset) / 300, 1);
+
+    const currentColors = getColorsForSlide(currentIndex);
+    let targetColors;
+    
+    if (dragOffset < 0 && currentIndex < slides.length - 1) {
+      // Swiping left (next slide)
+      targetColors = getColorsForSlide(currentIndex + 1);
+    } else if (dragOffset > 0 && currentIndex > 0) {
+      // Swiping right (prev slide)
+      targetColors = getColorsForSlide(currentIndex - 1);
+    } else {
+      // No valid target, stay at current
+      return safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
+    }
+
+    const currentCard = safeSlide?.question?.category.toLowerCase() !== 'intro' ? currentColors.cardColor : '#ffffff';
+    const targetCard = targetColors.cardColor;
+
+    return interpolateColors(currentCard, targetCard, dragProgress);
   };
 
-  // Update body background and theme-color for iOS Safari
+  // Update theme-color meta tag for iOS Safari status bar
   useEffect(() => {
-     // For opacity crossfade, we use two layers instead of direct body background
-     // This effect now just handles the static/non-drag cases
-     if (isDragging) return; // Drag is handled by crossfade system
+    // When category menu is open, always use black
+    const bgColor = categorySelectorOpen 
+      ? '#000000' 
+      : (slides[currentIndex]?.question?.category.toLowerCase() !== 'intro' ? getCurrentColors().pageBg : '#000000');
     
-     const bgColor = categorySelectorOpen 
-       ? '#000000' 
-       : getInterpolatedBgColor();
-     
-     if (!bgColor) return;
-     
-     // Update both layers to the same color for static state
-     setBgLayerA(bgColor);
-     setBgLayerB(bgColor);
-     setCrossfadeProgress(0);
-     setActiveLayer('A');
-     document.body.style.backgroundColor = 'transparent';
+    // Update both html and body background - iOS Safari inherits chrome color from these
+    document.documentElement.style.transition = 'background-color 0.3s ease-out';
+    document.documentElement.style.backgroundColor = bgColor;
+    document.body.style.transition = 'background-color 0.3s ease-out';
+    document.body.style.backgroundColor = bgColor;
     
-    // Only update theme-color on transition end or static state (not during drag to avoid flicker)
-     const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
-     metaThemeColors.forEach((meta) => {
-       meta.setAttribute('content', bgColor);
-     });
-  }, [isDragging, dragOffset, isTransitioning, transitionProgress, currentIndex, categorySelectorOpen, initialFadeProgress, hasInitialFadeCompleted]);
+    // Force iOS Safari to repaint browser chrome by nudging theme-color
+    const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+    metaThemeColors.forEach((meta) => {
+      // Nudge with slightly different color to force repaint
+      meta.setAttribute('content', bgColor + 'fe');
+    });
+    
+    // Then set actual color in next frame
+    requestAnimationFrame(() => {
+      metaThemeColors.forEach((meta) => {
+        meta.setAttribute('content', bgColor);
+      });
+    });
+  }, [currentIndex, slides, categorySelectorOpen]);
 
-  // Separate effect for smooth drag updates using requestAnimationFrame
+  // Update theme-color during drag and transition for smooth status bar color changes
   useEffect(() => {
-    if (!isDragging) return;
+    // Skip drag/transition color updates when category menu is open
+    if (categorySelectorOpen) return;
     
     let frameId: number;
-    let isCancelled = false;
-     
-     // Set up initial layer states when drag starts
-     const currentBg = getColorsForSlide(currentIndex).pageBg;
-     setBgLayerA(currentBg);
-     setActiveLayer('A');
-     setCrossfadeProgress(0);
     
-    const updateDragColor = () => {
-      if (isCancelled) return;
+    const updateThemeColor = () => {
+      const bgColor = getInterpolatedBgColor();
+      if (!bgColor) return;
       
-       // Calculate velocity-influenced progress
-       // Higher velocity = more responsive color change
-       const rawProgress = Math.min(Math.abs(dragOffset) / window.innerWidth, 1);
-       
-       // Velocity factor: clamp between 0.3 (slow drag) and 2.0 (fast drag)
-       const velocityFactor = Math.max(0.3, Math.min(2.0, dragVelocity.current * 0.5));
-       
-       // Apply velocity to progress - faster drag = more progress per distance
-       const velocityAdjustedProgress = Math.min(rawProgress * velocityFactor, 1);
-       
-       // Smoothstep for final easing
-       const smoothProgress = velocityAdjustedProgress * velocityAdjustedProgress * (3 - 2 * velocityAdjustedProgress);
-       
-       // Determine target color based on drag direction
-       let targetBg = currentBg;
-       if (dragOffset < 0 && currentIndex < slides.length - 1) {
-         targetBg = getColorsForSlide(currentIndex + 1).pageBg;
-       } else if (dragOffset > 0 && currentIndex > 0) {
-         targetBg = getColorsForSlide(currentIndex - 1).pageBg;
-      }
-       
-       // Update the inactive layer with target color and crossfade to it
-       setBgLayerB(targetBg);
-       setCrossfadeProgress(smoothProgress);
+      // Update both html and body background - this is what iOS Safari chrome follows
+      document.documentElement.style.transition = 'none';
+      document.documentElement.style.backgroundColor = bgColor;
+      document.body.style.transition = 'none';
+      document.body.style.backgroundColor = bgColor;
       
-      if (isDragging) {
-        frameId = requestAnimationFrame(updateDragColor);
+      // Force browser chrome repaint by nudging theme-color
+      const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+      metaThemeColors.forEach((meta) => {
+        meta.setAttribute('content', bgColor + 'fe');
+      });
+      
+      requestAnimationFrame(() => {
+        metaThemeColors.forEach((meta) => {
+          meta.setAttribute('content', bgColor);
+        });
+      });
+      
+      if (isDragging || isTransitioning) {
+        frameId = requestAnimationFrame(updateThemeColor);
       }
     };
-    
-    frameId = requestAnimationFrame(updateDragColor);
-    
-    return () => {
-      isCancelled = true;
-      if (frameId) cancelAnimationFrame(frameId);
-    };
-  }, [isDragging, dragOffset]);
+
+    if (isDragging || isTransitioning) {
+      updateThemeColor();
+      return () => {
+        if (frameId) cancelAnimationFrame(frameId);
+      };
+    }
+  }, [isDragging, isTransitioning, dragOffset, transitionDirection]);
 
   const currentColors = getCurrentColors();
 
   return (
     <>
-       {/* Opacity crossfade background layers */}
-       <div
-         style={{
-           position: 'fixed',
-           top: 0,
-           left: 0,
-           right: 0,
-           bottom: 0,
-           backgroundColor: bgLayerA,
-           zIndex: -2,
-           opacity: activeLayer === 'A' ? 1 : 1 - crossfadeProgress,
-           transition: isDragging ? 'none' : 'opacity 0.3s ease-out',
-         }}
-       />
-       <div
-         style={{
-           position: 'fixed',
-           top: 0,
-           left: 0,
-           right: 0,
-           bottom: 0,
-           backgroundColor: bgLayerB,
-           zIndex: -1,
-           opacity: activeLayer === 'A' ? crossfadeProgress : 1,
-           transition: isDragging ? 'none' : 'opacity 0.3s ease-out',
-         }}
-       />
+      {/* Background layer that extends into safe areas for iOS Safari */}
+      <div 
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: categorySelectorOpen ? '#000000' : (getInterpolatedBgColor() || '#000000'),
+          zIndex: -1
+        }}
+        aria-hidden="true"
+      />
       <div 
         className="overflow-hidden flex flex-col" 
         style={{ 
@@ -1053,8 +865,8 @@ export function QuizApp() {
                       justifyContent: 'center',
                       flexDirection: 'column',
                       position: 'relative',
-                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : baseSmileyRotation}deg)`,
-                      transition: loading ? 'transform 0.8s ease-in-out' : `transform ${isMobile ? 0.2 : 0.35}s ease-out`,
+                      transform: `translateY(0.5px) rotate(${loading ? (loadingSmileyRotating ? '360deg' : '0deg') : (baseSmileyRotation + (isDragging ? -(dragOffset / window.innerWidth) * 360 : 0))}deg)`,
+                      transition: loading ? 'transform 0.8s ease-in-out' : (isDragging ? 'none' : 'transform 0.3s ease-in-out'),
                       paddingLeft: '2px',
                       paddingRight: '2px'
                     }}
@@ -1133,102 +945,101 @@ export function QuizApp() {
             </div>
           ) : hasSlides ? (
             <div className="relative w-full h-full flex items-center justify-center" style={{ overflow: 'visible' }}>
-              {/* Render only the 5 visible slides (current ±2) */}
-              {(() => {
-                const visibleIndices = [
-                  safeIndex - 2,
-                  safeIndex - 1,
-                  safeIndex,
-                  safeIndex + 1,
-                  safeIndex + 2,
-                ].filter(i => i >= 0 && i < slides.length);
-
-                return visibleIndices.map((index) => {
-                  const slide = slides[index];
-                  const isActive = index === safeIndex;
-                  const isPrev = index === safeIndex - 1;
-                  const isNext = index === safeIndex + 1;
-                  const isPrev2 = index === safeIndex - 2;
-                  const isNext2 = index === safeIndex + 2;
+              {/* Render current slide and adjacent slides for transitions */}
+              {slides.map((slide, index) => {
+                const isActive = index === safeIndex;
+                const isPrev = index === safeIndex - 1;
+                const isNext = index === safeIndex + 1;
+                const isPrev2 = index === safeIndex - 2;
+                const isNext2 = index === safeIndex + 2;
                 
-                  if (slide.type === 'intro') return null;
+                if (!isActive && !isPrev && !isNext && !isPrev2 && !isNext2) return null;
                 
-                  let transform = '';
-                  let zIndex = 1;
+                let transform = '';
+                let zIndex = 1;
                 
-                  if (isActive) {
-                    if (isDragging) {
-                      const dragProgress = Math.abs(dragOffset) / 300;
-                      const scale = Math.max(0.8, 1 - dragProgress * 0.2);
-                      const rotation = dragOffset > 0 ? dragProgress * 5 : -dragProgress * 5;
-                      transform = `translateX(${dragOffset}px) scale(${scale}) rotate(${rotation}deg)`;
-                    } else if (isTransitioning && transitionDirection === 'left') {
-                      transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(-5deg)';
-                    } else if (isTransitioning && transitionDirection === 'right') {
-                      transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(5deg)';
-                    } else if (showHintAnimation && index === 0) {
-                      transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
-                    } else {
-                      transform = 'translateX(0) scale(1) rotate(0deg)';
-                    }
-                    zIndex = 2;
-                  } else if (isPrev) {
-                    if (isDragging) {
-                      const dragProgress = Math.abs(dragOffset) / 300;
-                      const scale = Math.min(1, 0.8 + dragProgress * 0.2);
-                      transform = `translateX(calc(-100% - 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
-                    } else if (isTransitioning && transitionDirection === 'right') {
-                      transform = 'translateX(0) scale(1) rotate(0deg)';
-                    } else {
-                      transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(0deg)';
-                    }
-                  } else if (isNext) {
-                    if (isDragging) {
-                      const dragProgress = Math.abs(dragOffset) / 300;
-                      const scale = Math.min(1, 0.8 + dragProgress * 0.2);
-                      transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
-                    } else if (isTransitioning && transitionDirection === 'left') {
-                      transform = 'translateX(0) scale(1) rotate(0deg)';
-                    } else if (showHintAnimation && index === 1) {
-                      transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
-                    } else {
-                      transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(0deg)';
-                    }
-                  } else if (isPrev2) {
-                    transform = 'translateX(calc(-200% - 32px)) scale(0.8) rotate(0deg)';
-                  } else if (isNext2) {
-                    transform = 'translateX(calc(200% + 32px)) scale(0.8) rotate(0deg)';
+                if (isActive) {
+                  // Current slide positioning
+                  if (isDragging) {
+                    // Calculate drag progress for scaling and rotation
+                    const dragProgress = Math.abs(dragOffset) / 300; // Normalize to 0-1
+                    const scale = Math.max(0.8, 1 - dragProgress * 0.2); // Scale from 1 to 0.8
+                    const rotation = dragOffset > 0 ? dragProgress * 5 : -dragProgress * 5; // Rotate up to 5 degrees
+                    transform = `translateX(${dragOffset}px) scale(${scale}) rotate(${rotation}deg)`;
+                  } else if (isTransitioning && transitionDirection === 'left') {
+                    transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(-5deg)';
+                  } else if (isTransitioning && transitionDirection === 'right') {
+                    transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(5deg)';
+                  } else if (showHintAnimation && index === 0) {
+                    // Hint animation: briefly move left as if being swiped
+                    transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
+                  } else {
+                    transform = 'translateX(0) scale(1) rotate(0deg)';
                   }
+                  zIndex = 2;
+                } else if (isPrev) {
+                  // Previous slide positioning
+                  if (isDragging) {
+                    // Calculate scale for incoming slide based on drag progress
+                    const dragProgress = Math.abs(dragOffset) / 300;
+                    const scale = Math.min(1, 0.8 + dragProgress * 0.2); // Scale from 0.8 to 1
+                    transform = `translateX(calc(-100% - 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
+                  } else if (isTransitioning && transitionDirection === 'right') {
+                    transform = 'translateX(0) scale(1) rotate(0deg)';
+                  } else {
+                    transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(0deg)';
+                  }
+                } else if (isNext) {
+                  // Next slide positioning
+                  if (isDragging) {
+                    // Calculate scale for incoming slide based on drag progress
+                    const dragProgress = Math.abs(dragOffset) / 300;
+                    const scale = Math.min(1, 0.8 + dragProgress * 0.2); // Scale from 0.8 to 1
+                    transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
+                  } else if (isTransitioning && transitionDirection === 'left') {
+                    transform = 'translateX(0) scale(1) rotate(0deg)';
+                  } else if (showHintAnimation && index === 1) {
+                    // Hint animation: next slide moves in slightly
+                    transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
+                  } else {
+                    transform = 'translateX(calc(100% + 16px)) scale(0.8) rotate(0deg)';
+                  }
+                } else if (isPrev2) {
+                  // Two slides back positioning - hidden but in DOM
+                  transform = 'translateX(calc(-200% - 32px)) scale(0.8) rotate(0deg)';
+                } else if (isNext2) {
+                  // Two slides forward positioning - hidden but in DOM
+                  transform = 'translateX(calc(200% + 32px)) scale(0.8) rotate(0deg)';
+                }
                 
-                  return (
-                    <div
-                      key={`slide-${index}`}
-                      className="absolute inset-0 w-full h-full"
-                      style={{
-                        transform,
-                        zIndex,
-                        transition: isDragging || suppressTransition.current
-                          ? 'none' 
-                          : showHintAnimation && (index === 0 || index === 1)
-                          ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                          : 'transform 0.3s ease-in-out',
-                      }}
-                    >
-                      <QuizCard
-                        question={slide.question!}
-                        onSwipeLeft={nextQuestion}
-                        onSwipeRight={prevQuestion}
-                        categoryIndex={categoryColorMap[slide.question!.category] || 0}
-                        onDragStart={handleDragStart}
-                        onDragMove={handleDragMove}
-                        onDragEnd={handleDragEnd}
-                        dragOffset={isDragging ? dragOffset : 0}
-                        isDragging={isDragging}
-                      />
-                    </div>
-                  );
-                });
-              })()}
+                return (
+                  <div
+                    key={`slide-${index}`}
+                    className="absolute inset-0 w-full h-full"
+                    style={{
+                      transform,
+                      zIndex,
+                      transition: isDragging 
+                        ? 'none' 
+                        : showHintAnimation && (index === 0 || index === 1)
+                        ? 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)' // Faster bouncy ease for hint
+                        : 'transform 0.3s ease-in-out'
+                    }}
+                  >
+                    <QuizCard
+                      question={slide.question!}
+                      onSwipeLeft={nextQuestion}
+                      onSwipeRight={prevQuestion}
+                      categoryIndex={categoryColorMap[slide.question!.category] || 0}
+                      onDragStart={handleDragStart}
+                      onDragMove={handleDragMove}
+                      onDragEnd={handleDragEnd}
+                      dragOffset={isDragging ? dragOffset : 0}
+                      isDragging={isDragging}
+                    />
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="flex items-center justify-center h-full text-white" style={{ fontSize: '14px' }}>Keine Fragen verfügbar</div>
@@ -1244,20 +1055,6 @@ export function QuizApp() {
         onCategoriesChange={handleCategoriesChange}
         backgroundColor={getInterpolatedBgColor()}
       />
-      
-       {/* RevenueCat Paywall Dialog */}
-       <RevenueCatPaywall
-         isOpen={showPaywall}
-         isPurchasing={isPurchasing}
-         isLoading={isRevenueCatLoading}
-         isRestoring={isRestoring}
-         priceString={priceString}
-         currentPackage={currentPackage}
-         managementUrl={getManagementUrl()}
-         onPurchase={purchase}
-         onRestore={handleRestore}
-         presentHostedPaywall={presentPaywall}
-       />
       </div>
     </>
   );
