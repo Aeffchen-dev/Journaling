@@ -174,7 +174,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         
         <div className="flex flex-col items-center text-center max-w-md w-full gap-6">
           <h2
-            className="font-factora text-[1.8rem] md:text-[2.2rem] lg:text-[2.8rem] leading-[120%] text-center w-full"
+            className="font-factora text-[1.8rem] md:text-[2.2rem] lg:text-[2.8rem] leading-[120%] text-center w-full first-letter:text-[3.2rem] first-letter:md:text-[3.8rem] first-letter:lg:text-[4.8rem] first-letter:leading-[1]"
             style={{
               fontWeight: 'bold',
               fontStyle: 'normal',
