@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { toast } from '@/hooks/use-toast';
 
 declare global {
   interface Window {
@@ -22,14 +23,17 @@ interface PaywallProps {
 export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const showError = (message: string) => {
+    toast({
+      description: message,
+      variant: 'destructive',
+    });
+  };
 
   const handlePurchase = async () => {
     setIsPurchasing(true);
-    setError(null);
     try {
       if (typeof window.NativelyPurchases !== 'undefined') {
-        // BuildNatively native IAP
         const purchases = new window.NativelyPurchases();
         const packageId = '$rc_lifetime';
 
@@ -41,7 +45,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
           } else if (resp.status === 'CANCELLED') {
             // User cancelled, do nothing
           } else {
-            setError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
+            showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
           }
           setIsPurchasing(false);
         });
@@ -56,7 +60,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         const pkg = offerings.current?.availablePackages?.[0];
 
         if (!pkg) {
-          setError('Kein Paket verfügbar. Bitte versuche es später erneut.');
+          showError('Kein Paket verfügbar. Bitte versuche es später erneut.');
           setIsPurchasing(false);
           return;
         }
@@ -71,7 +75,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
     } catch (e: any) {
       if (e?.errorCode !== 1) {
         console.error('Purchase error:', e);
-        setError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
+        showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
       }
     } finally {
       setIsPurchasing(false);
@@ -80,19 +84,15 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
 
   const handleRestore = async () => {
     setIsRestoring(true);
-    setError(null);
     try {
       if (typeof window.NativelyPurchases !== 'undefined') {
-        // BuildNatively: check entitlements via RevenueCat API
         const purchases = new window.NativelyPurchases();
         purchases.customerId((resp: any) => {
           if (resp.status === 'SUCCESS' && resp.customerId) {
-            // Customer is linked; check entitlements by fetching customer info
-            // For now, try restoring by making a purchase check
             localStorage.setItem('journaling_premium', 'true');
             onPurchaseSuccess();
           } else {
-            setError('Kein aktiver Kauf gefunden.');
+            showError('Kein aktiver Kauf gefunden.');
           }
           setIsRestoring(false);
         });
@@ -108,12 +108,12 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
           localStorage.setItem('journaling_premium', 'true');
           onPurchaseSuccess();
         } else {
-          setError('Kein aktiver Kauf gefunden.');
+          showError('Kein aktiver Kauf gefunden.');
         }
       }
     } catch (e) {
       console.error('Restore error:', e);
-      setError('Wiederherstellung fehlgeschlagen. Bitte versuche es erneut.');
+      showError('Wiederherstellung fehlgeschlagen. Bitte versuche es erneut.');
     } finally {
       setIsRestoring(false);
     }
@@ -136,13 +136,12 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         
         <div className="flex flex-col items-center text-center max-w-md w-full gap-6">
           <h2
-            className="font-factora"
+            className="font-factora text-[2.364rem] md:text-[2.832rem] lg:text-[3.78rem] leading-[120%] text-left w-full"
             style={{
-              fontSize: 'clamp(1.8rem, 7vw, 2.8rem)',
-              fontWeight: 700,
-              fontStyle: 'italic',
+              fontWeight: 'bold',
+              fontStyle: 'normal',
               color: '#ffffff',
-              lineHeight: 1.15,
+              letterSpacing: '0px',
             }}
           >
             Entdecke alle Fragen
@@ -158,18 +157,12 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
             Einmaliger Kauf. Kein Abo. Für immer Zugriff auf alle Fragen und zukünftige Updates.
           </p>
 
-          {error && (
-            <p style={{ fontSize: '13px', color: 'hsl(0, 80%, 60%)' }}>
-              {error}
-            </p>
-          )}
-
           <Button
             onClick={handlePurchase}
             disabled={isPurchasing || isRestoring}
             className="w-full rounded-full font-factora font-bold text-base"
             style={{
-              backgroundColor: 'hsl(285, 73%, 75%)',
+              backgroundColor: '#F88EFF',
               color: '#1a1a1a',
               height: '52px',
               fontSize: '16px',
