@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { QuizCard } from './QuizCard';
 import { CategorySelector } from './CategorySelector';
 import { IntroSlide } from './IntroSlide';
 import { Switch } from './ui/switch';
+import { Paywall } from './Paywall';
 
 interface Question {
   question: string;
@@ -83,6 +84,64 @@ export function QuizApp() {
   const [baseSmileyRotation, setBaseSmileyRotation] = useState(0);
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isPremium, setIsPremium] = useState(() => localStorage.getItem('journaling_premium') === 'true');
+
+  // Question view tracking for paywall
+  const QUESTION_LIMIT = 9;
+  const [viewedQuestions, setViewedQuestions] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('journaling_viewed_questions');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+  // On app restart, allow 1 bonus question beyond the limit
+  const [bonusUsed, setBonusUsed] = useState(() => sessionStorage.getItem('journaling_bonus_used') === 'true');
+
+  const trackQuestion = useCallback((questionText: string) => {
+    if (isPremium) return;
+    setViewedQuestions(prev => {
+      const next = new Set(prev);
+      next.add(questionText);
+      localStorage.setItem('journaling_viewed_questions', JSON.stringify([...next]));
+      
+      const limit = QUESTION_LIMIT;
+      if (next.size > limit) {
+        // Past the limit — check bonus
+        if (!bonusUsed) {
+          // Use the bonus
+          setBonusUsed(true);
+          sessionStorage.setItem('journaling_bonus_used', 'true');
+        } else {
+          setShowPaywall(true);
+        }
+      }
+      return next;
+    });
+  }, [isPremium, bonusUsed]);
+
+  const handlePurchaseSuccess = () => {
+    setIsPremium(true);
+    setShowPaywall(false);
+  };
+
+  // Check entitlement on mount
+  useEffect(() => {
+    if (isPremium) return;
+    (async () => {
+      try {
+        const { Purchases } = await import('@revenuecat/purchases-js');
+        const userId = localStorage.getItem('journaling_rc_user_id');
+        if (!userId) return;
+        const purchases = Purchases.configure('appl_pmfaGQMjIIiPzVbbGpkjhccvWHm', userId);
+        const info = await purchases.getCustomerInfo();
+        if (info.entitlements.active['Journaling']) {
+          localStorage.setItem('journaling_premium', 'true');
+          setIsPremium(true);
+        }
+      } catch (e) { /* silent */ }
+    })();
+  }, []);
 
   useEffect(() => {
     fetchQuestions();
@@ -346,12 +405,34 @@ export function QuizApp() {
 
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
+      // Check paywall before advancing
+      if (!isPremium) {
+        const nextSlide = slides[currentIndex + 1];
+        if (nextSlide?.question) {
+          const nextSet = new Set(viewedQuestions);
+          nextSet.add(nextSlide.question.question);
+          if (nextSet.size > QUESTION_LIMIT) {
+            if (bonusUsed) {
+              setShowPaywall(true);
+              return;
+            }
+          }
+        }
+      }
+      
       setIsTransitioning(true);
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
       
       setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
+        setCurrentIndex(prev => {
+          const newIndex = prev + 1;
+          const slide = slides[newIndex];
+          if (slide?.question) {
+            trackQuestion(slide.question.question);
+          }
+          return newIndex;
+        });
         setIsTransitioning(false);
         setTransitionDirection(null);
       }, 300);
@@ -490,6 +571,11 @@ export function QuizApp() {
     
     setSlides(slides);
     setCurrentIndex(0); // Reset to first slide when filtering/mode changes
+    
+    // Track the first question
+    if (slides.length > 0 && slides[0].question) {
+      trackQuestion(slides[0].question.question);
+    }
   }, [selectedCategories, allQuestions, availableCategories.length, isMixedMode, hasToggleBeenChanged]);
 
   // Clamp current index whenever slides length changes to prevent out-of-bounds access
@@ -1054,6 +1140,11 @@ export function QuizApp() {
         selectedCategories={selectedCategories}
         onCategoriesChange={handleCategoriesChange}
         backgroundColor={getInterpolatedBgColor()}
+      />
+      
+      <Paywall
+        open={showPaywall}
+        onPurchaseSuccess={handlePurchaseSuccess}
       />
       </div>
     </>
