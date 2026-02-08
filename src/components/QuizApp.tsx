@@ -342,6 +342,8 @@ export function QuizApp() {
   const [dragOffset, setDragOffset] = useState(0);
   const [dragStartX, setDragStartX] = useState(0);
   const [transitionProgress, setTransitionProgress] = useState(0);
+  // Store the drag offset at the moment transition starts (for smooth handoff)
+  const dragOffsetAtTransitionStart = useRef(0);
 
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
@@ -359,6 +361,7 @@ export function QuizApp() {
         highestIndexViewed.current = nextIndex;
       }
       
+      dragOffsetAtTransitionStart.current = 0;
       setIsTransitioning(true);
       setTransitionDirection('left');
       setBaseSmileyRotation(prev => prev + 360);
@@ -392,6 +395,7 @@ export function QuizApp() {
 
   const prevQuestion = () => {
     if (currentIndex > 0 && !isTransitioning) {
+      dragOffsetAtTransitionStart.current = 0;
       setIsTransitioning(true);
       setTransitionDirection('right');
       setBaseSmileyRotation(prev => prev - 360);
@@ -460,6 +464,7 @@ export function QuizApp() {
 
     if (Math.abs(dragOffset) > threshold) {
       if (dragOffset > 0 && currentIndex > 0) {
+        dragOffsetAtTransitionStart.current = dragOffset;
         // Navigate to previous - rotate left (counter-clockwise)
         setIsTransitioning(true);
         setTransitionDirection('right');
@@ -502,6 +507,7 @@ export function QuizApp() {
           highestIndexViewed.current = nextIndex;
         }
 
+        dragOffsetAtTransitionStart.current = dragOffset;
         // Navigate to next - rotate right (clockwise)
         setIsTransitioning(true);
         setTransitionDirection('left');
@@ -1143,6 +1149,9 @@ export function QuizApp() {
                 const slideProgress = isTransitioning 
                   ? Math.min(1, transitionProgress * (colorDuration / slideDuration))
                   : 0;
+                
+                // Starting drag offset for smooth handoff from drag to animation
+                const startOffset = dragOffsetAtTransitionStart.current;
 
                 return visibleIndices.map((index) => {
                   const slide = slides[index];
@@ -1165,17 +1174,19 @@ export function QuizApp() {
                       const rotation = dragOffset > 0 ? dragProgress * 5 : -dragProgress * 5;
                       transform = `translateX(${dragOffset}px) scale(${scale}) rotate(${rotation}deg)`;
                     } else if (isTransitioning && transitionDirection === 'left') {
-                      // JS-interpolated: center → exit left
-                      const x = -slideProgress * 110;
+                      // Interpolate from drag position to exit left
+                      const startPx = startOffset * (1 - slideProgress);
+                      const endPct = -slideProgress * 110;
                       const scale = 1 - slideProgress * 0.2;
                       const rot = -slideProgress * 5;
-                      transform = `translateX(${x}%) scale(${scale}) rotate(${rot}deg)`;
+                      transform = `translateX(calc(${startPx}px + ${endPct}%)) scale(${scale}) rotate(${rot}deg)`;
                     } else if (isTransitioning && transitionDirection === 'right') {
-                      // JS-interpolated: center → exit right
-                      const x = slideProgress * 110;
+                      // Interpolate from drag position to exit right
+                      const startPx = startOffset * (1 - slideProgress);
+                      const endPct = slideProgress * 110;
                       const scale = 1 - slideProgress * 0.2;
                       const rot = slideProgress * 5;
-                      transform = `translateX(${x}%) scale(${scale}) rotate(${rot}deg)`;
+                      transform = `translateX(calc(${startPx}px + ${endPct}%)) scale(${scale}) rotate(${rot}deg)`;
                     } else if (showHintAnimation && index === 0) {
                       transform = 'translateX(-60px) scale(0.96) rotate(-2deg)';
                       useTransition = true;
@@ -1189,10 +1200,11 @@ export function QuizApp() {
                       const scale = Math.min(1, 0.8 + dragProgress * 0.2);
                       transform = `translateX(calc(-100% - 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
                     } else if (isTransitioning && transitionDirection === 'right') {
-                      // JS-interpolated: offscreen left → center
-                      const x = -110 * (1 - slideProgress);
+                      // Interpolate from offscreen left (with drag offset) to center
+                      const startPx = startOffset * (1 - slideProgress);
+                      const pct = -110 * (1 - slideProgress);
                       const scale = 0.8 + slideProgress * 0.2;
-                      transform = `translateX(${x}%) scale(${scale}) rotate(0deg)`;
+                      transform = `translateX(calc(${startPx}px + ${pct}%)) scale(${scale}) rotate(0deg)`;
                     } else {
                       transform = 'translateX(calc(-100% - 16px)) scale(0.8) rotate(0deg)';
                     }
@@ -1202,10 +1214,11 @@ export function QuizApp() {
                       const scale = Math.min(1, 0.8 + dragProgress * 0.2);
                       transform = `translateX(calc(100% + 16px + ${dragOffset}px)) scale(${scale}) rotate(0deg)`;
                     } else if (isTransitioning && transitionDirection === 'left') {
-                      // JS-interpolated: offscreen right → center
-                      const x = 110 * (1 - slideProgress);
+                      // Interpolate from offscreen right (with drag offset) to center
+                      const startPx = startOffset * (1 - slideProgress);
+                      const pct = 110 * (1 - slideProgress);
                       const scale = 0.8 + slideProgress * 0.2;
-                      transform = `translateX(${x}%) scale(${scale}) rotate(0deg)`;
+                      transform = `translateX(calc(${startPx}px + ${pct}%)) scale(${scale}) rotate(0deg)`;
                     } else if (showHintAnimation && index === 1) {
                       transform = 'translateX(calc(100% + 16px - 60px)) scale(0.86) rotate(0deg)';
                       useTransition = true;
