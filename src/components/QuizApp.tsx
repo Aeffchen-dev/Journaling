@@ -1195,6 +1195,20 @@ export function QuizApp() {
                   safeIndex + 2,
                 ].filter(i => i >= 0 && i < slides.length);
 
+                // Debug: log which slides are rendered and their roles
+                console.log('[SlideRender]', {
+                  safeIndex,
+                  isTransitioning,
+                  transitionDirection,
+                  suppressTransition: suppressTransition.current,
+                  visibleIndices,
+                  slideContents: visibleIndices.map(i => ({
+                    index: i,
+                    role: i === safeIndex ? 'active' : i === safeIndex - 1 ? 'prev' : i === safeIndex + 1 ? 'next' : i < safeIndex ? 'prev2' : 'next2',
+                    question: slides[i]?.question?.question?.substring(0, 30)
+                  }))
+                });
+
                 return visibleIndices.map((index) => {
                   const slide = slides[index];
                   const isActive = index === safeIndex;
