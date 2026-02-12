@@ -40,17 +40,11 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
       try {
         if (typeof window.NativelyPurchases !== 'undefined') {
           const purchases = new window.NativelyPurchases();
-          purchases.getOfferings((resp: any) => {
-            console.log('💰 getOfferings response:', JSON.stringify(resp, null, 2));
-            if (resp.status === 'SUCCESS' && resp.offerings) {
-              const currentOffering = resp.offerings.find((o: any) => o.isCurrent) || resp.offerings[0];
-              console.log('💰 Current offering:', JSON.stringify(currentOffering, null, 2));
-              const pkg = currentOffering?.availablePackages?.find((p: any) => p.identifier === '$rc_lifetime')
-                || currentOffering?.availablePackages?.[0];
-              console.log('💰 Selected package:', JSON.stringify(pkg, null, 2));
-              if (pkg?.product?.priceString) {
-                setPrice(pkg.product.priceString);
-              }
+          const packageId = '$rc_lifetime';
+          purchases.packagePrice(packageId, (resp: any) => {
+            console.log('💰 packagePrice response:', JSON.stringify(resp, null, 2));
+            if (resp.status === 'SUCCESS' && resp.localized) {
+              setPrice(resp.localized);
             }
           });
         } else {
@@ -128,18 +122,11 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
     try {
       if (typeof window.NativelyPurchases !== 'undefined') {
         const purchases = new window.NativelyPurchases();
-        purchases.restorePurchases((resp: any) => {
-          console.log('🔄 restorePurchases response:', JSON.stringify(resp, null, 2));
-          if (resp.status === 'SUCCESS' && resp.entitlements) {
-            const hasEntitlement = resp.entitlements.some(
-              (e: any) => e.identifier === 'Journaling' && e.isActive
-            );
-            if (hasEntitlement) {
-              localStorage.setItem('journaling_premium', 'true');
-              onPurchaseSuccess();
-            } else {
-              showError('Kein aktiver Kauf gefunden.');
-            }
+        purchases.restore((resp: any) => {
+          console.log('🔄 restore response:', JSON.stringify(resp, null, 2));
+          if (resp.status === 'SUCCESS' && resp.customerId) {
+            localStorage.setItem('journaling_premium', 'true');
+            onPurchaseSuccess();
           } else {
             showError('Kein aktiver Kauf gefunden.');
           }
