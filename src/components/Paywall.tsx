@@ -41,10 +41,13 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         if (typeof window.NativelyPurchases !== 'undefined') {
           const purchases = new window.NativelyPurchases();
           purchases.getOfferings((resp: any) => {
+            console.log('💰 getOfferings response:', JSON.stringify(resp, null, 2));
             if (resp.status === 'SUCCESS' && resp.offerings) {
               const currentOffering = resp.offerings.find((o: any) => o.isCurrent) || resp.offerings[0];
+              console.log('💰 Current offering:', JSON.stringify(currentOffering, null, 2));
               const pkg = currentOffering?.availablePackages?.find((p: any) => p.identifier === '$rc_lifetime')
                 || currentOffering?.availablePackages?.[0];
+              console.log('💰 Selected package:', JSON.stringify(pkg, null, 2));
               if (pkg?.product?.priceString) {
                 setPrice(pkg.product.priceString);
               }
@@ -76,6 +79,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
         const packageId = '$rc_lifetime';
 
         purchases.purchasePackage(packageId, (resp: any) => {
+          console.log('🛒 purchasePackage response:', JSON.stringify(resp, null, 2));
           if (resp.status === 'SUCCESS') {
             localStorage.setItem('journaling_premium', 'true');
             onPurchaseSuccess();
@@ -125,6 +129,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
       if (typeof window.NativelyPurchases !== 'undefined') {
         const purchases = new window.NativelyPurchases();
         purchases.customerId((resp: any) => {
+          console.log('🔄 restore response:', JSON.stringify(resp, null, 2));
           if (resp.status === 'SUCCESS' && resp.customerId) {
             localStorage.setItem('journaling_premium', 'true');
             onPurchaseSuccess();
