@@ -128,11 +128,18 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
     try {
       if (typeof window.NativelyPurchases !== 'undefined') {
         const purchases = new window.NativelyPurchases();
-        purchases.customerId((resp: any) => {
-          console.log('🔄 restore response:', JSON.stringify(resp, null, 2));
-          if (resp.status === 'SUCCESS' && resp.customerId) {
-            localStorage.setItem('journaling_premium', 'true');
-            onPurchaseSuccess();
+        purchases.restorePurchases((resp: any) => {
+          console.log('🔄 restorePurchases response:', JSON.stringify(resp, null, 2));
+          if (resp.status === 'SUCCESS' && resp.entitlements) {
+            const hasEntitlement = resp.entitlements.some(
+              (e: any) => e.identifier === 'Journaling' && e.isActive
+            );
+            if (hasEntitlement) {
+              localStorage.setItem('journaling_premium', 'true');
+              onPurchaseSuccess();
+            } else {
+              showError('Kein aktiver Kauf gefunden.');
+            }
           } else {
             showError('Kein aktiver Kauf gefunden.');
           }
