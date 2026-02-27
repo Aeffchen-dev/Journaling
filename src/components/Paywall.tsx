@@ -39,15 +39,25 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
     const fetchPrice = async () => {
       try {
         if (typeof window.NativelyPurchases !== 'undefined') {
+          console.log('🔧 NativelyPurchases exists, type:', typeof window.NativelyPurchases);
           const purchases = new window.NativelyPurchases();
+          console.log('🔧 NativelyPurchases instance created, available methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(purchases)));
           const packageId = '$rc_lifetime';
-          purchases.packagePrice(packageId, (resp: any) => {
-            console.log('💰 packagePrice response:', JSON.stringify(resp, null, 2));
-            if (resp.status === 'SUCCESS' && resp.localized) {
-              setPrice(resp.localized);
-            }
-          });
+          console.log('🔧 Calling packagePrice with packageId:', packageId);
+          try {
+            purchases.packagePrice(packageId, (resp: any) => {
+              console.log('💰 packagePrice response:', JSON.stringify(resp, null, 2));
+              if (resp.status === 'SUCCESS' && resp.localized) {
+                setPrice(resp.localized);
+              } else {
+                console.warn('💰 packagePrice non-success:', resp.status, resp.error || '');
+              }
+            });
+          } catch (innerErr: any) {
+            console.error('💰 packagePrice call threw:', innerErr?.message || innerErr, innerErr?.stack || '');
+          }
         } else {
+          console.log('🔧 NativelyPurchases not found, using web SDK');
           const { Purchases } = await import('@revenuecat/purchases-js');
           const userId = getOrCreateUserId();
           const purchases = Purchases.configure('appl_pmfaGQMjIIiPzVbbGpkjhccvWHm', userId);
@@ -57,8 +67,8 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
             setPrice(pkg.rcBillingProduct.currentPrice.formattedPrice);
           }
         }
-      } catch (e) {
-        console.error('Failed to fetch price:', e);
+      } catch (e: any) {
+        console.error('❌ Failed to fetch price:', e?.message || e, e?.stack || '');
       }
     };
 
@@ -71,20 +81,29 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
       if (typeof window.NativelyPurchases !== 'undefined') {
         const purchases = new window.NativelyPurchases();
         const packageId = '$rc_lifetime';
+        console.log('🛒 About to call purchasePackage with:', packageId);
+        console.log('🛒 purchasePackage method exists:', typeof purchases.purchasePackage);
 
-        purchases.purchasePackage(packageId, (resp: any) => {
-          console.log('🛒 purchasePackage response:', JSON.stringify(resp, null, 2));
-          if (resp.status === 'SUCCESS') {
-            localStorage.setItem('journaling_premium', 'true');
-            onPurchaseSuccess();
-          } else if (resp.status === 'CANCELLED') {
-            // User cancelled
-          } else {
-            showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
-          }
+        try {
+          purchases.purchasePackage(packageId, (resp: any) => {
+            console.log('🛒 purchasePackage response:', JSON.stringify(resp, null, 2));
+            if (resp.status === 'SUCCESS') {
+              localStorage.setItem('journaling_premium', 'true');
+              onPurchaseSuccess();
+            } else if (resp.status === 'CANCELLED') {
+              console.log('🛒 Purchase cancelled by user');
+            } else {
+              console.error('🛒 Purchase failed:', resp.status, resp.error || '');
+              showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
+            }
+            setIsPurchasing(false);
+          });
+        } catch (innerErr: any) {
+          console.error('🛒 purchasePackage call threw:', innerErr?.message || innerErr, innerErr?.stack || '');
+          showError('Kauf fehlgeschlagen: ' + (innerErr?.message || 'Unbekannter Fehler'));
           setIsPurchasing(false);
-        });
-        return; // callback handles setIsPurchasing
+        }
+        return;
       } else {
         // Fallback: RevenueCat Web SDK
         const { Purchases } = await import('@revenuecat/purchases-js');
@@ -109,7 +128,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
       }
     } catch (e: any) {
       if (e?.errorCode !== 1) {
-        console.error('Purchase error:', e);
+        console.error('❌ Purchase error:', e?.message || e, e?.stack || '');
         showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
       }
     } finally {
@@ -122,16 +141,23 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
     try {
       if (typeof window.NativelyPurchases !== 'undefined') {
         const purchases = new window.NativelyPurchases();
-        purchases.restore((resp: any) => {
-          console.log('🔄 restore response:', JSON.stringify(resp, null, 2));
-          if (resp.status === 'SUCCESS' && resp.customerId) {
-            localStorage.setItem('journaling_premium', 'true');
-            onPurchaseSuccess();
-          } else {
-            showError('Kein aktiver Kauf gefunden.');
-          }
+        console.log('🔄 About to call restore, method exists:', typeof purchases.restore);
+        try {
+          purchases.restore((resp: any) => {
+            console.log('🔄 restore response:', JSON.stringify(resp, null, 2));
+            if (resp.status === 'SUCCESS' && resp.customerId) {
+              localStorage.setItem('journaling_premium', 'true');
+              onPurchaseSuccess();
+            } else {
+              showError('Kein aktiver Kauf gefunden.');
+            }
+            setIsRestoring(false);
+          });
+        } catch (innerErr: any) {
+          console.error('🔄 restore call threw:', innerErr?.message || innerErr, innerErr?.stack || '');
+          showError('Wiederherstellung fehlgeschlagen: ' + (innerErr?.message || 'Unbekannter Fehler'));
           setIsRestoring(false);
-        });
+        }
         return;
       } else {
         const { Purchases } = await import('@revenuecat/purchases-js');
