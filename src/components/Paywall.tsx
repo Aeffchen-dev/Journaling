@@ -94,7 +94,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
               console.log('🛒 Purchase cancelled by user');
             } else {
               console.error('🛒 Purchase failed:', resp.status, resp.error || '');
-              showError('Kauf fehlgeschlagen. Bitte versuche es erneut.');
+              showError(`Kauf fehlgeschlagen: ${resp.status || 'unknown'} – ${resp.error || 'kein Detail'}`);
             }
             setIsPurchasing(false);
           });
@@ -149,7 +149,7 @@ export function Paywall({ open, onPurchaseSuccess }: PaywallProps) {
               localStorage.setItem('journaling_premium', 'true');
               onPurchaseSuccess();
             } else {
-              showError('Kein aktiver Kauf gefunden.');
+              showError(`Restore: ${resp.status || 'unknown'} – ${resp.error || JSON.stringify(resp)}`);
             }
             setIsRestoring(false);
           });
