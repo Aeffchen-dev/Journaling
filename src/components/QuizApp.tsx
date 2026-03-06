@@ -407,7 +407,7 @@ export function QuizApp() {
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
       // Check paywall before advancing
-      if (!isPremium) {
+      if (!isPremium && !isPremiumOverride) {
         const nextSlide = slides[currentIndex + 1];
         if (nextSlide?.question) {
           const nextSet = new Set(viewedQuestions);
