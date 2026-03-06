@@ -85,6 +85,7 @@ export function QuizApp() {
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const isPremiumOverride = true; // Temporarily disable paywall
   const [isPremium, setIsPremium] = useState(() => localStorage.getItem('journaling_premium') === 'true');
 
   // Question view tracking for paywall
@@ -113,7 +114,7 @@ export function QuizApp() {
           setBonusUsed(true);
           sessionStorage.setItem('journaling_bonus_used', 'true');
         } else {
-          setShowPaywall(true);
+          if (!isPremiumOverride) setShowPaywall(true);
         }
       }
       return next;
@@ -406,7 +407,7 @@ export function QuizApp() {
   const nextQuestion = () => {
     if (currentIndex < slides.length - 1 && !isTransitioning) {
       // Check paywall before advancing
-      if (!isPremium) {
+      if (!isPremium && !isPremiumOverride) {
         const nextSlide = slides[currentIndex + 1];
         if (nextSlide?.question) {
           const nextSet = new Set(viewedQuestions);
