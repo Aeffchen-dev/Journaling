@@ -85,6 +85,7 @@ export function QuizApp() {
   const [isLogoBlinking, setIsLogoBlinking] = useState(false);
   const [showHintAnimation, setShowHintAnimation] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const isPremiumOverride = true; // Temporarily disable paywall
   const [isPremium, setIsPremium] = useState(() => localStorage.getItem('journaling_premium') === 'true');
 
   // Question view tracking for paywall
