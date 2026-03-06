@@ -114,7 +114,7 @@ export function QuizApp() {
           setBonusUsed(true);
           sessionStorage.setItem('journaling_bonus_used', 'true');
         } else {
-          setShowPaywall(true);
+          if (!isPremiumOverride) setShowPaywall(true);
         }
       }
       return next;
